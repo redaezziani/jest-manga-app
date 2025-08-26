@@ -1,9 +1,9 @@
 import { Text, View } from "react-native";
 
-export default function ExploreScreen() {
+export default function ProfileScreen() {
   return (
     <View className="flex-1 bg-gray-50">
-      <Text>Explore Screen</Text>
+      <Text>Profile Screen</Text>
     </View>
   );
 }
