@@ -90,6 +90,7 @@ export default function HomeScreen() {
           borderRadius: 10,
         }}
         resizeMode="cover"
+        className="border border-gray-300"
       />
       <View className="pt-2 px-1">
         <Text
