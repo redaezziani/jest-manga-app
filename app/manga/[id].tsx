@@ -129,9 +129,12 @@ export default function MangaDetail() {
               <View className="mb-3">
                 <Text
                   style={{ fontFamily: "Arabic" }}
-                  className="text-gray-700"
+                  className="text-gray-500 text-sm"
                 >
-                  <Text style={{ fontFamily: "Arabic" }} className="font-bold">
+                  <Text
+                    style={{ fontFamily: "Arabic" }}
+                    className=" text-sm text-gray-700"
+                  >
                     المؤلف:{" "}
                   </Text>
                   {manga.authors.join(", ")}
@@ -139,9 +142,12 @@ export default function MangaDetail() {
 
                 <Text
                   style={{ fontFamily: "Arabic" }}
-                  className="text-gray-700"
+                  className="text-gray-500 text-sm"
                 >
-                  <Text style={{ fontFamily: "Arabic" }} className="font-bold">
+                  <Text
+                    style={{ fontFamily: "Arabic" }}
+                    className=" text-sm text-gray-700"
+                  >
                     الرسام:{" "}
                   </Text>
                   {manga.artists.join(", ")}
@@ -149,9 +155,12 @@ export default function MangaDetail() {
 
                 <Text
                   style={{ fontFamily: "Arabic" }}
-                  className="text-gray-700"
+                  className="text-gray-500 text-sm"
                 >
-                  <Text style={{ fontFamily: "Arabic" }} className="font-bold">
+                  <Text
+                    style={{ fontFamily: "Arabic" }}
+                    className=" text-sm text-gray-700"
+                  >
                     النوع:{" "}
                   </Text>
                   {manga.type}
@@ -159,9 +168,12 @@ export default function MangaDetail() {
 
                 <Text
                   style={{ fontFamily: "Arabic" }}
-                  className="text-gray-700"
+                  className="text-gray-500 text-sm"
                 >
-                  <Text style={{ fontFamily: "Arabic" }} className="font-bold">
+                  <Text
+                    style={{ fontFamily: "Arabic" }}
+                    className=" text-sm text-gray-700"
+                  >
                     الحالة:{" "}
                   </Text>
                   {manga.status}
@@ -169,9 +181,12 @@ export default function MangaDetail() {
 
                 <Text
                   style={{ fontFamily: "Arabic" }}
-                  className="text-gray-700"
+                  className="text-gray-500 text-sm"
                 >
-                  <Text style={{ fontFamily: "Arabic" }} className="font-bold">
+                  <Text
+                    style={{ fontFamily: "Arabic" }}
+                    className=" text-sm text-gray-700"
+                  >
                     المنصة:{" "}
                   </Text>
                   {manga.platform}
