@@ -46,7 +46,7 @@ const TopBar = () => {
       }}
     >
       <StatusBar
-        backgroundColor={colorScheme === "dark" ? "#34d399" : "#34d399"}
+        backgroundColor={colorScheme === "dark" ? "#ff4D00" : "#ff4D00"}
       />
 
       <View className="flex-row-reverse justify-between items-center">
@@ -77,7 +77,7 @@ const TopBar = () => {
             }}
             className={`text-base ${colorScheme === "dark" ? "text-white" : "text-gray-800"}`}
           >
-            رغبة <Text style={{ color: "#34d399" }}>مانجا</Text>
+            رغبة <Text style={{ color: "#ff4D00" }}>مانجا</Text>
           </Text>
 
           <Image
@@ -217,7 +217,7 @@ export default function TabLayout() {
           tabBarIconStyle: {
             marginTop: 4,
           },
-          tabBarActiveTintColor: "#34d399",
+          tabBarActiveTintColor: "#ff4D00",
           tabBarInactiveTintColor:
             colorScheme === "dark" ? "#9ca3af" : "#9ca3af",
         }}

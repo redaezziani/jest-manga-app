@@ -65,18 +65,23 @@ export default function MangaDetail() {
 
   return (
     <>
-      {/* Hide Expo Router default header */}
       <Stack.Screen options={{ headerShown: false }} />
-      <View className="flex-row  flex items-center justify-between h-28 px-4 py-3 bg-white border-b border-gray-200 shadow-sm">
+      <View className="flex-row  flex items-end justify-between h-24 px-4 py-3 bg-white border-b border-gray-300 ">
         <Text
           style={{ fontFamily: "Arabic" }}
-          className="text-lg flex-row font-bold mt-2 text-gray-900"
+          className="text-base flex-row  mt-2 text-gray-800"
           numberOfLines={1}
         >
-          تفاصيل المانجا {manga?.title}
+          <Text
+            onPress={() => router.push("/")}
+            style={{ fontFamily: "Arabic" }}
+          >
+            رغبة <Text style={{ color: "#ff4D00" }}>مانجا</Text>
+          </Text>
+          /{manga?.title}
         </Text>
         <TouchableOpacity onPress={() => router.back()} className="">
-          <ChevronLeft size={20} color="#4B5563" />
+          <ChevronLeft size={20} color="#ff4D00" />
         </TouchableOpacity>
       </View>
       <ScrollView className="flex-1 bg-white px-2">
