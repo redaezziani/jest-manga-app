@@ -1,50 +1,70 @@
-# Welcome to your Expo app 👋
+# رغبة مانجا (Ragheb Manga) 📚
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Expo](https://img.shields.io/badge/Expo-1B1F23?style=for-the-badge&logo=expo&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![API](https://img.shields.io/badge/API-REST-blue?style=for-the-badge)
+![RTL Support](https://img.shields.io/badge/RTL%20Support-Enabled-green?style=for-the-badge)
 
-## Get started
+---
 
-1. Install dependencies
+## Overview
 
-   ```bash
-   npm install
-   ```
+**Ragheb Manga** is a modern mobile application for manga enthusiasts, built using **React Native** and **Expo**. The app is fully **RTL-friendly**, designed for Arabic users, and provides a seamless experience for browsing, exploring, and managing manga collections.
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
+## Features
 
-In the output, you'll find options to open the app in a
+- **Home Screen**
+  - Swipeable carousels for **latest manga** and **popular manga**.
+  - Pull-to-refresh support for live updates.
+  - Displays manga title, authors, status, and cover thumbnails.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **Manga Details**
+  - Detailed view of each manga.
+  - Shows title, alternative titles, authors, artists, type, status, genres, platform, and description.
+  - Similar manga suggestions.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- **Profile Menu**
+  - Accessible via a **top-right user icon**.
+  - Options to view the profile or log out.
+  - Clean modal with backdrop blur effect.
 
-## Get a fresh project
+- **Navigation**
+  - **Tab-based navigation** using Expo Router.
+  - Tabs include: Home, Explore, Library, and Profile.
+  - Custom tab bar with active/inactive styles, haptic feedback, and RTL layout support.
 
-When you're ready, run:
+- **Dark Mode Support**
+  - Automatically adapts to system theme.
+  - Dark/light mode for all UI components including top bar, modal, and tab bar.
 
-```bash
-npm run reset-project
-```
+- **Swipeable Sections**
+  - Latest and popular manga sections are swipeable using `react-native-swiper`.
+  - Groups manga in pairs for better visual hierarchy.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- **Responsive UI**
+  - Supports multiple screen sizes.
+  - Rounded card designs with clean spacing and typography.
+  - Arabic font support for a native feel.
 
-## Learn more
+---
 
-To learn more about developing your project with Expo, look at the following resources:
+## Tech Stack
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+| Layer            | Technology/Library                    |
+| ---------------- | ------------------------------------- |
+| Mobile Framework | React Native + Expo                   |
+| Language         | TypeScript                            |
+| State Management | React Hooks (`useState`, `useEffect`) |
+| Navigation       | Expo Router (Tabs & Stack)            |
+| UI Components    | Tailwind + React Native Components    |
+| API              | REST API (Node.js + Express Backend)  |
+| Database         | PostgreSQL                            |
+| Icons            | lucide-react-native                   |
+| Styling          | Tailwind CSS (via NativeWind)         |
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
