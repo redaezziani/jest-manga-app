@@ -31,6 +31,7 @@ export default function MangaDetail() {
   const [manga, setManga] = useState<Manga | null>(null);
   const [similar, setSimilar] = useState<Manga[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const API_URL =
@@ -60,8 +61,6 @@ export default function MangaDetail() {
       </View>
     );
   }
-
-  const router = useRouter();
 
   return (
     <>
@@ -162,7 +161,6 @@ export default function MangaDetail() {
                 </Text>
               </View>
 
-              {/* Genres */}
               {manga.genres.length > 0 && (
                 <View className="flex-row flex-wrap mb-4">
                   {manga.genres.map((genre) => (
@@ -181,7 +179,6 @@ export default function MangaDetail() {
                 </View>
               )}
 
-              {/* Description */}
               <Text
                 style={{ fontFamily: "Arabic" }}
                 className="text-gray-800 leading-relaxed"
@@ -190,7 +187,6 @@ export default function MangaDetail() {
               </Text>
             </View>
 
-            {/* Similar Manga */}
             {similar.length > 0 && (
               <View className="py-4 px-4">
                 <Text

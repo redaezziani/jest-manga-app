@@ -95,7 +95,7 @@ export default function HomeScreen() {
         <Text
           onPress={() => router.push(`/manga/${item.id}`)}
           style={{ fontFamily: "Arabic" }}
-          className="text-sm font-bold text-gray-900 mb-1"
+          className="text-sm font-bold line-clamp-1 text-gray-900 mb-1"
           numberOfLines={2}
         >
           {item.title}
@@ -148,7 +148,7 @@ export default function HomeScreen() {
         </View>
 
         {mangaList.length > 0 ? (
-          <View style={{ height: 300 }} className="relative">
+          <View style={{ height: 330 }} className="relative">
             <Swiper
               ref={swiperRef}
               showsPagination={true}
