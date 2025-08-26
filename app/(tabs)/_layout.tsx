@@ -37,7 +37,6 @@ const TopBar = () => {
       } border-b`}
       style={{
         paddingTop: insets.top,
-        paddingBottom: 12,
         paddingHorizontal: 16,
         elevation: 0,
         shadowOpacity: 0,
@@ -46,7 +45,7 @@ const TopBar = () => {
       }}
     >
       <StatusBar
-        backgroundColor={colorScheme === "dark" ? "#ff4D00" : "#ff4D00"}
+        backgroundColor={colorScheme === "dark" ? "#5d3aca" : "#5d3aca"}
       />
 
       <View className="flex-row-reverse justify-between items-center">
@@ -77,12 +76,12 @@ const TopBar = () => {
             }}
             className={`text-base ${colorScheme === "dark" ? "text-white" : "text-gray-800"}`}
           >
-            رغبة <Text style={{ color: "#ff4D00" }}>مانجا</Text>
+            دينو <Text style={{ color: "#5d3aca" }}>مانجا</Text>
           </Text>
 
           <Image
-            source={require("../../assets/images/desire-manga.jpg")}
-            className="w-8 h-8 rounded-full"
+            source={require("../../assets/images/dino.png")}
+            className="w-14 h-auto aspect-square "
           />
         </View>
       </View>
@@ -217,7 +216,7 @@ export default function TabLayout() {
           tabBarIconStyle: {
             marginTop: 4,
           },
-          tabBarActiveTintColor: "#ff4D00",
+          tabBarActiveTintColor: "#5d3aca",
           tabBarInactiveTintColor:
             colorScheme === "dark" ? "#9ca3af" : "#9ca3af",
         }}
