@@ -95,8 +95,8 @@ export default function ChapterReader() {
           <Image
             key={index}
             source={{ uri: pageUrl }}
-            style={{ width: "100%", height: 600 }}
-            className="my-2 rounded-md"
+            style={{ width: "100%", height: 550 }}
+            className=" rounded-md border-t border-gray-300"
             resizeMode="contain"
           />
         ))}
