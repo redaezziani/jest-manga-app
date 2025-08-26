@@ -82,12 +82,12 @@ export default function ChapterReader() {
             onPress={() => router.push("/")}
             style={{ fontFamily: "Arabic" }}
           >
-            رغبة <Text style={{ color: "#ff4D00" }}>مانجا</Text>
+            رغبة <Text style={{ color: "#5d3aca" }}>مانجا</Text>
           </Text>
           / {chapter.mangaName} / {chapter.chapterName}
         </Text>
         <TouchableOpacity onPress={() => router.back()} className="">
-          <ChevronLeft size={20} color="#ff4D00" />
+          <ChevronLeft size={20} color="#5d3aca" />
         </TouchableOpacity>
       </View>
       <ScrollView className="flex-1 bg-white px-2">

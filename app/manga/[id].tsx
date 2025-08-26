@@ -82,7 +82,7 @@ export default function MangaDetail() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <View className="flex-row  flex items-end justify-between h-24 px-4 py-3 bg-white border-b border-gray-300 ">
+      <View className="flex-row  flex items-end justify-between h-12 py-1 px-4  bg-white border-b border-gray-300 ">
         <Text
           style={{ fontFamily: "Arabic" }}
           className="text-base flex-row  mt-2 text-gray-800"
@@ -92,12 +92,12 @@ export default function MangaDetail() {
             onPress={() => router.push("/")}
             style={{ fontFamily: "Arabic" }}
           >
-            رغبة <Text style={{ color: "#ff4D00" }}>مانجا</Text>
+            رغبة <Text style={{ color: "#5d3aca" }}>مانجا</Text>
           </Text>
           /{manga?.title}
         </Text>
         <TouchableOpacity onPress={() => router.back()} className="">
-          <ChevronLeft size={20} color="#ff4D00" />
+          <ChevronLeft size={20} color="#5d3aca" />
         </TouchableOpacity>
       </View>
       <ScrollView className="flex-1 bg-white px-2">
