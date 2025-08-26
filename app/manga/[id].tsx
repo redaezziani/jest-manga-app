@@ -26,10 +26,18 @@ interface Manga {
   description: string;
 }
 
+interface Chapter {
+  id: string;
+  title: string;
+  number: number;
+  createdAt: string;
+}
+
 export default function MangaDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [manga, setManga] = useState<Manga | null>(null);
   const [similar, setSimilar] = useState<Manga[]>([]);
+  const [chapters, setChapters] = useState<Chapter[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -50,6 +58,15 @@ export default function MangaDetail() {
         console.error(err);
         setLoading(false);
       });
+    fetch(`${API_URL}/api/manga/manga/${id}/chapters`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setChapters(data.data.chapters);
+        }
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
   }, [id]);
 
   if (loading) {
@@ -198,6 +215,32 @@ export default function MangaDetail() {
               </View>
             )}
           </>
+        )}
+        {chapters.length > 0 && (
+          <View className="px-2 py-4">
+            <Text
+              style={{ fontFamily: "Arabic" }}
+              className="text-xl  text-gray-900 mb-2"
+            >
+              الفصول
+            </Text>
+            {chapters.map((chapter, index) => (
+              <TouchableOpacity
+                key={chapter.id}
+                className="py-2 "
+                onPress={() =>
+                  router.push(`/chapter/${chapter.number}?mangaId=${id}`)
+                }
+              >
+                <Text
+                  style={{ fontFamily: "Arabic" }}
+                  className="text-gray-800 text-sm"
+                >
+                  {chapter.number} - {chapter.title}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         )}
       </ScrollView>
     </>
