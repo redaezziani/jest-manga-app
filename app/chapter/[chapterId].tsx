@@ -1,4 +1,4 @@
-import { Picker } from "@react-native-picker/picker";
+import CustomSelect from "@/components/ui/Custome-Select";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
@@ -73,9 +73,18 @@ export default function ChapterReader() {
     [chapters, chapterId]
   );
 
-  const goToChapter = (number: string) => {
-    // /chapter/:chapter?mangaId=
-    router.push(`/chapter/${number}?mangaId=${mangaId}`);
+  // Prepare select options
+  const chapterOptions = useMemo(
+    () =>
+      chapters.map((c) => ({
+        label: `الفصل ${c.number} - ${c.title}`,
+        value: c.id,
+      })),
+    [chapters]
+  );
+
+  const goToChapter = (chapterIdToGo: string) => {
+    router.push(`/chapter/${chapterIdToGo}?mangaId=${mangaId}`);
   };
 
   if (loading) {
@@ -102,6 +111,7 @@ export default function ChapterReader() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
+
       {/* Header */}
       <View className="flex-row items-center justify-between h-12 px-4 bg-white border-b border-gray-300">
         <Text
@@ -123,7 +133,7 @@ export default function ChapterReader() {
       </View>
 
       {/* Chapter navigation */}
-      <View className="flex-row items-center justify-between px-3 py-2 border-b border-gray-200 bg-gray-50">
+      <View className="flex-row items-center justify-between px-3 py-3 border-b border-gray-200 bg-gray-50">
         {/* Prev button */}
         <TouchableOpacity
           disabled={currentIndex === chapters.length - 1}
@@ -131,7 +141,16 @@ export default function ChapterReader() {
             if (chapters[currentIndex + 1])
               goToChapter(chapters[currentIndex + 1].id);
           }}
-          className="p-2"
+          className="p-2 rounded-full"
+          style={{
+            backgroundColor:
+              currentIndex === chapters.length - 1 ? "#f0f0f0" : "#fff",
+            elevation: currentIndex === chapters.length - 1 ? 0 : 2,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.1,
+            shadowRadius: 2,
+          }}
         >
           <ChevronLeft
             size={24}
@@ -139,20 +158,21 @@ export default function ChapterReader() {
           />
         </TouchableOpacity>
 
-        {/* Chapter selector */}
-        <View className="flex-1 mx-3 border border-gray-300 rounded-md bg-white">
-          <Picker
+        {/* Custom Chapter selector */}
+        <View className="flex-1 mx-3">
+          <CustomSelect
+            options={chapterOptions}
             selectedValue={chapterId}
-            onValueChange={(value) => goToChapter(value)}
-          >
-            {chapters.map((c) => (
-              <Picker.Item
-                key={c.number}
-                label={`الفصل ${c.number} - ${c.title}`}
-                value={c.number}
-              />
-            ))}
-          </Picker>
+            onValueChange={goToChapter}
+            placeholder="اختر فصلاً"
+            style={{
+              elevation: 2,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.1,
+              shadowRadius: 2,
+            }}
+          />
         </View>
 
         {/* Next button */}
@@ -162,7 +182,15 @@ export default function ChapterReader() {
             if (chapters[currentIndex - 1])
               goToChapter(chapters[currentIndex - 1].id);
           }}
-          className="p-2"
+          className="p-2 rounded-full"
+          style={{
+            backgroundColor: currentIndex === 0 ? "#f0f0f0" : "#fff",
+            elevation: currentIndex === 0 ? 0 : 2,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.1,
+            shadowRadius: 2,
+          }}
         >
           <ChevronRight
             size={24}
