@@ -1,19 +1,11 @@
+import { LayoutWithTopBar } from "@/components/LayoutWithBar";
 import { Chapter } from "@/type/chapter";
 import { MangaExtended } from "@/type/manga";
 import { API_URL } from "@/utils";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { ChevronLeft } from "lucide-react-native";
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import {
-  Image,
-  Platform,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Swiper from "react-native-swiper";
-
 
 export default function MangaDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -101,25 +93,10 @@ export default function MangaDetail() {
   }
 
   return (
-    <>
+    <LayoutWithTopBar>
       <Stack.Screen options={{ headerShown: false }} />
-      <View className="flex-row  flex items-end justify-between h-12 py-1 px-4  bg-white border-b border-gray-300 ">
-        <Text
-          style={{ fontFamily: "Arabic" }}
-          className="text-base flex-row  mt-2 text-gray-800"
-          numberOfLines={1}
-        >
-          <Text
-            onPress={() => router.push("/")}
-            style={{ fontFamily: "Arabic" }}
-          >
-            رغبة <Text style={{ color: "#5d3aca" }}>مانجا</Text>
-          </Text>
-          /{manga?.title}
-        </Text>
-        <TouchableOpacity onPress={() => router.back()} className="">
-          <ChevronLeft size={20} color="#5d3aca" />
-        </TouchableOpacity>
+      <View className="px-4 mt-4 pt-2 pb-1 ">
+        <PathIndicator title={manga ? manga.title : "تفاصيل المانجا"} />
       </View>
       <ScrollView className="flex-1 bg-white px-2">
         {manga && (
@@ -216,9 +193,9 @@ export default function MangaDetail() {
 
               {manga.genres.length > 0 && (
                 <View className="flex-row flex-wrap mb-4">
-                  {manga.genres.map((genre) => (
+                  {manga.genres.map((genre, index) => (
                     <View
-                      key={genre}
+                      key={`genre-${genre}-${index}`}
                       className="bg-gray-200 px-3 py-1 rounded-full mr-2 mb-2"
                     >
                       <Text
@@ -308,6 +285,29 @@ export default function MangaDetail() {
           </View>
         )}
       </ScrollView>
-    </>
+    </LayoutWithTopBar>
   );
 }
+
+const PathIndicator = ({ title }: { title: string }) => (
+  <View className="flex-row items-center space-x-2">
+    <Link
+      href="/"
+      style={{ fontFamily: "Arabic" }}
+      className="text-sm text-gray-500"
+    >
+      الرئيسية
+    </Link>
+    <Text style={{ fontFamily: "Arabic" }} className="text-sm text-gray-500">
+      /
+    </Text>
+    <Text
+      style={{ fontFamily: "Arabic" }}
+      className="text-sm text-gray-700 font-bold"
+      numberOfLines={1}
+      ellipsizeMode="tail"
+    >
+      {title}
+    </Text>
+  </View>
+);
