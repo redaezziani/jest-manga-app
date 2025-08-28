@@ -10,10 +10,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRouter } from "expo-router";
 import { Search, Settings2, X } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  FlatList,
+  Image,
   Platform,
   ScrollView,
   Text,
@@ -112,7 +115,7 @@ export default function ExploreScreen() {
         throw new Error(`HTTP error! status: ${response.status}`);
 
       const data = await response.json();
-      setMangaData(data.data);
+      setMangaData(data.data.items);
     } catch (err: any) {
       setError(err.message);
       console.error("Error fetching manga data:", err);
@@ -150,6 +153,44 @@ export default function ExploreScreen() {
     minRating ||
     selectedStatus ||
     selectedType;
+
+  const router = useRouter();
+
+  const renderMangaCard = (item: any) => (
+    <View className="flex-1 px-2 mb-4 " key={item.id}>
+      <Image
+        source={{ uri: item.coverThumbnail }}
+        style={{
+          width: "100%",
+          height: 245,
+          borderRadius: 10,
+        }}
+        resizeMode="cover"
+        className="border border-gray-300"
+      />
+      <View className="pt-2 px-1">
+        <Text
+          onPress={() => router.push(`/manga/${item.id}`)}
+          style={{ fontFamily: "Arabic" }}
+          className="text-sm font-bold line-clamp-1 text-gray-900 mb-1"
+          numberOfLines={2}
+        >
+          {item.title}
+        </Text>
+        <Text className="text-xs text-gray-600 mb-2" numberOfLines={1}>
+          {item.authors.join(", ")}
+        </Text>
+        <View className="flex-row items-center justify-between">
+          <Text
+            style={{ fontFamily: "Arabic" }}
+            className="text-xs text-gray-500 capitalize"
+          >
+            {item.status}
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#f9fafb", padding: 16 }}>
@@ -443,7 +484,6 @@ export default function ExploreScreen() {
         </Card>
       )}
 
-      {/* Search Button */}
       <Button onPress={handleSearch} style={{ marginBottom: 24 }}>
         <Text
           style={{ color: "#fff", fontWeight: "600", fontFamily: "Arabic" }}
@@ -453,9 +493,8 @@ export default function ExploreScreen() {
         <Search color={"#fff"} size={16} />
       </Button>
 
-      {/* Results */}
       <Card>
-        <CardContent>
+        <CardContent className=" p-0">
           {loading && <ActivityIndicator />}
           {error && (
             <View>
@@ -474,15 +513,28 @@ export default function ExploreScreen() {
             </View>
           )}
 
-          {mangaData && !loading && !error && (
-            <Text
-              style={{
-                fontFamily: "Arabic",
-              }}
-            >
-              تم العثور على {mangaData.length} نتيجة
-            </Text>
-          )}
+          {mangaData &&
+            !loading &&
+            !error &&
+            (mangaData.length === 0 ? (
+              <Text
+                style={{ fontFamily: "Arabic" }}
+                className="text-center text-gray-500 my-4"
+              >
+                لم يتم العثور على مانجا.
+              </Text>
+            ) : (
+              <FlatList
+                data={mangaData}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  <View className="flex-1 m-2">{renderMangaCard(item)}</View>
+                )}
+                numColumns={2}
+                columnWrapperStyle={{ justifyContent: "space-between" }}
+                contentContainerStyle={{ paddingBottom: 20 }}
+              />
+            ))}
         </CardContent>
       </Card>
     </ScrollView>

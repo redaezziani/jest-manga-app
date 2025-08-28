@@ -2,7 +2,6 @@ import { Tabs } from "expo-router";
 import React, { useState } from "react";
 import {
   I18nManager,
-  Image,
   Modal,
   Platform,
   Pressable,
@@ -14,6 +13,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HapticTab } from "@/components/HapticTab";
+import { UserMenu } from "@/components/user-menu";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Home, Library, Search, User } from "lucide-react-native";
 
@@ -45,7 +45,8 @@ const TopBar = () => {
       }}
     >
       <StatusBar
-        backgroundColor={colorScheme === "dark" ? "#5d3aca" : "#5d3aca"}
+        barStyle={colorScheme === "dark" ? "light-content" : "dark-content"}
+        backgroundColor={colorScheme === "dark" ? "#f53d3d" : "#f53d3d"}
       />
 
       <View className="flex-row-reverse justify-between items-center">
@@ -53,19 +54,7 @@ const TopBar = () => {
           className="flex flex-row-reverse items-center gap-1"
           style={{ minHeight: 40 }}
         >
-          <TouchableOpacity onPress={toggleMenu}>
-            <View
-              className={`w-8 h-8 rounded-full items-center justify-center ${
-                colorScheme === "dark" ? "bg-gray-800" : "bg-gray-100"
-              }`}
-            >
-              <User
-                size={18}
-                color={colorScheme === "dark" ? "#d1d5db" : "#6b7280"}
-                strokeWidth={1.5}
-              />
-            </View>
-          </TouchableOpacity>
+          <UserMenu />
         </View>
         <View className="flex flex-row-reverse items-center gap-1">
           <Text
@@ -76,13 +65,13 @@ const TopBar = () => {
             }}
             className={`text-base ${colorScheme === "dark" ? "text-white" : "text-gray-800"}`}
           >
-            دينو <Text style={{ color: "#5d3aca" }}>مانجا</Text>
+            دينو <Text style={{ color: "#f53d3d" }}>مانجا</Text>
           </Text>
 
-          <Image
+          {/* <Image
             source={require("../../assets/images/dino.png")}
-            className="w-14 h-auto aspect-square "
-          />
+            className="w-14 h-auto aspect-square hue-rotate-15 "
+          /> */}
         </View>
       </View>
 
@@ -216,7 +205,7 @@ export default function TabLayout() {
           tabBarIconStyle: {
             marginTop: 4,
           },
-          tabBarActiveTintColor: "#5d3aca",
+          tabBarActiveTintColor: "#f53d3d",
           tabBarInactiveTintColor:
             colorScheme === "dark" ? "#9ca3af" : "#9ca3af",
         }}
