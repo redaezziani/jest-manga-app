@@ -110,7 +110,7 @@ export default function MangaDetail() {
             <View className="px-2 py-2">
               <Text
                 style={{ fontFamily: "Arabic" }}
-                className="text-2xl font-bold text-gray-900 mb-1"
+                className="text-xl font-bold text-gray-900 mb-1"
               >
                 {manga.title}
               </Text>
@@ -174,20 +174,9 @@ export default function MangaDetail() {
                   >
                     الحالة:{" "}
                   </Text>
-                  {manga.status}
-                </Text>
-
-                <Text
-                  style={{ fontFamily: "Arabic" }}
-                  className="text-gray-500 text-sm"
-                >
-                  <Text
-                    style={{ fontFamily: "Arabic" }}
-                    className=" text-sm text-gray-700"
-                  >
-                    المنصة:{" "}
-                  </Text>
-                  {manga.platform}
+                  {manga.status.toLowerCase() === "ongoing"
+                    ? "مستمرة"
+                    : "مكتملة"}
                 </Text>
               </View>
 

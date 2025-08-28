@@ -1,14 +1,8 @@
 import Manga from "@/type/manga";
 import { API_URL } from "@/utils";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Image,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { Image, RefreshControl, ScrollView, Text, View } from "react-native";
 import Swiper from "react-native-swiper";
 
 export default function HomeScreen() {
@@ -20,7 +14,6 @@ export default function HomeScreen() {
   const swiperRefPopular = useRef<Swiper | null>(null);
 
   const router = useRouter();
-
 
   const fetchManga = async () => {
     try {
@@ -55,7 +48,11 @@ export default function HomeScreen() {
   };
 
   const renderMangaCard = (item: Manga) => (
-    <View className="flex-1 px-2 mb-4 " key={item.id}>
+    <Link
+      href={`/manga/${item.id}`}
+      className="flex-1 px-2 mb-4 "
+      key={item.id}
+    >
       <Image
         source={{ uri: item.coverThumbnail }}
         style={{
@@ -68,26 +65,31 @@ export default function HomeScreen() {
       />
       <View className="pt-2 px-1">
         <Text
-          onPress={() => router.push(`/manga/${item.id}`)}
           style={{ fontFamily: "Arabic" }}
           className="text-sm font-bold line-clamp-1 text-gray-900 mb-1"
           numberOfLines={2}
         >
           {item.title}
         </Text>
-        <Text className="text-xs text-gray-600 mb-2" numberOfLines={1}>
-          {item.authors.join(", ")}
+        <Text
+          style={{ fontFamily: "Arabic" }}
+          className="text-xs text-gray-600 mb-2"
+          numberOfLines={1}
+        >
+          {item.authors && item.authors.length > 0 && item.authors[0] !== ""
+            ? item.authors.join(", ")
+            : "غير معروف"}
         </Text>
         <View className="flex-row items-center justify-between">
           <Text
             style={{ fontFamily: "Arabic" }}
             className="text-xs text-gray-500 capitalize"
           >
-            {item.status}
+            {item.status.toLowerCase() === "ongoing" ? "مستمرة" : "مكتملة"}
           </Text>
         </View>
       </View>
-    </View>
+    </Link>
   );
 
   const renderMangaPair = (pair: Manga[], index: number) => (
