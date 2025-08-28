@@ -1,10 +1,12 @@
-import { Tabs } from "expo-router";
-import { Platform, View } from "react-native";
 import { HapticTab } from "@/components/HapticTab";
+import {
+  CustomTabBarBackground,
+  LayoutWithTopBar,
+} from "@/components/LayoutWithBar";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { Tabs } from "expo-router";
 import { Home, Library, Search, User } from "lucide-react-native";
-import { CustomTabBarBackground, LayoutWithTopBar } from "@/components/LayoutWithBar";
-
+import { Platform, View } from "react-native";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -39,7 +41,7 @@ export default function TabLayout() {
           tabBarIconStyle: {
             marginTop: 4,
           },
-          tabBarActiveTintColor: "#f53d3d",
+          tabBarActiveTintColor: "#42c3ff",
           tabBarInactiveTintColor:
             colorScheme === "dark" ? "#9ca3af" : "#9ca3af",
         }}
