@@ -1,3 +1,6 @@
+import { Chapter } from "@/type/chapter";
+import { MangaExtended } from "@/type/manga";
+import { API_URL } from "@/utils";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
@@ -11,43 +14,21 @@ import {
 } from "react-native";
 import Swiper from "react-native-swiper";
 
-interface Manga {
-  id: string;
-  title: string;
-  otherTitles: string[];
-  cover: string;
-  coverThumbnail: string;
-  authors: string[];
-  artists: string[];
-  platform: string;
-  type: string;
-  releaseDate: string;
-  status: string;
-  genres: string[];
-  description: string;
-}
-
-interface Chapter {
-  id: string;
-  title: string;
-  number: number;
-  createdAt: string;
-}
 
 export default function MangaDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [manga, setManga] = useState<Manga | null>(null);
-  const [similar, setSimilar] = useState<Manga[]>([]);
+  const [manga, setManga] = useState<MangaExtended | null>(null);
+  const [similar, setSimilar] = useState<MangaExtended[]>([]);
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const API_URL =
-      Platform.OS === "android"
-        ? "http://10.0.2.2:8082"
-        : "http://localhost:8082";
+    handelFetchMangaDetails();
+    handelFetchChapters();
+  }, [id]);
 
+  const handelFetchMangaDetails = () => {
     fetch(`${API_URL}/api/manga/info/${id}`)
       .then((res) => res.json())
       .then((data) => {
@@ -59,6 +40,9 @@ export default function MangaDetail() {
         console.error(err);
         setLoading(false);
       });
+  };
+
+  const handelFetchChapters = () => {
     fetch(`${API_URL}/api/manga/manga/${id}/chapters`)
       .then((res) => res.json())
       .then((data) => {
@@ -68,9 +52,9 @@ export default function MangaDetail() {
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
-  }, [id]);
+  };
 
-  const renderMangaCard = (item: Manga) => (
+  const renderMangaCard = (item: MangaExtended) => (
     <View className="flex-1 px-2 mb-4 " key={item.id}>
       <Image
         source={{ uri: item.coverThumbnail }}
@@ -275,7 +259,7 @@ export default function MangaDetail() {
                     className="mt-2"
                   >
                     {similar
-                      .reduce((resultArray: Manga[][], item, index) => {
+                      .reduce((resultArray: MangaExtended[][], item, index) => {
                         const chunkIndex = Math.floor(index / 2);
                         if (!resultArray[chunkIndex]) {
                           resultArray[chunkIndex] = [];

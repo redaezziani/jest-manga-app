@@ -1,37 +1,15 @@
+import Manga from "@/type/manga";
+import { API_URL } from "@/utils";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Dimensions,
   Image,
-  Platform,
   RefreshControl,
   ScrollView,
   Text,
   View,
 } from "react-native";
 import Swiper from "react-native-swiper";
-
-const { width } = Dimensions.get("window");
-
-interface Manga {
-  id: string;
-  title: string;
-  slug: string;
-  rating: number;
-  coverThumbnail: string;
-  cover: string;
-  authors: string[];
-  artists: string[];
-  platform: string;
-  type: string;
-  releaseDate: string;
-  status: string;
-  genres: string[];
-  views: number;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 export default function HomeScreen() {
   const [latestManga, setLatestManga] = useState<Manga[]>([]);
@@ -43,10 +21,6 @@ export default function HomeScreen() {
 
   const router = useRouter();
 
-  const API_URL =
-    Platform.OS === "android"
-      ? "http://10.0.2.2:8082"
-      : "http://localhost:8082";
 
   const fetchManga = async () => {
     try {

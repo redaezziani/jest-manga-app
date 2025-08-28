@@ -1,33 +1,17 @@
 import CustomSelect from "@/components/ui/Custome-Select";
+import { Chapter, ChapterPage } from "@/type/chapter";
+import { API_URL } from "@/utils";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Image,
-  Platform,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-
-// Define types for chapter and manga data
-interface ChapterPage {
-  mangaId: string;
-  chapterId: string;
-  mangaName: string;
-  chapterName: string;
-  chapterNumber: number;
-  pages: string[];
-}
-
-interface Chapter {
-  id: string;
-  title: string;
-  number: number;
-  createdAt: string;
-}
 
 export default function ChapterReader() {
   const { chapterId, mangaId } = useLocalSearchParams<{
@@ -38,34 +22,40 @@ export default function ChapterReader() {
   const [chapter, setChapter] = useState<ChapterPage | null>(null);
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [loading, setLoading] = useState(true);
-
   const router = useRouter();
 
-  const API_URL =
-    Platform.OS === "android"
-      ? "http://10.0.2.2:8082"
-      : "http://localhost:8082";
-
-  // Fetch chapter pages
-  useEffect(() => {
+  const handelFetchChapter = async () => {
+    if (!mangaId || !chapterId) return;
     setLoading(true);
-    fetch(`${API_URL}/api/manga/manga/${mangaId}/chapter/${chapterId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) setChapter(data.data);
-      })
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
-  }, [chapterId, mangaId]);
+    try {
+      const res = await fetch(
+        `${API_URL}/api/manga/manga/${mangaId}/chapter/${chapterId}`
+      );
+      const data = await res.json();
+      if (data.success) setChapter(data.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Fetch chapters list
+  const handelFetchMangaChapters = async () => {
+    if (!mangaId) return;
+    try {
+      const res = await fetch(`${API_URL}/api/manga/manga/${mangaId}/chapters`);
+      const data = await res.json();
+      if (data.success) setChapters(data.data.chapters);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    fetch(`${API_URL}/api/manga/manga/${mangaId}/chapters`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) setChapters(data.data.chapters);
-      })
-      .catch((err) => console.error(err));
+    handelFetchChapter();
+  }, [chapterId, mangaId]);
+  useEffect(() => {
+    handelFetchMangaChapters();
   }, [mangaId]);
 
   const currentIndex = useMemo(
@@ -73,7 +63,6 @@ export default function ChapterReader() {
     [chapters, chapterId]
   );
 
-  // Prepare select options
   const chapterOptions = useMemo(
     () =>
       chapters.map((c) => ({
@@ -111,8 +100,6 @@ export default function ChapterReader() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-
-      {/* Header */}
       <View className="flex-row items-center justify-between h-12 px-4 bg-white border-b border-gray-300">
         <Text
           style={{ fontFamily: "Arabic" }}
@@ -132,9 +119,7 @@ export default function ChapterReader() {
         </TouchableOpacity>
       </View>
 
-      {/* Chapter navigation */}
       <View className="flex-row items-center justify-between px-3 py-3 border-b border-gray-200 bg-gray-50">
-        {/* Prev button */}
         <TouchableOpacity
           disabled={currentIndex === chapters.length - 1}
           onPress={() => {
@@ -158,7 +143,6 @@ export default function ChapterReader() {
           />
         </TouchableOpacity>
 
-        {/* Custom Chapter selector */}
         <View className="flex-1 mx-3">
           <CustomSelect
             options={chapterOptions}
@@ -175,7 +159,6 @@ export default function ChapterReader() {
           />
         </View>
 
-        {/* Next button */}
         <TouchableOpacity
           disabled={currentIndex === 0}
           onPress={() => {
@@ -199,7 +182,6 @@ export default function ChapterReader() {
         </TouchableOpacity>
       </View>
 
-      {/* Pages */}
       <ScrollView className="flex-1 bg-white px-2 mt-2">
         {chapter.pages.map((pageUrl, index) => (
           <Image
