@@ -197,11 +197,11 @@ const PathIndicator = ({
   mangaId?: string;
   mangaName?: string;
 }) => (
-  <View className="flex-row items-center space-x-2">
+  <View className="flex-row items-center space-x-2 gap-1">
     <Link
       href="/"
       style={{ fontFamily: "Arabic" }}
-      className="text-sm text-gray-500"
+      className="text-sm text-[#ff4D00]"
     >
       الرئيسية
     </Link>
