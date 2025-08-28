@@ -1,3 +1,4 @@
+import { MangaDetailSkeleton } from "@/components/Details-Manga-S";
 import { LayoutWithTopBar } from "@/components/LayoutWithBar";
 import { Chapter } from "@/type/chapter";
 import { MangaExtended } from "@/type/manga";
@@ -16,8 +17,35 @@ export default function MangaDetail() {
   const router = useRouter();
 
   useEffect(() => {
-    handelFetchMangaDetails();
-    handelFetchChapters();
+    const fetchWithDelay = async () => {
+      setLoading(true); // show skeleton immediately
+
+      // fake delay function
+      const sleep = (ms: number) =>
+        new Promise((resolve) => setTimeout(resolve, ms));
+
+      try {
+        // fetch manga details
+        const res1 = await fetch(`${API_URL}/api/manga/info/${id}`);
+        const data1 = await res1.json();
+        setManga(data1.data.mangaDetails);
+        setSimilar(data1.data.similarManga);
+
+        // fetch chapters
+        const res2 = await fetch(`${API_URL}/api/manga/manga/${id}/chapters`);
+        const data2 = await res2.json();
+        if (data2.success) setChapters(data2.data.chapters);
+
+        // wait 1-2 seconds before hiding skeleton
+        await sleep(1500);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWithDelay();
   }, [id]);
 
   const handelFetchMangaDetails = () => {
@@ -84,11 +112,12 @@ export default function MangaDetail() {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center bg-white">
-        <Text style={{ fontFamily: "Arabic" }} className="text-gray-500">
-          جاري التحميل...
-        </Text>
-      </View>
+      <LayoutWithTopBar>
+        <Stack.Screen options={{ headerShown: false }} />
+        <ScrollView className="flex-1 bg-white">
+          <MangaDetailSkeleton />
+        </ScrollView>
+      </LayoutWithTopBar>
     );
   }
 
