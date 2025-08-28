@@ -1,18 +1,17 @@
-import CustomSelect from "@/components/ui/Custome-Select";
+import { LayoutWithTopBar } from "@/components/LayoutWithBar";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Chapter, ChapterPage } from "@/type/chapter";
 import { API_URL } from "@/utils";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { ChevronLeft, ChevronRight } from "lucide-react-native";
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-
+import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
 export default function ChapterReader() {
   const { chapterId, mangaId } = useLocalSearchParams<{
     chapterId: string;
@@ -98,88 +97,46 @@ export default function ChapterReader() {
   }
 
   return (
-    <>
+    <LayoutWithTopBar>
       <Stack.Screen options={{ headerShown: false }} />
-      <View className="flex-row items-center justify-between h-12 px-4 bg-white border-b border-gray-300">
-        <Text
-          style={{ fontFamily: "Arabic" }}
-          className="text-base text-gray-800"
-          numberOfLines={1}
-        >
-          <Text
-            onPress={() => router.push("/")}
-            style={{ fontFamily: "Arabic" }}
-          >
-            رغبة <Text style={{ color: "#5d3aca" }}>مانجا</Text>
-          </Text>
-          / {chapter.mangaName} / {chapter.chapterName}
-        </Text>
-        <TouchableOpacity onPress={() => router.back()}>
-          <ChevronLeft size={22} color="#5d3aca" />
-        </TouchableOpacity>
+      <View className="px-4 mt-4 pt-2 pb-1 ">
+        <PathIndicator
+          title={chapter.chapterName}
+          mangaId={mangaId}
+          mangaName={chapter.mangaName}
+        />
       </View>
 
       <View className="flex-row items-center justify-between px-3 py-3 border-b border-gray-200 bg-gray-50">
-        <TouchableOpacity
-          disabled={currentIndex === chapters.length - 1}
-          onPress={() => {
-            if (chapters[currentIndex + 1])
-              goToChapter(chapters[currentIndex + 1].id);
-          }}
-          className="p-2 rounded-full"
-          style={{
-            backgroundColor:
-              currentIndex === chapters.length - 1 ? "#f0f0f0" : "#fff",
-            elevation: currentIndex === chapters.length - 1 ? 0 : 2,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.1,
-            shadowRadius: 2,
-          }}
-        >
-          <ChevronLeft
-            size={24}
-            color={currentIndex === chapters.length - 1 ? "#ccc" : "#5d3aca"}
-          />
-        </TouchableOpacity>
-
-        <View className="flex-1 mx-3">
-          <CustomSelect
-            options={chapterOptions}
-            selectedValue={chapterId}
-            onValueChange={goToChapter}
-            placeholder="اختر فصلاً"
-            style={{
-              elevation: 2,
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.1,
-              shadowRadius: 2,
-            }}
-          />
+        <View className="flex-row items-center space-x-2">
+          <Select
+            value={chapterOptions.find((option) => option.value === chapterId)}
+            onValueChange={(value) => goToChapter(value.value)}
+            className="w-48"
+          >
+            <SelectTrigger className="w-full border border-gray-300 bg-white">
+              <SelectValue
+                style={{ fontFamily: "Arabic" }}
+                placeholder="اختر الفصل"
+                className="text-sm text-gray-700"
+              />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {chapterOptions.map((option) => (
+                  <SelectItem
+                    label={option.label}
+                    key={option.value}
+                    value={option.value}
+                    className="text-sm text-gray-700"
+                  >
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </View>
-
-        <TouchableOpacity
-          disabled={currentIndex === 0}
-          onPress={() => {
-            if (chapters[currentIndex - 1])
-              goToChapter(chapters[currentIndex - 1].id);
-          }}
-          className="p-2 rounded-full"
-          style={{
-            backgroundColor: currentIndex === 0 ? "#f0f0f0" : "#fff",
-            elevation: currentIndex === 0 ? 0 : 2,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.1,
-            shadowRadius: 2,
-          }}
-        >
-          <ChevronRight
-            size={24}
-            color={currentIndex === 0 ? "#ccc" : "#5d3aca"}
-          />
-        </TouchableOpacity>
       </View>
 
       <ScrollView className="flex-1 bg-white px-2 mt-2">
@@ -193,6 +150,47 @@ export default function ChapterReader() {
           />
         ))}
       </ScrollView>
-    </>
+    </LayoutWithTopBar>
   );
 }
+
+const PathIndicator = ({
+  title,
+  mangaId,
+  mangaName,
+}: {
+  title: string;
+  mangaId?: string;
+  mangaName?: string;
+}) => (
+  <View className="flex-row items-center space-x-2">
+    <Link
+      href="/"
+      style={{ fontFamily: "Arabic" }}
+      className="text-sm text-gray-500"
+    >
+      الرئيسية
+    </Link>
+    <Text style={{ fontFamily: "Arabic" }} className="text-sm text-gray-500">
+      /
+    </Text>
+    <Link
+      href={`/manga/${mangaId}`}
+      style={{ fontFamily: "Arabic" }}
+      className="text-sm text-gray-500"
+    >
+      {mangaName}
+    </Link>
+    <Text style={{ fontFamily: "Arabic" }} className="text-sm text-gray-500">
+      /
+    </Text>
+    <Text
+      style={{ fontFamily: "Arabic" }}
+      className="text-sm text-gray-700 font-bold"
+      numberOfLines={1}
+      ellipsizeMode="tail"
+    >
+      {title}
+    </Text>
+  </View>
+);
