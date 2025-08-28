@@ -24,7 +24,7 @@ const LayoutWithTopBar = ({ children }: { children: React.ReactNode }) => {
   return (
     <View
       className={`flex-1 ${
-        colorScheme === "dark" ? "bg-gray-900" : "bg-gray-50"
+        colorScheme === "dark" ? "bg-gray-900" : "bg-white"
       }`}
     >
       <TopBar />
@@ -33,5 +33,4 @@ const LayoutWithTopBar = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-
-export { LayoutWithTopBar, CustomTabBarBackground };
+export { CustomTabBarBackground, LayoutWithTopBar };

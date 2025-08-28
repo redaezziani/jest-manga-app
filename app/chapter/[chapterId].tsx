@@ -1,4 +1,5 @@
 import { LayoutWithTopBar } from "@/components/LayoutWithBar";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -10,6 +11,7 @@ import {
 import { Chapter, ChapterPage } from "@/type/chapter";
 import { API_URL } from "@/utils";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { ChevronRight } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
 export default function ChapterReader() {
@@ -99,7 +101,7 @@ export default function ChapterReader() {
   return (
     <LayoutWithTopBar>
       <Stack.Screen options={{ headerShown: false }} />
-      <View className="px-4 mt-4 pt-2 pb-1 ">
+      <View className="px-4 mt-6  bg-white pt-2 pb-1 ">
         <PathIndicator
           title={chapter.chapterName}
           mangaId={mangaId}
@@ -107,14 +109,14 @@ export default function ChapterReader() {
         />
       </View>
 
-      <View className="flex-row items-center justify-between px-3 py-3 border-b border-gray-200 bg-gray-50">
+      <View className="flex-row items-center justify-between px-3 py-3  bg-white">
         <View className="flex-row items-center space-x-2">
           <Select
             value={chapterOptions.find((option) => option.value === chapterId)}
             onValueChange={(value) => goToChapter(value.value)}
             className="w-48"
           >
-            <SelectTrigger className="w-full border border-gray-300 bg-white">
+            <SelectTrigger>
               <SelectValue
                 style={{ fontFamily: "Arabic" }}
                 placeholder="اختر الفصل"
@@ -137,9 +139,41 @@ export default function ChapterReader() {
             </SelectContent>
           </Select>
         </View>
+        <View className="flex-row items-center gap-1 space-x-2">
+          <Button
+            variant="outline"
+            size={"icon"}
+            disabled={currentIndex === chapters.length - 1}
+            onPress={() => {
+              if (currentIndex < chapters.length - 1) {
+                goToChapter(chapters[currentIndex + 1].id);
+              }
+            }}
+            className=" rounded-full w-9 h-9 flex items-center justify-center"
+          >
+            <ChevronRight size={16} color="#ff4D00" />
+          </Button>
+          <Button
+            variant="outline"
+            size={"icon"}
+            disabled={currentIndex === 0}
+            onPress={() => {
+              if (currentIndex > 0) {
+                goToChapter(chapters[currentIndex - 1].id);
+              }
+            }}
+            className=" rounded-full w-9 h-9 flex items-center justify-center"
+          >
+            <ChevronRight
+              size={16}
+              color="#ff4D00"
+              style={{ transform: [{ rotate: "180deg" }] }}
+            />
+          </Button>
+        </View>
       </View>
 
-      <ScrollView className="flex-1 bg-white px-2 mt-2">
+      <ScrollView className="flex-1 bg-white px-2">
         {chapter.pages.map((pageUrl, index) => (
           <Image
             key={index}
@@ -186,7 +220,7 @@ const PathIndicator = ({
     </Text>
     <Text
       style={{ fontFamily: "Arabic" }}
-      className="text-sm text-gray-700 font-bold"
+      className="text-sm text-gray-700 "
       numberOfLines={1}
       ellipsizeMode="tail"
     >
