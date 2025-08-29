@@ -11,9 +11,13 @@ import {
 import { Chapter, ChapterPage } from "@/type/chapter";
 import { API_URL } from "@/utils";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { ChevronRight } from "lucide-react-native";
+import { ChevronRight, Download } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
+
+import * as FileSystem from "expo-file-system";
+import { Alert } from "react-native";
+
 export default function ChapterReader() {
   const { chapterId, mangaId } = useLocalSearchParams<{
     chapterId: string;
@@ -75,6 +79,46 @@ export default function ChapterReader() {
 
   const goToChapter = (chapterIdToGo: string) => {
     router.push(`/chapter/${chapterIdToGo}?mangaId=${mangaId}`);
+  };
+
+  const downloadChapter = async () => {
+    if (!chapter || !mangaId || !chapterId) return;
+
+    try {
+      // create folder for manga if not exist
+      const mangaFolder = `${FileSystem.documentDirectory}manga_${mangaId}`;
+      const chapterFolder = `${mangaFolder}/chapter_${chapterId}`;
+
+      const mangaFolderInfo = await FileSystem.getInfoAsync(mangaFolder);
+      if (!mangaFolderInfo.exists) {
+        await FileSystem.makeDirectoryAsync(mangaFolder, {
+          intermediates: true,
+        });
+      }
+
+      const chapterFolderInfo = await FileSystem.getInfoAsync(chapterFolder);
+      if (!chapterFolderInfo.exists) {
+        await FileSystem.makeDirectoryAsync(chapterFolder, {
+          intermediates: true,
+        });
+      }
+
+      // download each page
+      for (let i = 0; i < chapter.pages.length; i++) {
+        const pageUrl = chapter.pages[i];
+        const fileUri = `${chapterFolder}/page_${i}.jpg`;
+
+        const fileInfo = await FileSystem.getInfoAsync(fileUri);
+        if (!fileInfo.exists) {
+          await FileSystem.downloadAsync(pageUrl, fileUri);
+        }
+      }
+
+      Alert.alert("نجاح ✅", "تم تحميل الفصل ويمكنك قراءته في المكتبة");
+    } catch (error) {
+      console.error(error);
+      Alert.alert("خطأ ❌", "فشل تحميل الفصل");
+    }
   };
 
   if (loading) {
@@ -140,6 +184,14 @@ export default function ChapterReader() {
           </Select>
         </View>
         <View className="flex-row items-center gap-1 space-x-2">
+          <Button
+            variant="outline"
+            size={"icon"}
+            className=" rounded-full w-9 h-9 flex items-center justify-center"
+            onPress={downloadChapter}
+          >
+            <Download size={16} className="" color="#ff4D00" />
+          </Button>
           <Button
             variant="outline"
             size={"icon"}

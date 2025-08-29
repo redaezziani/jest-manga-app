@@ -490,7 +490,7 @@ export default function ExploreScreen() {
         >
           بحث
         </Text>
-        <Search color={"#fff"} size={16} />
+        {<Search color={"#fff"} size={16} />}
       </Button>
 
       <Card>

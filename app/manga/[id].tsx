@@ -1,11 +1,21 @@
 import { MangaDetailSkeleton } from "@/components/Details-Manga-S";
 import { LayoutWithTopBar } from "@/components/LayoutWithBar";
+import { Button } from "@/components/ui/button";
 import { Chapter } from "@/type/chapter";
 import { MangaExtended } from "@/type/manga";
 import { API_URL } from "@/utils";
+import * as FileSystem from "expo-file-system";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Download } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Swiper from "react-native-swiper";
 
 export default function MangaDetail() {
@@ -120,6 +130,54 @@ export default function MangaDetail() {
       </LayoutWithTopBar>
     );
   }
+
+  const downloadChapter = async (chapter: Chapter) => {
+    try {
+      if (!manga) return;
+
+      const mangaFolder = `${FileSystem.documentDirectory}manga_${manga.id}`;
+      const chapterFolder = `${mangaFolder}/chapter_${chapter.id}`;
+
+      // make sure folders exist
+      const mangaInfo = await FileSystem.getInfoAsync(mangaFolder);
+      if (!mangaInfo.exists) {
+        await FileSystem.makeDirectoryAsync(mangaFolder, {
+          intermediates: true,
+        });
+      }
+
+      const chapterInfo = await FileSystem.getInfoAsync(chapterFolder);
+      if (!chapterInfo.exists) {
+        await FileSystem.makeDirectoryAsync(chapterFolder, {
+          intermediates: true,
+        });
+      }
+
+      // fetch chapter data (pages) from API
+      const res = await fetch(`${API_URL}/api/manga/chapter/${chapter.id}`);
+      const data = await res.json();
+
+      if (!data.success) throw new Error("Failed to fetch chapter");
+
+      const pages: string[] = data.data.pages;
+
+      // download each page
+      for (let i = 0; i < pages.length; i++) {
+        const pageUrl = pages[i];
+        const fileUri = `${chapterFolder}/page_${i + 1}.jpg`;
+        const fileInfo = await FileSystem.getInfoAsync(fileUri);
+
+        if (!fileInfo.exists) {
+          await FileSystem.downloadAsync(pageUrl, fileUri);
+        }
+      }
+
+      Alert.alert("نجاح ✅", `تم تحميل الفصل ${chapter.number}`);
+    } catch (err) {
+      console.error(err);
+      Alert.alert("خطأ ❌", "فشل تحميل الفصل");
+    }
+  };
 
   return (
     <LayoutWithTopBar>
@@ -284,21 +342,35 @@ export default function MangaDetail() {
             >
               الفصول
             </Text>
-            {chapters.map((chapter, index) => (
-              <TouchableOpacity
+            {chapters.map((chapter) => (
+              <View
                 key={chapter.id}
-                className="py-2 "
-                onPress={() =>
-                  router.push(`/chapter/${chapter.number}?mangaId=${id}`)
-                }
+                className="py-2 flex-row items-center justify-between"
               >
-                <Text
-                  style={{ fontFamily: "Arabic" }}
-                  className="text-gray-800 text-sm"
+                {/* Open chapter */}
+                <TouchableOpacity
+                  onPress={() =>
+                    router.push(`/chapter/${chapter.number}?mangaId=${id}`)
+                  }
                 >
-                  {chapter.number} - {chapter.title}
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={{ fontFamily: "Arabic" }}
+                    className="text-gray-800 text-sm"
+                  >
+                    {chapter.number} - {chapter.title}
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Download button */}
+                <Button
+                  variant="ghost"
+                  size={"icon"}
+                  className=" rounded-full w-6 h-6 flex items-center justify-center"
+                  onPress={() => downloadChapter(chapter)}
+                >
+                  <Download size={12} className="" color="#ff4D00" />
+                </Button>
+              </View>
             ))}
           </View>
         )}
