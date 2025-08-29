@@ -308,11 +308,11 @@ export default function MangaDetail() {
 }
 
 const PathIndicator = ({ title }: { title: string }) => (
-  <View className="flex-row items-center space-x-2">
+  <View className="flex-row items-center gap-1 space-x-2">
     <Link
       href="/"
       style={{ fontFamily: "Arabic" }}
-      className="text-sm text-gray-500"
+      className="text-sm text-[#ff4D00]"
     >
       الرئيسية
     </Link>
