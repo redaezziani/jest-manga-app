@@ -141,7 +141,14 @@ export default function HomeScreen() {
           </View>
         ) : (
           <View className="flex-1 justify-center items-center">
-            <Text className="text-gray-500 text-md">جارٍ تحميل المانجا...</Text>
+            <Text
+              style={{
+                fontFamily: "Arabic",
+              }}
+              className="text-gray-500 text-md"
+            >
+              جارٍ تحميل المانجا...
+            </Text>
           </View>
         )}
       </View>

@@ -5,7 +5,7 @@ import {
 } from "@/components/LayoutWithBar";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Tabs } from "expo-router";
-import { Home, Library, Search, User } from "lucide-react-native";
+import { ArrowDown, Home, Library, Search, User } from "lucide-react-native";
 import { Platform, View } from "react-native";
 
 export default function TabLayout() {
@@ -88,6 +88,18 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => (
               <View className="p-1">
                 <User size={22} color={color} strokeWidth={1.5} />
+              </View>
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="downloads"
+          options={{
+            title: "التنزيلات",
+            tabBarIcon: ({ color }) => (
+              <View className="p-1">
+                <ArrowDown size={22} color={color} strokeWidth={1.5} />
               </View>
             ),
           }}

@@ -17,9 +17,11 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
+  Keyboard,
+  KeyboardAvoidingView,
   Platform,
-  ScrollView,
   Text,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 
@@ -92,9 +94,11 @@ export default function ExploreScreen() {
   const [selectedType, setSelectedType] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [showFilters, setShowFilters] = useState(false);
-  const [mangaData, setMangaData] = useState<any>(null);
+  const [mangaData, setMangaData] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   // --- fetch data ---
   const fetchMangaData = async (searchQuery = "", page = 1, limit = 10) => {
@@ -154,17 +158,11 @@ export default function ExploreScreen() {
     selectedStatus ||
     selectedType;
 
-  const router = useRouter();
-
   const renderMangaCard = (item: any) => (
     <View className="flex-1 px-2 mb-4 " key={item.id}>
       <Image
         source={{ uri: item.coverThumbnail }}
-        style={{
-          width: "100%",
-          height: 245,
-          borderRadius: 10,
-        }}
+        style={{ width: "100%", height: 245, borderRadius: 10 }}
         resizeMode="cover"
         className="border border-gray-300"
       />
@@ -193,350 +191,311 @@ export default function ExploreScreen() {
   );
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#f9fafb", padding: 16 }}>
-      {/* Header */}
-      <View style={{ marginBottom: 24, marginTop: 16 }}>
-        <Text
-          style={{
-            fontFamily: "Arabic",
-          }}
-        >
-          استكشاف المانجا
-        </Text>
-        <Text
-          style={{
-            color: "#4b5563",
-            fontFamily: "Arabic",
-          }}
-          className="text-sm mt-1"
-        >
-          اكتشف مانجا جديدة ومثيرة
-        </Text>
-      </View>
-
-      {/* Search Bar */}
-      <View className=" flex-row items-center justify-between">
-        <Input
-          placeholder="ابحث عن المانجا..."
-          value={searchText}
-          onChangeText={setSearchText}
-          className=" text-right bg-white  max-w-[90%]"
-          style={{ fontFamily: "Arabic" }}
-        />
-        <Button
-          size={"icon"}
-          variant={"outline"}
-          onPress={() => setShowFilters(!showFilters)}
-        >
-          <Settings2 size={14} />
-        </Button>
-      </View>
-
-      {/* Filter Toggle & Clear */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          marginBottom: 16,
-        }}
-      >
-        {hasActiveFilters && (
-          <Button variant="ghost" onPress={clearFilters}>
-            <X size={16} />
-            <Text style={{ color: "#4b5563", fontFamily: "Arabic" }}>
-              مسح الكل
-            </Text>
-          </Button>
-        )}
-      </View>
-
-      {/* Active Filters */}
-      {/* {hasActiveFilters && (
-        <View style={{ marginBottom: 16 }}>
-          <Text
-            style={{
-              fontSize: 12,
-              fontWeight: "600",
-
-              marginBottom: 8,
-              fontFamily: "Arabic",
-            }}
-          >
-            الفلاتر النشطة:
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              flexWrap: "wrap",
-              justifyContent: "flex-end",
-            }}
-          >
-            {searchText ? (
-              <Badge>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <FlatList
+          data={mangaData}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View className="flex-1 m-2">{renderMangaCard(item)}</View>
+          )}
+          numColumns={2}
+          columnWrapperStyle={{ justifyContent: "space-between" }}
+          contentContainerStyle={{ paddingBottom: 20 }}
+          keyboardShouldPersistTaps="handled"
+          ListHeaderComponent={
+            <View style={{ backgroundColor: "#f9fafb", padding: 16 }}>
+              {/* Header */}
+              <View style={{ marginBottom: 24, marginTop: 16 }}>
+                <Text style={{ fontFamily: "Arabic" }}>استكشاف المانجا</Text>
                 <Text
+                  style={{ color: "#4b5563", fontFamily: "Arabic" }}
+                  className="text-sm mt-1"
+                >
+                  اكتشف مانجا جديدة ومثيرة
+                </Text>
+              </View>
+
+              {/* Search Bar */}
+              <View className=" flex-row items-center justify-between">
+                <Input
+                  placeholder="ابحث عن المانجا..."
+                  value={searchText}
+                  onChangeText={setSearchText}
+                  className=" text-right bg-white max-w-[90%]"
                   style={{ fontFamily: "Arabic" }}
-                >{`البحث: ${searchText}`}</Text>
-              </Badge>
-            ) : null}
-            {selectedGenres.map((g) => (
-              <Badge key={g}>
-                <Text style={{ fontFamily: "Arabic" }}>{g}</Text>
-              </Badge>
-            ))}
-            {minRating ? (
-              <Badge>
-                <Star size={12} />{" "}
-                <Text style={{ fontFamily: "Arabic" }}>{minRating}+</Text>
-              </Badge>
-            ) : null}
-          </View>
-        </View>
-      )} */}
-
-      {/* Filters */}
-      {showFilters && (
-        <Card style={{ marginBottom: 24 }}>
-          <CardHeader>
-            <CardTitle style={{ fontFamily: "Arabic" }}>
-              خيارات البحث المتقدم
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <View className="flex-row justify-between gap-2 items-center w-full">
-              <View className="flex-col justify-start items-start w-1/2">
-                <Text
-                  style={{
-                    fontFamily: "Arabic",
-                  }}
-                  className="text-sm text-gray-500"
+                />
+                <Button
+                  size={"icon"}
+                  variant={"outline"}
+                  onPress={() => setShowFilters(!showFilters)}
                 >
-                  ترتيب النتائج
-                </Text>
-                <Select
-                  className="w-full"
-                  value={sortOptions.find((o) => o.value === sortBy)}
-                  onValueChange={(o) => setSortBy(o?.value ?? "")}
-                >
-                  <SelectTrigger>
-                    <SelectValue
-                      style={{ fontFamily: "Arabic" }}
-                      placeholder="اختر طريقة الترتيب"
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {sortOptions.map((o) => (
-                        <SelectItem
-                          key={o.value}
-                          value={o.value}
-                          label={o.label}
-                        >
-                          <Text style={{ fontFamily: "Arabic" }}>
-                            {o.label}
-                          </Text>
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                  <Settings2 size={14} />
+                </Button>
               </View>
-              {/* Type */}
-              <View className="flex-col justify-start items-start w-1/2 ">
-                <Text
-                  style={{
-                    fontFamily: "Arabic",
-                  }}
-                  className="text-sm text-gray-500"
-                >
-                  نوع المحتوى
-                </Text>
-                <Select
-                  className="w-full"
-                  value={typeOptions.find((o) => o.value === selectedType)}
-                  onValueChange={(o) => setSelectedType(o?.value ?? "")}
-                >
-                  <SelectTrigger>
-                    <SelectValue
-                      style={{ fontFamily: "Arabic" }}
-                      placeholder="اختر نوع المحتوى"
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {typeOptions.map((o) => (
-                        <SelectItem
-                          key={o.value}
-                          value={o.value}
-                          label={o.label}
-                        >
-                          <Text style={{ fontFamily: "Arabic" }}>
-                            {o.label}
-                          </Text>
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </View>
-            </View>
 
-            <View className="flex-row justify-between gap-2 items-center w-full mt-4">
-              <View className="flex-col justify-start items-start w-1/2">
-                <Text
-                  style={{
-                    fontFamily: "Arabic",
-                  }}
-                  className="text-sm text-gray-500"
-                >
-                  حالة النشر
-                </Text>
-                <Select
-                  className="w-full"
-                  value={statusOptions.find((o) => o.value === selectedStatus)}
-                  onValueChange={(o) => setSelectedStatus(o?.value ?? "")}
-                >
-                  <SelectTrigger>
-                    <SelectValue
-                      style={{ fontFamily: "Arabic" }}
-                      placeholder="اختر حالة النشر"
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {statusOptions.map((o) => (
-                        <SelectItem
-                          key={o.value}
-                          value={o.value}
-                          label={o.label}
-                        >
-                          <Text style={{ fontFamily: "Arabic" }}>
-                            {o.label}
-                          </Text>
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </View>
-              {/* Rating */}
-              <View className="flex-col justify-start items-start w-1/2">
-                <Text
-                  style={{
-                    fontFamily: "Arabic",
-                  }}
-                  className="text-sm text-gray-500"
-                >
-                  التقييم الأدنى
-                </Text>
-                <Select
-                  className="w-full"
-                  value={ratingOptions.find((o) => o.value === minRating)}
-                  onValueChange={(o) => setMinRating(o?.value ?? "")}
-                >
-                  <SelectTrigger>
-                    <SelectValue
-                      style={{ fontFamily: "Arabic" }}
-                      placeholder="اختر التقييم الأدنى"
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {ratingOptions.map((o) => (
-                        <SelectItem
-                          key={o.value}
-                          value={o.value}
-                          label={o.label}
-                        >
-                          <Text style={{ fontFamily: "Arabic" }}>
-                            {o.label}
-                          </Text>
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </View>
-            </View>
-            {/* Genres */}
-            <Text
-              style={{
-                marginVertical: 8,
-                fontFamily: "Arabic",
-              }}
-            >
-              التصنيفات ({selectedGenres.length} محدد)
-            </Text>
-            <View className="  flex-row flex-wrap  gap-2  mb-4">
-              {genres.map((g) => (
-                <View
-                  key={g}
-                  className=" flex gap-1 min-w-28 col-span-1 flex-row-reverse items-center"
-                >
-                  <Text style={{ flex: 1, fontFamily: "Arabic" }}>{g}</Text>
-                  <Checkbox
-                    checked={selectedGenres.includes(g)}
-                    onCheckedChange={() => toggleGenre(g)}
-                  />
-                </View>
-              ))}
-            </View>
-          </CardContent>
-        </Card>
-      )}
-
-      <Button onPress={handleSearch} style={{ marginBottom: 24 }}>
-        <Text
-          style={{ color: "#fff", fontWeight: "600", fontFamily: "Arabic" }}
-        >
-          بحث
-        </Text>
-        {<Search color={"#fff"} size={16} />}
-      </Button>
-
-      <Card>
-        <CardContent className=" p-0">
-          {loading && <ActivityIndicator />}
-          {error && (
-            <View>
-              <Text
+              {/* Clear filters */}
+              <View
                 style={{
-                  color: "red",
-                  textAlign: "center",
-                  fontFamily: "Arabic",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginBottom: 16,
                 }}
               >
-                {error}
-              </Text>
-              <Button onPress={() => fetchMangaData()}>
-                <Text style={{ fontFamily: "Arabic" }}>إعادة المحاولة</Text>
-              </Button>
-            </View>
-          )}
-
-          {mangaData &&
-            !loading &&
-            !error &&
-            (mangaData.length === 0 ? (
-              <Text
-                style={{ fontFamily: "Arabic" }}
-                className="text-center text-gray-500 my-4"
-              >
-                لم يتم العثور على مانجا.
-              </Text>
-            ) : (
-              <FlatList
-                data={mangaData}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                  <View className="flex-1 m-2">{renderMangaCard(item)}</View>
+                {hasActiveFilters && (
+                  <Button variant="ghost" onPress={clearFilters}>
+                    <X size={16} />
+                    <Text style={{ color: "#4b5563", fontFamily: "Arabic" }}>
+                      مسح الكل
+                    </Text>
+                  </Button>
                 )}
-                numColumns={2}
-                columnWrapperStyle={{ justifyContent: "space-between" }}
-                contentContainerStyle={{ paddingBottom: 20 }}
-              />
-            ))}
-        </CardContent>
-      </Card>
-    </ScrollView>
+              </View>
+
+              {/* Filters */}
+              {showFilters && (
+                <Card style={{ marginBottom: 24 }}>
+                  <CardHeader>
+                    <CardTitle style={{ fontFamily: "Arabic" }}>
+                      خيارات البحث المتقدم
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {/* Sorting / Type */}
+                    <View className="flex-row justify-between gap-2 items-center w-full">
+                      {/* Sort */}
+                      <View className="flex-col justify-start items-start w-1/2">
+                        <Text
+                          style={{ fontFamily: "Arabic" }}
+                          className="text-sm text-gray-500"
+                        >
+                          ترتيب النتائج
+                        </Text>
+                        <Select
+                          className="w-full"
+                          value={sortOptions.find((o) => o.value === sortBy)}
+                          onValueChange={(o) => setSortBy(o?.value ?? "")}
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              style={{ fontFamily: "Arabic" }}
+                              placeholder="اختر طريقة الترتيب"
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              {sortOptions.map((o) => (
+                                <SelectItem
+                                  key={o.value}
+                                  value={o.value}
+                                  label={o.label}
+                                >
+                                  <Text style={{ fontFamily: "Arabic" }}>
+                                    {o.label}
+                                  </Text>
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </View>
+                      {/* Type */}
+                      <View className="flex-col justify-start items-start w-1/2 ">
+                        <Text
+                          style={{ fontFamily: "Arabic" }}
+                          className="text-sm text-gray-500"
+                        >
+                          نوع المحتوى
+                        </Text>
+                        <Select
+                          className="w-full"
+                          value={typeOptions.find(
+                            (o) => o.value === selectedType
+                          )}
+                          onValueChange={(o) => setSelectedType(o?.value ?? "")}
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              style={{ fontFamily: "Arabic" }}
+                              placeholder="اختر نوع المحتوى"
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              {typeOptions.map((o) => (
+                                <SelectItem
+                                  key={o.value}
+                                  value={o.value}
+                                  label={o.label}
+                                >
+                                  <Text style={{ fontFamily: "Arabic" }}>
+                                    {o.label}
+                                  </Text>
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </View>
+                    </View>
+
+                    {/* Status / Rating */}
+                    <View className="flex-row justify-between gap-2 items-center w-full mt-4">
+                      <View className="flex-col justify-start items-start w-1/2">
+                        <Text
+                          style={{ fontFamily: "Arabic" }}
+                          className="text-sm text-gray-500"
+                        >
+                          حالة النشر
+                        </Text>
+                        <Select
+                          className="w-full"
+                          value={statusOptions.find(
+                            (o) => o.value === selectedStatus
+                          )}
+                          onValueChange={(o) =>
+                            setSelectedStatus(o?.value ?? "")
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              style={{ fontFamily: "Arabic" }}
+                              placeholder="اختر حالة النشر"
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              {statusOptions.map((o) => (
+                                <SelectItem
+                                  key={o.value}
+                                  value={o.value}
+                                  label={o.label}
+                                >
+                                  <Text style={{ fontFamily: "Arabic" }}>
+                                    {o.label}
+                                  </Text>
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </View>
+                      {/* Rating */}
+                      <View className="flex-col justify-start items-start w-1/2">
+                        <Text
+                          style={{ fontFamily: "Arabic" }}
+                          className="text-sm text-gray-500"
+                        >
+                          التقييم الأدنى
+                        </Text>
+                        <Select
+                          className="w-full"
+                          value={ratingOptions.find(
+                            (o) => o.value === minRating
+                          )}
+                          onValueChange={(o) => setMinRating(o?.value ?? "")}
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              style={{ fontFamily: "Arabic" }}
+                              placeholder="اختر التقييم الأدنى"
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              {ratingOptions.map((o) => (
+                                <SelectItem
+                                  key={o.value}
+                                  value={o.value}
+                                  label={o.label}
+                                >
+                                  <Text style={{ fontFamily: "Arabic" }}>
+                                    {o.label}
+                                  </Text>
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </View>
+                    </View>
+
+                    {/* Genres */}
+                    <Text
+                      style={{
+                        marginVertical: 8,
+                        fontFamily: "Arabic",
+                      }}
+                    >
+                      التصنيفات ({selectedGenres.length} محدد)
+                    </Text>
+                    <View className="flex-row flex-wrap gap-2 mb-4">
+                      {genres.map((g) => (
+                        <View
+                          key={g}
+                          className="flex gap-1 min-w-28 col-span-1 flex-row-reverse items-center"
+                        >
+                          <Text style={{ flex: 1, fontFamily: "Arabic" }}>
+                            {g}
+                          </Text>
+                          <Checkbox
+                            checked={selectedGenres.includes(g)}
+                            onCheckedChange={() => toggleGenre(g)}
+                          />
+                        </View>
+                      ))}
+                    </View>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Search Button */}
+              <Button onPress={handleSearch} style={{ marginBottom: 24 }}>
+                <Text
+                  style={{
+                    color: "#fff",
+                    fontWeight: "600",
+                    fontFamily: "Arabic",
+                  }}
+                >
+                  بحث
+                </Text>
+                {<Search color={"#fff"} size={16} />}
+              </Button>
+
+              {/* Loading / Error */}
+              {loading && <ActivityIndicator />}
+              {error && (
+                <View>
+                  <Text
+                    style={{
+                      color: "red",
+                      textAlign: "center",
+                      fontFamily: "Arabic",
+                    }}
+                  >
+                    {error}
+                  </Text>
+                  <Button onPress={() => fetchMangaData()}>
+                    <Text style={{ fontFamily: "Arabic" }}>إعادة المحاولة</Text>
+                  </Button>
+                </View>
+              )}
+              {!loading && !error && mangaData.length === 0 && (
+                <Text
+                  style={{ fontFamily: "Arabic" }}
+                  className="text-center text-gray-500 my-4"
+                >
+                  لم يتم العثور على مانجا.
+                </Text>
+              )}
+            </View>
+          }
+        />
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
