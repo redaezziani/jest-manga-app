@@ -50,20 +50,31 @@ export default function HomeScreen() {
   const renderMangaCard = (item: Manga) => (
     <Link
       href={`/manga/${item.id}`}
-      className="flex-1 px-2 mb-4 "
+      className="flex-1 px-2  "
       key={item.id}
     >
-      <Image
+      <View className=" p-1 border relative border-gray-300 bg-gray-100 w-full rounded-md ">
+       <Image
         source={{ uri: item.coverThumbnail }}
         style={{
           width: "100%",
           height: 245,
-          borderRadius: 10,
+          borderRadius: 5,
         }}
         resizeMode="cover"
         className="border border-gray-300"
       />
-      <View className="pt-2 px-1">
+      <View className="absolute top-0 left-2 bg-amber-300 h-10 rounded-b-[0.2rem]  bg-opacity-50 px-2 py-1 rounded">
+        <Text
+          style={{ fontFamily: "Arabic" }}
+          className="text-sm text-amber-900 font-bold mt-1"
+        >
+          {item.rating} 
+        </Text>
+        </View>
+      </View>
+
+      <View className="pt-10 px-1">
         <Text
           style={{ fontFamily: "Arabic" }}
           className="text-sm font-bold line-clamp-1 text-gray-900 mb-1"
@@ -80,14 +91,16 @@ export default function HomeScreen() {
             ? item.authors.join(", ")
             : "غير معروف"}
         </Text>
-        <View className="flex-row items-center justify-between">
+        <View className="flex-row items-center space-x-2 gap-1">
           <Text
             style={{ fontFamily: "Arabic" }}
             className="text-xs text-gray-500 capitalize"
           >
-            {item.status.toLowerCase() === "ongoing" ? "مستمرة" : "مكتملة"}
+            {item.status.toLowerCase() === "ongoing" ? "مستمرة" : item.status.toLowerCase()}
           </Text>
+         
         </View>
+        
       </View>
     </Link>
   );

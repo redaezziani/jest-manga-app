@@ -10,8 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { API_URL } from "@/utils";
 import { useRouter } from "expo-router";
-import { Search, Settings2, X } from "lucide-react-native";
+import { Search, Settings2 } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -106,10 +107,7 @@ export default function ExploreScreen() {
     setError(null);
 
     try {
-      const API_URL =
-        Platform.OS === "android"
-          ? "http://10.0.2.2:8082"
-          : "http://localhost:8082";
+      
       const url = `${API_URL}/api/manga/all?page=${page}&limit=${limit}&search=${encodeURIComponent(
         searchQuery
       )}`;
@@ -245,14 +243,7 @@ export default function ExploreScreen() {
                   marginBottom: 16,
                 }}
               >
-                {hasActiveFilters && (
-                  <Button variant="ghost" onPress={clearFilters}>
-                    <X size={16} />
-                    <Text style={{ color: "#4b5563", fontFamily: "Arabic" }}>
-                      مسح الكل
-                    </Text>
-                  </Button>
-                )}
+               
               </View>
 
               {/* Filters */}
