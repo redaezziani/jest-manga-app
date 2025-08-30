@@ -48,29 +48,25 @@ export default function HomeScreen() {
   };
 
   const renderMangaCard = (item: Manga) => (
-    <Link
-      href={`/manga/${item.id}`}
-      className="flex-1 px-2  "
-      key={item.id}
-    >
+    <Link href={`/manga/${item.id}`} className="flex-1 px-2  " key={item.id}>
       <View className=" p-1 border relative border-gray-300 bg-gray-100 w-full rounded-md ">
-       <Image
-        source={{ uri: item.coverThumbnail }}
-        style={{
-          width: "100%",
-          height: 245,
-          borderRadius: 5,
-        }}
-        resizeMode="cover"
-        className="border border-gray-300"
-      />
-      <View className="absolute top-0 left-2 bg-amber-300 h-10 rounded-b-[0.2rem]  bg-opacity-50 px-2 py-1 rounded">
-        <Text
-          style={{ fontFamily: "Arabic" }}
-          className="text-sm text-amber-900 font-bold mt-1"
-        >
-          {item.rating} 
-        </Text>
+        <Image
+          source={{ uri: item.coverThumbnail }}
+          style={{
+            width: "100%",
+            height: 245,
+            borderRadius: 5,
+          }}
+          resizeMode="cover"
+          className="border border-gray-300"
+        />
+        <View className="absolute top-0 left-2 bg-amber-300 h-10 rounded-b-[0.2rem]  bg-opacity-50 px-2 py-1 rounded">
+          <Text
+            style={{ fontFamily: "Arabic" }}
+            className="text-sm text-amber-900 font-bold mt-1"
+          >
+            {item.rating}
+          </Text>
         </View>
       </View>
 
@@ -96,11 +92,11 @@ export default function HomeScreen() {
             style={{ fontFamily: "Arabic" }}
             className="text-xs text-gray-500 capitalize"
           >
-            {item.status.toLowerCase() === "ongoing" ? "مستمرة" : item.status.toLowerCase()}
+            {item.status.toLowerCase() === "ongoing"
+              ? "مستمرة"
+              : item.status.toLowerCase()}
           </Text>
-         
         </View>
-        
       </View>
     </Link>
   );
@@ -175,6 +171,39 @@ export default function HomeScreen() {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
+      <View className=" h-72 w-full relative flex justify-center items-center">
+        <Image
+          source={{
+            uri:"https://t3.ftcdn.net/jpg/07/32/10/90/360_F_732109080_4lXwGofazqAiysUpcCnrbflsNOl9EMdW.jpg"
+          }}
+          style={{ width: "100%", height: "100%" }}
+          resizeMode="cover"
+          className=" z-0"
+        />
+        <View className="absolute inset-0 z-20 backdrop-blur-lg bg-black opacity-70" />
+        <View className="absolute z-30 px-4">
+          <Text
+            style={{ fontFamily: "Arabic" }}
+            className="text-2xl text-white mb-2"
+          >
+            مرحبًا بك في Desire Manga
+          </Text>
+          <Text
+            style={{ fontFamily: "Arabic" }}
+            className="text-sm text-white mb-4"
+          >
+            استكشف مجموعتنا الواسعة من المانجا واستمتع بقراءة قصصك المفضلة.
+          </Text>
+          <View className="bg-white bg-opacity-90 px-4 py-3 rounded-full">
+            <Text
+              style={{ fontFamily: "Arabic" }}
+              className="text-sm text-gray-800"
+            >
+              ابحث عن مانجا...
+            </Text>
+          </View>
+        </View>
+      </View>
       {renderSwiperSection(
         "أحدث المانجا",
         "تصفح أحدث الإضافات إلى مكتبتنا المتنامية من المانجا",
