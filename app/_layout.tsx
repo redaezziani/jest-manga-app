@@ -15,6 +15,9 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     Arabic: require("../assets/fonts/ElMessiri-VariableFont_wght.ttf"),
     Bigx : require("../assets/fonts/bigx.otf"),
+    Vexa : require("../assets/fonts/vexa.ttf"),
+    Almarai : require("../assets/fonts/Almarai-Regular.ttf"),
+    Readex : require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
   if (!loaded) {

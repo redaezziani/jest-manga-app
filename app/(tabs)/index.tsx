@@ -122,13 +122,13 @@ export default function HomeScreen() {
         <View className="px-4 py-2">
           <Text
             style={{ fontFamily: "Arabic" }}
-            className="text-gray-700 text-lg font-semibold"
+            className="text-gray-700 text-xl font-semibold"
           >
             {title}
           </Text>
           <Text
             style={{ fontFamily: "Arabic" }}
-            className="text-xs text-gray-600"
+            className="text-sm text-gray-600"
           >
             {description}
           </Text>
