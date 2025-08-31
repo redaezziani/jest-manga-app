@@ -124,7 +124,7 @@ export default function ChapterReader() {
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
-        <ActivityIndicator size="large" color="#ff4D00" />
+        <ActivityIndicator size="large" color="#ff4133" />
         <Text style={{ fontFamily: "Arabic" }} className="text-gray-500 mt-2">
           جاري تحميل الفصل...
         </Text>
@@ -190,7 +190,7 @@ export default function ChapterReader() {
             className=" rounded-full w-9 h-9 flex items-center justify-center"
             onPress={downloadChapter}
           >
-            <Download size={16} className="" color="#ff4D00" />
+            <Download size={16} className="" color="#ff4133" />
           </Button>
           <Button
             variant="outline"
@@ -203,7 +203,7 @@ export default function ChapterReader() {
             }}
             className=" rounded-full w-9 h-9 flex items-center justify-center"
           >
-            <ChevronRight size={16} color="#ff4D00" />
+            <ChevronRight size={16} color="#ff4133" />
           </Button>
           <Button
             variant="outline"
@@ -218,7 +218,7 @@ export default function ChapterReader() {
           >
             <ChevronRight
               size={16}
-              color="#ff4D00"
+              color="#ff4133"
               style={{ transform: [{ rotate: "180deg" }] }}
             />
           </Button>
@@ -253,7 +253,7 @@ const PathIndicator = ({
     <Link
       href="/"
       style={{ fontFamily: "Arabic" }}
-      className="text-sm text-[#ff4D00]"
+      className="text-sm text-[#ff4133]"
     >
       الرئيسية
     </Link>

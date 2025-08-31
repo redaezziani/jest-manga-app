@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import Manga from "@/type/manga";
 import { API_URL } from "@/utils";
 import { Link, useRouter } from "expo-router";
@@ -171,7 +172,7 @@ export default function HomeScreen() {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      <View className=" h-72 w-full bg-gray-400 relative flex justify-center items-center">
+      <View className=" h-72 w-full bg-gray-200 relative flex justify-center items-center">
         {/* <Image
           source={{
             uri:"https://t3.ftcdn.net/jpg/07/32/10/90/360_F_732109080_4lXwGofazqAiysUpcCnrbflsNOl9EMdW.jpg"
@@ -183,8 +184,8 @@ export default function HomeScreen() {
         <View className="absolute inset-0 z-20 backdrop-blur-lg  opacity-70" />
         <View className="absolute z-30 px-4">
           <Text
-            style={{ fontFamily: "Arabic" }}
-            className="text-2xl text-white mb-2"
+            style={{ fontFamily: "Bigx" }}
+            className="text-4xl text-center text-primary mb-2"
           >
             مرحبًا بك في Desire Manga
           </Text>
@@ -194,13 +195,12 @@ export default function HomeScreen() {
           >
             استكشف مجموعتنا الواسعة من المانجا واستمتع بقراءة قصصك المفضلة.
           </Text>
-          <View className="bg-white bg-opacity-90 px-4 py-3 rounded-full">
-            <Text
+          <View className="">
+            <Input
+              placeholder="ابحث عن مانجا..."
               style={{ fontFamily: "Arabic" }}
               className="text-sm text-gray-800"
-            >
-              ابحث عن مانجا...
-            </Text>
+            />
           </View>
         </View>
       </View>

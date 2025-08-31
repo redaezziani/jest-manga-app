@@ -341,7 +341,9 @@ export default function MangaDetail() {
                   className=" rounded-full w-6 h-6 flex items-center justify-center"
                   onPress={() => downloadChapter(chapter)}
                 >
-                  <Download size={12} className="" color="#ff4D00" />
+                  <Download
+                  color={"#ff4133"}
+                  size={12} className=""  />
                 </Button>
               </View>
             ))}
@@ -357,7 +359,7 @@ const PathIndicator = ({ title }: { title: string }) => (
     <Link
       href="/"
       style={{ fontFamily: "Arabic" }}
-      className="text-sm text-[#ff4D00]"
+      className=" text-[#ff4133]"
     >
       الرئيسية
     </Link>
