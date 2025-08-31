@@ -14,6 +14,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     Arabic: require("../assets/fonts/ElMessiri-VariableFont_wght.ttf"),
+    Bigx : require("../assets/fonts/bigx.otf"),
   });
 
   if (!loaded) {

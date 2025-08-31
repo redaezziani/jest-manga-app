@@ -171,16 +171,16 @@ export default function HomeScreen() {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      <View className=" h-72 w-full relative flex justify-center items-center">
-        <Image
+      <View className=" h-72 w-full bg-gray-400 relative flex justify-center items-center">
+        {/* <Image
           source={{
             uri:"https://t3.ftcdn.net/jpg/07/32/10/90/360_F_732109080_4lXwGofazqAiysUpcCnrbflsNOl9EMdW.jpg"
           }}
           style={{ width: "100%", height: "100%" }}
           resizeMode="cover"
           className=" z-0"
-        />
-        <View className="absolute inset-0 z-20 backdrop-blur-lg bg-black opacity-70" />
+        /> */}
+        <View className="absolute inset-0 z-20 backdrop-blur-lg  opacity-70" />
         <View className="absolute z-30 px-4">
           <Text
             style={{ fontFamily: "Arabic" }}

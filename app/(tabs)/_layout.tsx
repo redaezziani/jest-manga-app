@@ -30,6 +30,7 @@ export default function TabLayout() {
             shadowOpacity: 0,
             shadowOffset: { width: 0, height: 0 },
             shadowRadius: 0,
+            
           },
           tabBarLabelStyle: {
             fontSize: 10,
@@ -37,11 +38,12 @@ export default function TabLayout() {
             marginTop: 2,
             letterSpacing: 0.3,
             fontFamily: "Arabic",
+
           },
           tabBarIconStyle: {
             marginTop: 4,
           },
-          tabBarActiveTintColor: "#42c3ff",
+          tabBarActiveTintColor: "#ff4133",
           tabBarInactiveTintColor:
             colorScheme === "dark" ? "#9ca3af" : "#9ca3af",
         }}

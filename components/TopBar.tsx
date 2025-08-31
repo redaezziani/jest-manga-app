@@ -61,11 +61,11 @@ const UserMenuWrapper = ({ toggleMenu }: { toggleMenu: () => void }) => (
 const AppTitle = () => (
   <Text
     style={{
-      fontFamily: "Arabic",
+      fontFamily: "Bigx",
       includeFontPadding: false,
       textAlignVertical: "center",
     }}
-    className="text-base text-white"
+    className="text-3xl text-white"
   >
     دينو <Text style={{ color: "#fff" }}>مانجا</Text>
   </Text>
