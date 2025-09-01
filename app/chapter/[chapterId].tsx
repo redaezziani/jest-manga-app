@@ -8,8 +8,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useAuth } from "@/hooks/useAuth";
 import { Chapter, ChapterPage } from "@/type/chapter";
 import { API_URL } from "@/utils";
+import { APIService } from "@/utils/apiService";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { ChevronRight, Download } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
@@ -24,9 +26,11 @@ export default function ChapterReader() {
     mangaId: string;
   }>();
 
+  const { user, token, isAuthenticated } = useAuth();
   const [chapter, setChapter] = useState<ChapterPage | null>(null);
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [loading, setLoading] = useState(true);
+  const [addingToKeepReading, setAddingToKeepReading] = useState(false);
   const router = useRouter();
 
   const handelFetchChapter = async () => {
@@ -58,7 +62,11 @@ export default function ChapterReader() {
 
   useEffect(() => {
     handelFetchChapter();
-  }, [chapterId, mangaId]);
+    // Automatically add to keep reading when chapter loads
+    if (mangaId && chapterId && isAuthenticated && token) {
+      addToKeepReading();
+    }
+  }, [chapterId, mangaId, isAuthenticated, token]);
   useEffect(() => {
     handelFetchMangaChapters();
   }, [mangaId]);
@@ -121,6 +129,34 @@ export default function ChapterReader() {
     }
   };
 
+  const addToKeepReading = async () => {
+    if (!mangaId || !chapterId || !token || !isAuthenticated) {
+      // Silently return if not authenticated - no alert needed
+      return;
+    }
+
+    setAddingToKeepReading(true);
+    try {
+      const result = await APIService.addToKeepReading(
+        {
+          mangaId: mangaId,
+          chapterId: chapter?.chapterId!,
+        },
+        token
+      );
+
+      if (result.success) {
+        console.log("Chapter successfully added to keep reading");
+      } else {
+        console.error("Failed to add to keep reading:", result.message);
+      }
+    } catch (error) {
+      console.error("Error adding to keep reading:", error);
+    } finally {
+      setAddingToKeepReading(false);
+    }
+  };
+
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
@@ -157,7 +193,7 @@ export default function ChapterReader() {
         <View className="flex-row items-center space-x-2">
           <Select
             value={chapterOptions.find((option) => option.value === chapterId)}
-            onValueChange={(value) => goToChapter(value.value)}
+            onValueChange={(value) => value && goToChapter(value.value)}
             className="w-48"
           >
             <SelectTrigger>

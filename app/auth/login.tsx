@@ -52,7 +52,7 @@ export default function LoginPage() {
     // Password validation
     if (!formData.password) {
       newErrors.password = "يجب إدخال كلمة المرور";
-    } else if (formData.password.length < 8) {
+    } else if (formData.password.length < 7) {
       newErrors.password = "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل";
     }
 

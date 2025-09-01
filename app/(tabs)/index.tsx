@@ -1,17 +1,32 @@
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/useAuth";
+import { KeepReadingItem } from "@/type/keepReading";
 import Manga from "@/type/manga";
 import { API_URL } from "@/utils";
+import { APIService } from "@/utils/apiService";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { Image, RefreshControl, ScrollView, Text, View } from "react-native";
+import {
+  Image,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Swiper from "react-native-swiper";
 
 export default function HomeScreen() {
   const [latestManga, setLatestManga] = useState<Manga[]>([]);
   const [popularManga, setPopularManga] = useState<Manga[]>([]);
+  const [keepReadingManga, setKeepReadingManga] = useState<KeepReadingItem[]>(
+    []
+  );
+  const [keepReadingLoading, setKeepReadingLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
+  const { user, token, isAuthenticated } = useAuth();
   const swiperRefLatest = useRef<Swiper | null>(null);
   const swiperRefPopular = useRef<Swiper | null>(null);
 
@@ -31,13 +46,31 @@ export default function HomeScreen() {
     }
   };
 
+  const fetchKeepReading = async () => {
+    if (!isAuthenticated || !token) return;
+
+    setKeepReadingLoading(true);
+    try {
+      const result = await APIService.getKeepReadingList(token);
+      if (result.success && result.data) {
+        setKeepReadingManga(result.data);
+      }
+    } catch (err) {
+      console.error("Error fetching keep reading:", err);
+    } finally {
+      setKeepReadingLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchManga();
-  }, []);
+    fetchKeepReading();
+  }, [isAuthenticated, token]);
 
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchManga();
+    await fetchKeepReading();
     setRefreshing(false);
   };
 
@@ -158,6 +191,146 @@ export default function HomeScreen() {
     );
   };
 
+  const renderKeepReadingCard = (item: KeepReadingItem) => (
+    <TouchableOpacity
+      key={item.id}
+      className="flex-1 mx-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm"
+      onPress={() =>
+        router.push(`/chapter/${item.chapterId}?mangaId=${item.mangaId}`)
+      }
+    >
+      <View className="relative">
+        <Image
+          source={{ uri: item.manga.coverThumbnail }}
+          style={{ width: "100%", height: 150 }}
+          resizeMode="cover"
+          className="rounded-t-lg"
+        />
+      </View>
+      <View className="p-3">
+        <Text
+          style={{ fontFamily: "Arabic" }}
+          className="text-sm font-bold text-gray-900 mb-1"
+          numberOfLines={2}
+        >
+          {item.manga.title}
+        </Text>
+        <Text
+          style={{ fontFamily: "Arabic" }}
+          className="text-xs text-gray-600"
+          numberOfLines={1}
+        >
+          {item.chapter.title}
+        </Text>
+        <Text
+          style={{ fontFamily: "Arabic" }}
+          className="text-xs text-gray-500 mt-1"
+        >
+          الفصل {item.chapter.number}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const renderKeepReadingSection = () => {
+    if (!isAuthenticated) {
+      return null;
+    }
+
+    if (keepReadingLoading) {
+      return (
+        <View className="my-4">
+          <View className="px-4 py-2">
+            <Text
+              style={{ fontFamily: "Arabic" }}
+              className="text-gray-700 text-xl font-semibold"
+            >
+              متابعة القراءة
+            </Text>
+            <Text
+              style={{ fontFamily: "Arabic" }}
+              className="text-sm text-gray-600"
+            >
+              استكمل قراءة المانجا التي بدأتها
+            </Text>
+          </View>
+          <View className="flex-1 justify-center items-center py-8">
+            <Text
+              style={{ fontFamily: "Arabic" }}
+              className="text-gray-500 text-sm"
+            >
+              جارٍ تحميل قائمة المتابعة...
+            </Text>
+          </View>
+        </View>
+      );
+    }
+
+    if (keepReadingManga.length === 0) {
+      return (
+        <View className="my-4">
+          <View className="px-4 py-2">
+            <Text
+              style={{ fontFamily: "Arabic" }}
+              className="text-gray-700 text-xl font-semibold"
+            >
+              متابعة القراءة
+            </Text>
+            <Text
+              style={{ fontFamily: "Arabic" }}
+              className="text-sm text-gray-600"
+            >
+              ابدأ بقراءة مانجا لتظهر هنا
+            </Text>
+          </View>
+        </View>
+      );
+    }
+
+    const mangaPairs = [];
+    for (let i = 0; i < keepReadingManga.length; i += 2) {
+      mangaPairs.push(keepReadingManga.slice(i, i + 2));
+    }
+
+    return (
+      <View className="my-4">
+        <View className="px-4 py-2">
+          <Text
+            style={{ fontFamily: "Arabic" }}
+            className="text-gray-700 text-xl font-semibold"
+          >
+            متابعة القراءة
+          </Text>
+          <Text
+            style={{ fontFamily: "Arabic" }}
+            className="text-sm text-gray-600"
+          >
+            استكمل قراءة المانجا التي بدأتها
+          </Text>
+        </View>
+
+        <View style={{ height: 250 }} className="relative">
+          <Swiper
+            showsPagination={true}
+            autoplay={false}
+            loop={false}
+            dotStyle={{ display: "none" }}
+            activeDotStyle={{ display: "none" }}
+            showsButtons={false}
+            className="mt-2"
+          >
+            {mangaPairs.map((pair, index) => (
+              <View className="flex-row px-4" key={index}>
+                {pair.map((item) => renderKeepReadingCard(item))}
+                {pair.length === 1 && <View className="flex-1 mx-2" />}
+              </View>
+            ))}
+          </Swiper>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <ScrollView
       className="flex-1 bg-white"
@@ -208,6 +381,9 @@ export default function HomeScreen() {
           </View>
         </View>
       </View>
+
+      {renderKeepReadingSection()}
+
       {renderSwiperSection(
         "أحدث المانجا",
         "تصفح أحدث الإضافات إلى مكتبتنا المتنامية من المانجا",
@@ -221,6 +397,8 @@ export default function HomeScreen() {
         popularManga,
         swiperRefPopular
       )}
+
+      {renderKeepReadingSection()}
     </ScrollView>
   );
 }

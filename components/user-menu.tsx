@@ -50,10 +50,14 @@ export function UserMenu() {
     return (
       <Popover>
         <PopoverTrigger asChild ref={popoverTriggerRef}>
-          <Button variant="ghost" size="icon" className="size-8 rounded-full">
-            <Avatar alt="User avatar" className="size-8">
+          <Button variant="ghost" size="icon" className="p-0 ">
+            <Avatar
+              alt="@shadcn"
+              className="border-background  web:border-0 web:ring-2 web:ring-background rounded-lg "
+            >
+              <AvatarImage source={{ uri: "https://github.com/shadcn.png" }} />
               <AvatarFallback>
-                <LogIn size={16} color="#666" />
+                <Text>CN</Text>
               </AvatarFallback>
             </Avatar>
           </Button>
@@ -65,12 +69,12 @@ export function UserMenu() {
                 popoverTriggerRef.current?.close();
                 router.push("/auth/login" as any);
               }}
-              className="flex-row items-center gap-3 p-3 rounded-lg bg-gray-50"
+              className="flex-row items-center gap-3 p-3 "
             >
-              <LogIn size={20} color="#666" />
+              <LogIn size={16} color="#666" />
               <Text
                 style={{ fontFamily: "Arabic" }}
-                className="font-medium text-gray-700"
+                className=" text-sm text-gray-700"
               >
                 تسجيل الدخول
               </Text>
@@ -81,12 +85,12 @@ export function UserMenu() {
                 popoverTriggerRef.current?.close();
                 router.push("/auth/register" as any);
               }}
-              className="flex-row items-center gap-3 p-3 rounded-lg bg-[#ff4133]/10"
+              className="flex-row items-center gap-3 p-3 "
             >
-              <UserPlus size={20} color="#ff4133" />
+              <UserPlus size={16} color="#ff4133" />
               <Text
                 style={{ fontFamily: "Arabic" }}
-                className="font-medium text-[#ff4133]"
+                className="text-sm  text-[#ff4133]"
               >
                 إنشاء حساب جديد
               </Text>
