@@ -357,7 +357,7 @@ export default function DownloadsPage() {
             {manga.info.description && (
               <Text
                 style={{ fontFamily: "Arabic" }}
-                className="text-gray-700 text-sm mb-4 leading-relaxed"
+                className="text-gray-700 text-sm line-clamp-3 mb-4 leading-relaxed"
               >
                 {manga.info.description}
               </Text>
