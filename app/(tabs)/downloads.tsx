@@ -1,7 +1,15 @@
 import * as FileSystem from "expo-file-system";
 import { useRouter } from "expo-router";
+import { Trash2 } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface DownloadedChapter {
   id: string;
@@ -166,13 +174,93 @@ export default function DownloadsPage() {
     setSelectedManga(selectedManga === mangaId ? null : mangaId);
   };
 
+  const deleteChapter = async (
+    chapterPath: string,
+    mangaId: string,
+    chapterNumber: number
+  ) => {
+    try {
+      // Delete chapter folder
+      await FileSystem.deleteAsync(chapterPath);
+
+      // Reload downloads to update UI
+      await loadDownloads();
+
+      Alert.alert("تم الحذف ✅", `تم حذف الفصل ${chapterNumber} بنجاح`);
+    } catch (error) {
+      console.error("Error deleting chapter:", error);
+      Alert.alert("خطأ ❌", "فشل في حذف الفصل");
+    }
+  };
+
+  const deleteManga = async (mangaId: string, mangaTitle: string) => {
+    try {
+      const mangaFolder = `${FileSystem.documentDirectory}manga_${mangaId}`;
+
+      // Delete entire manga folder
+      await FileSystem.deleteAsync(mangaFolder);
+
+      // Reload downloads to update UI
+      await loadDownloads();
+
+      Alert.alert(
+        "تم الحذف ✅",
+        `تم حذف مانجا "${mangaTitle}" وجميع فصولها بنجاح`
+      );
+    } catch (error) {
+      console.error("Error deleting manga:", error);
+      Alert.alert("خطأ ❌", "فشل في حذف المانجا");
+    }
+  };
+
+  const confirmDeleteChapter = (
+    chapterPath: string,
+    mangaId: string,
+    chapterNumber: number,
+    chapterTitle: string
+  ) => {
+    Alert.alert(
+      "حذف الفصل",
+      `هل أنت متأكد من رغبتك في حذف "${chapterTitle}"؟ لن تتمكن من التراجع عن هذا الإجراء.`,
+      [
+        {
+          text: "إلغاء",
+          style: "cancel",
+        },
+        {
+          text: "حذف",
+          style: "destructive",
+          onPress: () => deleteChapter(chapterPath, mangaId, chapterNumber),
+        },
+      ]
+    );
+  };
+
+  const confirmDeleteManga = (mangaId: string, mangaTitle: string) => {
+    Alert.alert(
+      "حذف المانجا",
+      `هل أنت متأكد من رغبتك في حذف مانجا "${mangaTitle}" وجميع فصولها المحملة؟ لن تتمكن من التراجع عن هذا الإجراء.`,
+      [
+        {
+          text: "إلغاء",
+          style: "cancel",
+        },
+        {
+          text: "حذف الكل",
+          style: "destructive",
+          onPress: () => deleteManga(mangaId, mangaTitle),
+        },
+      ]
+    );
+  };
+
   const renderMangaCard = (manga: DownloadedManga) => {
     const isSelected = selectedManga === manga.id;
 
     return (
       <View
         key={manga.id}
-        className="mb-6 bg-white rounded-lg  border border-gray-200"
+        className="mb-6 bg-white rounded-md  border border-gray-400/45"
       >
         <TouchableOpacity
           onPress={() => toggleMangaSelection(manga.id)}
@@ -199,7 +287,7 @@ export default function DownloadsPage() {
               {manga.info.otherTitles && manga.info.otherTitles.length > 0 && (
                 <Text
                   style={{ fontFamily: "Arabic" }}
-                  className="text-gray-500 mb-2 text-sm"
+                  className="text-gray-500 mb-2 text-sm line-clamp-1"
                 >
                   {manga.info.otherTitles.join(" / ")}
                 </Text>
@@ -265,7 +353,7 @@ export default function DownloadsPage() {
         </TouchableOpacity>
 
         {isSelected && (
-          <View className="border-t border-gray-200 p-4">
+          <View className="border-t border-gray-200 border-dashed p-4">
             {manga.info.description && (
               <Text
                 style={{ fontFamily: "Arabic" }}
@@ -277,55 +365,91 @@ export default function DownloadsPage() {
 
             <Text
               style={{ fontFamily: "Arabic" }}
-              className="text-lg font-semibold text-gray-800 mb-3"
+              className="text-base font-semibold text-gray-800 mb-3"
             >
               الفصول المحملة
             </Text>
 
             {manga.chapters.map((chapter) => (
-              <TouchableOpacity
+              <View
                 key={chapter.id}
-                className="flex-row items-center justify-between bg-gray-50 rounded-xl p-3 mb-2"
-                onPress={() =>
-                  router.push(
-                    `/offline-reader?chapterPath=${encodeURIComponent(chapter.path)}&title=${encodeURIComponent(chapter.title)}`
-                  )
-                }
+                className="flex-row items-center bg-gray-50 rounded-lg p-3 mb-2"
               >
-                {chapter.pages[0] && (
-                  <Image
-                    source={{ uri: chapter.pages[0] }}
-                    className="w-12 h-16 rounded mr-3"
-                    resizeMode="cover"
-                  />
-                )}
+                <TouchableOpacity
+                  onPress={() =>
+                    router.push(
+                      `/offline-reader?chapterPath=${encodeURIComponent(chapter.path)}&title=${encodeURIComponent(chapter.title)}`
+                    )
+                  }
+                  className="flex-row items-center flex-1"
+                >
+                  {chapter.pages[0] && (
+                    <Image
+                      source={{ uri: chapter.pages[0] }}
+                      className="w-12 h-16 rounded mr-3"
+                      resizeMode="cover"
+                    />
+                  )}
 
-                <View className="flex-1">
+                  <View className="flex-1">
+                    <Text
+                      style={{ fontFamily: "Arabic" }}
+                      className="text-gray-800 font-medium"
+                    >
+                      الفصل {chapter.number}
+                    </Text>
+                    {chapter.title &&
+                      chapter.title !== `الفصل ${chapter.number}` && (
+                        <Text
+                          style={{ fontFamily: "Arabic" }}
+                          className="text-gray-600 text-sm"
+                        >
+                          {chapter.title}
+                        </Text>
+                      )}
+                  </View>
+
                   <Text
                     style={{ fontFamily: "Arabic" }}
-                    className="text-gray-800 font-medium"
+                    className="text-xs text-gray-500 mr-2"
                   >
-                    الفصل {chapter.number}
+                    {chapter.totalPages} صفحة
                   </Text>
-                  {chapter.title &&
-                    chapter.title !== `الفصل ${chapter.number}` && (
-                      <Text
-                        style={{ fontFamily: "Arabic" }}
-                        className="text-gray-600 text-sm"
-                      >
-                        {chapter.title}
-                      </Text>
-                    )}
-                </View>
+                </TouchableOpacity>
 
-                <Text
-                  style={{ fontFamily: "Arabic" }}
-                  className="text-sm text-gray-500"
+                {/* Delete chapter button */}
+                <TouchableOpacity
+                  onPress={() =>
+                    confirmDeleteChapter(
+                      chapter.path,
+                      manga.id,
+                      chapter.number,
+                      chapter.title
+                    )
+                  }
+                  className="p-2 ml-2"
                 >
-                  {chapter.totalPages} صفحة
-                </Text>
-              </TouchableOpacity>
+                  <Trash2 size={14} color="#ef4444" />
+                </TouchableOpacity>
+              </View>
             ))}
+          </View>
+        )}
+
+        {isSelected && (
+          <View className="border-t border-gray-200 border-dashed p-4">
+            <TouchableOpacity
+              className="flex-row items-center gap-2 mb-4"
+              onPress={() => confirmDeleteManga(manga.id, manga.info.title)}
+            >
+              <Trash2 size={14} color="#ef4444" />
+              <Text
+                style={{ fontFamily: "Arabic" }}
+                className="text-red-500 text-xs  "
+              >
+                حذف المانجا وجميع فصولها
+              </Text>
+            </TouchableOpacity>
           </View>
         )}
       </View>
