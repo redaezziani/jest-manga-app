@@ -9,7 +9,7 @@ import { Text } from "@/components/ui/text";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import type { TriggerRef } from "@rn-primitives/popover";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { LogIn, LogOut, UserPlus } from "lucide-react-native";
 import * as React from "react";
 import { Alert, TouchableOpacity, View } from "react-native";
@@ -108,20 +108,20 @@ export function UserMenu() {
           <UserAvatar />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="center" side="bottom" className="w-80 p-0">
-        <View className="border-border gap-3 border-b p-3">
+      <PopoverContent align="center" side="bottom" className="w-52 p-0">
+        <View className="border-border gap-3 border-b border-dashed p-3">
           <View className="flex-row items-center gap-3">
-            <UserAvatar className="size-10" />
+            <UserAvatar />
             <View className="flex-1">
               <Text
                 style={{ fontFamily: "Arabic" }}
-                className="font-medium leading-5"
+                className="font-medium text-xs leading-5"
               >
                 {user?.name}
               </Text>
               <Text
                 style={{ fontFamily: "Arabic" }}
-                className="text-muted-foreground text-sm font-normal leading-4"
+                className="text-muted-foreground line-clamp-1 text-sm font-normal leading-4"
               >
                 {user?.email}
               </Text>
@@ -132,16 +132,28 @@ export function UserMenu() {
         <View className="p-3">
           <TouchableOpacity
             onPress={onSignOut}
-            className="flex-row items-center gap-3 p-3 rounded-lg hover:bg-gray-50"
+            className="flex-row items-center gap-1   hover:bg-gray-50"
           >
-            <LogOut size={18} color="#dc2626" />
+            <LogOut size={14} color="#dc2626" />
             <Text
               style={{ fontFamily: "Arabic" }}
-              className="font-medium text-red-600"
+              className=" text-xs text-red-600"
             >
               تسجيل الخروج
             </Text>
           </TouchableOpacity>
+          <Link
+            href="/(tabs)/profile"
+            className="flex-row items-center gap-1   hover:bg-gray-50 mt-2"
+          >
+            <UserPlus size={14} color="#666" />
+            <Text
+              style={{ fontFamily: "Arabic" }}
+              className=" text-xs text-gray-700 mx-3"
+            >
+              ملفي الشخصي
+            </Text>
+          </Link>
         </View>
       </PopoverContent>
     </Popover>
