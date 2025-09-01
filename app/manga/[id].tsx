@@ -6,7 +6,7 @@ import { MangaExtended } from "@/type/manga";
 import { API_URL } from "@/utils";
 import * as FileSystem from "expo-file-system";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Download } from "lucide-react-native";
+import { Book, Download } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -24,12 +24,44 @@ export default function MangaDetail() {
   const [similar, setSimilar] = useState<MangaExtended[]>([]);
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [loading, setLoading] = useState(true);
+  const [downloadedChapters, setDownloadedChapters] = useState<Set<string>>(
+    new Set()
+  );
+  const [downloadingChapters, setDownloadingChapters] = useState<Set<string>>(
+    new Set()
+  );
   const router = useRouter();
 
   useEffect(() => {
     handelFetchMangaDetails();
     handelFetchChapters();
+    checkDownloadedChapters();
   }, [id]);
+
+  const checkDownloadedChapters = async () => {
+    if (!id) return;
+
+    try {
+      const mangaFolder = `${FileSystem.documentDirectory}manga_${id}`;
+      const mangaInfo = await FileSystem.getInfoAsync(mangaFolder);
+
+      if (mangaInfo.exists) {
+        const chapterDirs = await FileSystem.readDirectoryAsync(mangaFolder);
+        const downloaded = new Set<string>();
+
+        for (const dir of chapterDirs) {
+          if (dir.startsWith("chapter_")) {
+            const chapterId = dir.replace("chapter_", "");
+            downloaded.add(chapterId);
+          }
+        }
+
+        setDownloadedChapters(downloaded);
+      }
+    } catch (err) {
+      console.error("Error checking downloaded chapters:", err);
+    }
+  };
 
   const handelFetchMangaDetails = () => {
     fetch(`${API_URL}/api/manga/info/${id}`)
@@ -108,6 +140,9 @@ export default function MangaDetail() {
     try {
       if (!manga) return;
 
+      // Mark as downloading
+      setDownloadingChapters((prev) => new Set(prev).add(chapter.id));
+
       const mangaFolder = `${FileSystem.documentDirectory}manga_${manga.id}`;
       const chapterFolder = `${mangaFolder}/chapter_${chapter.id}`;
 
@@ -126,29 +161,111 @@ export default function MangaDetail() {
         });
       }
 
+      // Save manga info if not already saved
+      const mangaInfoPath = `${mangaFolder}/manga_info.json`;
+      const mangaInfoExists = await FileSystem.getInfoAsync(mangaInfoPath);
+      if (!mangaInfoExists.exists) {
+        const mangaData = {
+          id: manga.id,
+          title: manga.title,
+          cover: manga.cover,
+          coverThumbnail: manga.coverThumbnail,
+          authors: manga.authors,
+          artists: manga.artists,
+          genres: manga.genres,
+          status: manga.status,
+          type: manga.type,
+          description: manga.description,
+          otherTitles: manga.otherTitles,
+          rating: manga.rating,
+          views: manga.views,
+          releaseDate: manga.releaseDate,
+        };
+        await FileSystem.writeAsStringAsync(
+          mangaInfoPath,
+          JSON.stringify(mangaData)
+        );
+      }
+
       // fetch chapter data (pages) from API
-      const res = await fetch(`${API_URL}/api/manga/chapter/${chapter.id}`);
+      console.log(
+        `Fetching chapter: ${API_URL}/api/manga/manga/${id}/chapter/${chapter.number}`
+      );
+      const res = await fetch(
+        `${API_URL}/api/manga/manga/${id}/chapter/${chapter.number}`
+      );
+      console.log("Response status:", res.status);
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+
       const data = await res.json();
+      console.log("API Response:", data);
 
-      if (!data.success) throw new Error("Failed to fetch chapter");
+      if (!data.success) {
+        throw new Error(data.message || "Failed to fetch chapter");
+      }
 
-      const pages: string[] = data.data.pages;
+      // Extract pages from the response - the structure might be different
+      let pages: string[] = [];
+      if (data.data.pages) {
+        pages = data.data.pages;
+      } else if (data.data && Array.isArray(data.data)) {
+        pages = data.data;
+      } else {
+        throw new Error("No pages found in API response");
+      }
+
+      // Save chapter info
+      const chapterInfoPath = `${chapterFolder}/chapter_info.json`;
+      const chapterData = {
+        id: chapter.id,
+        title: chapter.title,
+        number: chapter.number,
+        createdAt: chapter.createdAt,
+        totalPages: pages.length,
+      };
+      await FileSystem.writeAsStringAsync(
+        chapterInfoPath,
+        JSON.stringify(chapterData)
+      );
 
       // download each page
+      console.log(`Starting download of ${pages.length} pages`);
       for (let i = 0; i < pages.length; i++) {
         const pageUrl = pages[i];
         const fileUri = `${chapterFolder}/page_${i + 1}.jpg`;
         const fileInfo = await FileSystem.getInfoAsync(fileUri);
 
         if (!fileInfo.exists) {
+          console.log(`Downloading page ${i + 1}/${pages.length}: ${pageUrl}`);
           await FileSystem.downloadAsync(pageUrl, fileUri);
+        } else {
+          console.log(`Page ${i + 1} already exists, skipping`);
         }
       }
 
-      Alert.alert("نجاح ✅", `تم تحميل الفصل ${chapter.number}`);
+      console.log(`Successfully downloaded all ${pages.length} pages`);
+      Alert.alert(
+        "نجاح ✅",
+        `تم تحميل الفصل ${chapter.number} بنجاح (${pages.length} صفحة)`
+      );
+
+      // Refresh downloaded chapters list
+      checkDownloadedChapters();
     } catch (err) {
-      console.error(err);
-      Alert.alert("خطأ ❌", "فشل تحميل الفصل");
+      console.error("Download error:", err);
+      const errorMessage =
+        err instanceof Error ? err.message : "فشل تحميل الفصل";
+      Alert.alert("خطأ ❌", `فشل تحميل الفصل: ${errorMessage}`);
+    } finally {
+      // Remove from downloading state
+      setDownloadingChapters((prev) => {
+        const updated = new Set(prev);
+        updated.delete(chapter.id);
+        return updated;
+      });
     }
   };
 
@@ -315,38 +432,67 @@ export default function MangaDetail() {
             >
               الفصول
             </Text>
-            {chapters.map((chapter) => (
-              <View
-                key={chapter.id}
-                className="py-2 flex-row items-center justify-between"
-              >
-                {/* Open chapter */}
-                <TouchableOpacity
-                  onPress={() =>
-                    router.push(`/chapter/${chapter.number}?mangaId=${id}`)
-                  }
-                >
-                  <Text
-                    style={{ fontFamily: "Arabic" }}
-                    className="text-gray-800 text-sm"
-                  >
-                    {chapter.number} - {chapter.title}
-                  </Text>
-                </TouchableOpacity>
+            {chapters.map((chapter) => {
+              const isDownloaded = downloadedChapters.has(chapter.id);
+              const isDownloading = downloadingChapters.has(chapter.id);
 
-                {/* Download button */}
-                <Button
-                  variant="ghost"
-                  size={"icon"}
-                  className=" rounded-full w-6 h-6 flex items-center justify-center"
-                  onPress={() => downloadChapter(chapter)}
+              return (
+                <View
+                  key={chapter.id}
+                  className="py-2 flex-row items-center justify-between"
                 >
-                  <Download
-                  color={"#ff4133"}
-                  size={12} className=""  />
-                </Button>
-              </View>
-            ))}
+                  {/* Chapter title and reading options */}
+                  <View className="flex-1">
+                    <TouchableOpacity
+                      onPress={() =>
+                        router.push(`/chapter/${chapter.number}?mangaId=${id}`)
+                      }
+                    >
+                      <Text
+                        style={{ fontFamily: "Arabic" }}
+                        className="text-gray-800 text-sm"
+                      >
+                        {chapter.number} - {chapter.title}
+                      </Text>
+                    </TouchableOpacity>
+
+                    {isDownloading && (
+                      <Text
+                        style={{ fontFamily: "Arabic" }}
+                        className="text-blue-600 text-xs mt-1"
+                      >
+                        ⬇️ جاري التحميل...
+                      </Text>
+                    )}
+                  </View>
+
+                  {isDownloaded && (
+                    <TouchableOpacity
+                      onPress={() => {
+                        const chapterPath = `${FileSystem.documentDirectory}manga_${id}/chapter_${chapter.id}`;
+                        router.push(
+                          `/offline-reader?chapterPath=${encodeURIComponent(chapterPath)}&title=${encodeURIComponent(`الفصل ${chapter.number}`)}`
+                        );
+                      }}
+                      className="rounded-full w-6 h-6 flex items-center justify-center"
+                    >
+                      <Book size={12} color={"#374151"} />
+                    </TouchableOpacity>
+                  )}
+                  {!isDownloaded && (
+                    <Button
+                      variant="ghost"
+                      size={"icon"}
+                      className="rounded-full w-6 h-6 flex items-center justify-center"
+                      onPress={() => downloadChapter(chapter)}
+                      disabled={isDownloaded || isDownloading}
+                    >
+                      <Download color={"#ff4133"} size={12} className="" />
+                    </Button>
+                  )}
+                </View>
+              );
+            })}
           </View>
         )}
       </ScrollView>
@@ -356,11 +502,7 @@ export default function MangaDetail() {
 
 const PathIndicator = ({ title }: { title: string }) => (
   <View className="flex-row items-center gap-1 space-x-2">
-    <Link
-      href="/"
-      style={{ fontFamily: "Arabic" }}
-      className=" text-[#ff4133]"
-    >
+    <Link href="/" style={{ fontFamily: "Arabic" }} className=" text-[#ff4133]">
       الرئيسية
     </Link>
     <Text style={{ fontFamily: "Arabic" }} className="text-sm text-gray-500">

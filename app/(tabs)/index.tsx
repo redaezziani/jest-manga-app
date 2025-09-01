@@ -50,7 +50,7 @@ export default function HomeScreen() {
 
   const renderMangaCard = (item: Manga) => (
     <Link href={`/manga/${item.id}`} className="flex-1 px-2  " key={item.id}>
-      <View className=" p-1 border relative border-gray-300 bg-gray-100 w-full rounded-md ">
+      <View className=" p-0.5 border relative border-gray-300 w-full rounded-md ">
         <Image
           source={{ uri: item.coverThumbnail }}
           style={{
@@ -61,17 +61,9 @@ export default function HomeScreen() {
           resizeMode="cover"
           className="border border-gray-300"
         />
-        <View className="absolute top-0 left-2 bg-amber-300 h-10 rounded-b-[0.2rem]  bg-opacity-50 px-2 py-1">
-          <Text
-            style={{ fontFamily: "Arabic" }}
-            className="text-sm text-amber-900 font-bold mt-1"
-          >
-            {item.rating}
-          </Text>
-        </View>
       </View>
 
-      <View className="pt-10 px-1">
+      <View className="pt-5 px-1">
         <Text
           style={{ fontFamily: "Arabic" }}
           className="text-sm font-bold line-clamp-1 text-gray-900 mb-1"
