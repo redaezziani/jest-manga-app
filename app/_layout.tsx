@@ -1,3 +1,4 @@
+import { AuthProvider } from "@/hooks/useAuth";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   DarkTheme,
@@ -14,10 +15,10 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     Arabic: require("../assets/fonts/ElMessiri-VariableFont_wght.ttf"),
-    Bigx : require("../assets/fonts/bigx.otf"),
-    Vexa : require("../assets/fonts/vexa.ttf"),
-    Almarai : require("../assets/fonts/Almarai-Regular.ttf"),
-    Readex : require("../assets/fonts/SpaceMono-Regular.ttf"),
+    Bigx: require("../assets/fonts/bigx.otf"),
+    Vexa: require("../assets/fonts/vexa.ttf"),
+    Almarai: require("../assets/fonts/Almarai-Regular.ttf"),
+    Readex: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
   if (!loaded) {
@@ -25,13 +26,15 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-      <PortalHost />
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+        <PortalHost />
+      </ThemeProvider>
+    </AuthProvider>
   );
 }

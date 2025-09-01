@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import Manga from "@/type/manga";
 import { API_URL } from "@/utils";
+import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { Image, RefreshControl, ScrollView, Text, View } from "react-native";
@@ -165,25 +166,36 @@ export default function HomeScreen() {
       }
     >
       <View className=" h-72 w-full bg-gray-200 relative flex justify-center items-center">
-        {/* <Image
+        <Image
           source={{
-            uri:"https://t3.ftcdn.net/jpg/07/32/10/90/360_F_732109080_4lXwGofazqAiysUpcCnrbflsNOl9EMdW.jpg"
+            uri: "https://t3.ftcdn.net/jpg/07/32/10/90/360_F_732109080_4lXwGofazqAiysUpcCnrbflsNOl9EMdW.jpg",
           }}
           style={{ width: "100%", height: "100%" }}
           resizeMode="cover"
           className=" z-0"
-        /> */}
+        />
+        <LinearGradient
+          colors={["rgba(0,0,0,0.6)", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.6)"]}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 10,
+          }}
+        />
         <View className="absolute inset-0 z-20 backdrop-blur-lg  opacity-70" />
         <View className="absolute z-30 px-4">
           <Text
             style={{ fontFamily: "Bigx" }}
-            className="text-4xl text-center text-primary mb-2"
+            className="text-4xl text-center text-white mb-2"
           >
             مرحبًا بك في Desire Manga
           </Text>
           <Text
             style={{ fontFamily: "Arabic" }}
-            className="text-sm text-white mb-4"
+            className="text-sm text-white/80 mb-4"
           >
             استكشف مجموعتنا الواسعة من المانجا واستمتع بقراءة قصصك المفضلة.
           </Text>
