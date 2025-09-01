@@ -1,8 +1,6 @@
 import { LayoutWithTopBar } from "@/components/LayoutWithBar";
-import { Button } from "@/components/ui/button";
 import * as FileSystem from "expo-file-system";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { ArrowRight } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -91,43 +89,10 @@ export default function OfflineReader() {
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header */}
-      <View className="px-4 py-3 bg-white border-b border-gray-200">
-        <View className="flex-row items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onPress={() => router.back()}
-            className="flex-row items-center"
-          >
-            <ArrowRight size={20} color="#374151" />
-            <Text
-              style={{ fontFamily: "Arabic" }}
-              className="text-gray-700 mr-2"
-            >
-              رجوع
-            </Text>
-          </Button>
-
-          <View className="flex-1 items-center">
-            <Text
-              style={{ fontFamily: "Arabic" }}
-              className="text-lg font-semibold text-gray-900"
-              numberOfLines={1}
-            >
-              {chapterInfo?.title || title || "قارئ الفصول"}
-            </Text>
-            {chapterInfo && (
-              <Text
-                style={{ fontFamily: "Arabic" }}
-                className="text-sm text-gray-600"
-              >
-                {pages.length} صفحة
-              </Text>
-            )}
-          </View>
-
-          <View style={{ width: 80 }} />
-        </View>
+      <View className="px-4  bg-white pt-2 pb-1 ">
+        <PathIndicator
+          chapterName={chapterInfo ? chapterInfo.title : title || "الفصل"}
+        />
       </View>
 
       {/* Pages */}
@@ -176,3 +141,24 @@ export default function OfflineReader() {
     </LayoutWithTopBar>
   );
 }
+
+const PathIndicator = ({ chapterName }: { chapterName: string }) => {
+  const router = useRouter();
+  return (
+    <View className="flex-row items-center space-x-2 gap-1">
+      <Text
+        onPress={() => router.back()}
+        style={{ fontFamily: "Arabic" }}
+        className="text-sm text-[#ff4133]"
+      >
+        الرئيسية
+      </Text>
+      <Text style={{ fontFamily: "Arabic" }} className="text-sm text-gray-500">
+        /
+      </Text>
+      <Text style={{ fontFamily: "Arabic" }} className="text-sm text-gray-500">
+        {chapterName}
+      </Text>
+    </View>
+  );
+};

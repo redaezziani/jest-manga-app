@@ -145,7 +145,7 @@ export default function ChapterReader() {
   return (
     <LayoutWithTopBar>
       <Stack.Screen options={{ headerShown: false }} />
-      <View className="px-4 mt-6  bg-white pt-2 pb-1 ">
+      <View className="px-4   bg-white pt-2 pb-1 ">
         <PathIndicator
           title={chapter.chapterName}
           mangaId={mangaId}
