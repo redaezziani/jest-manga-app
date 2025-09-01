@@ -1,3 +1,4 @@
+import { useCustomAlert } from "@/components/CustomAlert";
 import { MangaDetailSkeleton } from "@/components/Details-Manga-S";
 import { LayoutWithTopBar } from "@/components/LayoutWithBar";
 import { Button } from "@/components/ui/button";
@@ -8,18 +9,12 @@ import * as FileSystem from "expo-file-system";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Book, Download } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import {
-  Alert,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Swiper from "react-native-swiper";
 
 export default function MangaDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { showAlert } = useCustomAlert();
   const [manga, setManga] = useState<MangaExtended | null>(null);
   const [similar, setSimilar] = useState<MangaExtended[]>([]);
   const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -247,10 +242,11 @@ export default function MangaDetail() {
       }
 
       console.log(`Successfully downloaded all ${pages.length} pages`);
-      Alert.alert(
-        "نجاح ✅",
-        `تم تحميل الفصل ${chapter.number} بنجاح (${pages.length} صفحة)`
-      );
+      showAlert({
+        title: "نجاح ✅",
+        message: `تم تحميل الفصل ${chapter.number} بنجاح (${pages.length} صفحة)`,
+        showCancel: false,
+      });
 
       // Refresh downloaded chapters list
       checkDownloadedChapters();
@@ -258,7 +254,11 @@ export default function MangaDetail() {
       console.error("Download error:", err);
       const errorMessage =
         err instanceof Error ? err.message : "فشل تحميل الفصل";
-      Alert.alert("خطأ ❌", `فشل تحميل الفصل: ${errorMessage}`);
+      showAlert({
+        title: "خطأ ❌",
+        message: `فشل تحميل الفصل: ${errorMessage}`,
+        showCancel: false,
+      });
     } finally {
       // Remove from downloading state
       setDownloadingChapters((prev) => {
@@ -272,7 +272,7 @@ export default function MangaDetail() {
   return (
     <LayoutWithTopBar>
       <Stack.Screen options={{ headerShown: false }} />
-      <View className="px-4 mt-4 pt-2 pb-1 ">
+      <View className="px-4    ">
         <PathIndicator title={manga ? manga.title : "تفاصيل المانجا"} />
       </View>
       <ScrollView className="flex-1 bg-white px-2">
@@ -501,7 +501,7 @@ export default function MangaDetail() {
 }
 
 const PathIndicator = ({ title }: { title: string }) => (
-  <View className="flex-row items-center gap-1 space-x-2">
+  <View className="flex-row items-center gap-1 ">
     <Link href="/" style={{ fontFamily: "Arabic" }} className=" text-[#ff4133]">
       الرئيسية
     </Link>
