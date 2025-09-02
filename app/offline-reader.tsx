@@ -89,7 +89,7 @@ export default function OfflineReader() {
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header */}
-      <View className="px-4  bg-white pt-2 pb-1 ">
+      <View className="px-4    pt-2 pb-1 ">
         <PathIndicator
           chapterName={chapterInfo ? chapterInfo.title : title || "الفصل"}
         />
@@ -145,7 +145,7 @@ export default function OfflineReader() {
 const PathIndicator = ({ chapterName }: { chapterName: string }) => {
   const router = useRouter();
   return (
-    <View className="flex-row items-center space-x-2 gap-1">
+    <View className="flex-row items-center  space-x-2 gap-1">
       <Text
         onPress={() => router.back()}
         style={{ fontFamily: "Arabic" }}
