@@ -107,7 +107,6 @@ export default function ExploreScreen() {
     setError(null);
 
     try {
-      
       const url = `${API_URL}/api/manga/all?page=${page}&limit=${limit}&search=${encodeURIComponent(
         searchQuery
       )}`;
@@ -167,7 +166,7 @@ export default function ExploreScreen() {
       <View className="pt-2 px-1">
         <Text
           onPress={() => router.push(`/manga/${item.id}`)}
-          style={{ fontFamily: "Arabic" }}
+          style={{ fontFamily: "Doc" }}
           className="text-sm font-bold line-clamp-1 text-gray-900 mb-1"
           numberOfLines={2}
         >
@@ -178,7 +177,7 @@ export default function ExploreScreen() {
         </Text>
         <View className="flex-row items-center justify-between">
           <Text
-            style={{ fontFamily: "Arabic" }}
+            style={{ fontFamily: "Doc" }}
             className="text-xs text-gray-500 capitalize"
           >
             {item.status}
@@ -208,9 +207,9 @@ export default function ExploreScreen() {
             <View style={{ backgroundColor: "#f9fafb", padding: 16 }}>
               {/* Header */}
               <View style={{ marginBottom: 24, marginTop: 16 }}>
-                <Text style={{ fontFamily: "Arabic" }}>استكشاف المانجا</Text>
+                <Text style={{ fontFamily: "Doc" }}>استكشاف المانجا</Text>
                 <Text
-                  style={{ color: "#4b5563", fontFamily: "Arabic" }}
+                  style={{ color: "#4b5563", fontFamily: "Doc" }}
                   className="text-sm mt-1"
                 >
                   اكتشف مانجا جديدة ومثيرة
@@ -224,7 +223,7 @@ export default function ExploreScreen() {
                   value={searchText}
                   onChangeText={setSearchText}
                   className=" text-right bg-white max-w-[90%]"
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                 />
                 <Button
                   size={"icon"}
@@ -242,15 +241,13 @@ export default function ExploreScreen() {
                   justifyContent: "space-between",
                   marginBottom: 16,
                 }}
-              >
-               
-              </View>
+              ></View>
 
               {/* Filters */}
               {showFilters && (
                 <Card style={{ marginBottom: 24 }}>
                   <CardHeader>
-                    <CardTitle style={{ fontFamily: "Arabic" }}>
+                    <CardTitle style={{ fontFamily: "Doc" }}>
                       خيارات البحث المتقدم
                     </CardTitle>
                   </CardHeader>
@@ -260,7 +257,7 @@ export default function ExploreScreen() {
                       {/* Sort */}
                       <View className="flex-col justify-start items-start w-1/2">
                         <Text
-                          style={{ fontFamily: "Arabic" }}
+                          style={{ fontFamily: "Doc" }}
                           className="text-sm text-gray-500"
                         >
                           ترتيب النتائج
@@ -272,7 +269,7 @@ export default function ExploreScreen() {
                         >
                           <SelectTrigger>
                             <SelectValue
-                              style={{ fontFamily: "Arabic" }}
+                              style={{ fontFamily: "Doc" }}
                               placeholder="اختر طريقة الترتيب"
                             />
                           </SelectTrigger>
@@ -284,7 +281,7 @@ export default function ExploreScreen() {
                                   value={o.value}
                                   label={o.label}
                                 >
-                                  <Text style={{ fontFamily: "Arabic" }}>
+                                  <Text style={{ fontFamily: "Doc" }}>
                                     {o.label}
                                   </Text>
                                 </SelectItem>
@@ -296,7 +293,7 @@ export default function ExploreScreen() {
                       {/* Type */}
                       <View className="flex-col justify-start items-start w-1/2 ">
                         <Text
-                          style={{ fontFamily: "Arabic" }}
+                          style={{ fontFamily: "Doc" }}
                           className="text-sm text-gray-500"
                         >
                           نوع المحتوى
@@ -310,7 +307,7 @@ export default function ExploreScreen() {
                         >
                           <SelectTrigger>
                             <SelectValue
-                              style={{ fontFamily: "Arabic" }}
+                              style={{ fontFamily: "Doc" }}
                               placeholder="اختر نوع المحتوى"
                             />
                           </SelectTrigger>
@@ -322,7 +319,7 @@ export default function ExploreScreen() {
                                   value={o.value}
                                   label={o.label}
                                 >
-                                  <Text style={{ fontFamily: "Arabic" }}>
+                                  <Text style={{ fontFamily: "Doc" }}>
                                     {o.label}
                                   </Text>
                                 </SelectItem>
@@ -337,7 +334,7 @@ export default function ExploreScreen() {
                     <View className="flex-row justify-between gap-2 items-center w-full mt-4">
                       <View className="flex-col justify-start items-start w-1/2">
                         <Text
-                          style={{ fontFamily: "Arabic" }}
+                          style={{ fontFamily: "Doc" }}
                           className="text-sm text-gray-500"
                         >
                           حالة النشر
@@ -353,7 +350,7 @@ export default function ExploreScreen() {
                         >
                           <SelectTrigger>
                             <SelectValue
-                              style={{ fontFamily: "Arabic" }}
+                              style={{ fontFamily: "Doc" }}
                               placeholder="اختر حالة النشر"
                             />
                           </SelectTrigger>
@@ -365,7 +362,7 @@ export default function ExploreScreen() {
                                   value={o.value}
                                   label={o.label}
                                 >
-                                  <Text style={{ fontFamily: "Arabic" }}>
+                                  <Text style={{ fontFamily: "Doc" }}>
                                     {o.label}
                                   </Text>
                                 </SelectItem>
@@ -377,7 +374,7 @@ export default function ExploreScreen() {
                       {/* Rating */}
                       <View className="flex-col justify-start items-start w-1/2">
                         <Text
-                          style={{ fontFamily: "Arabic" }}
+                          style={{ fontFamily: "Doc" }}
                           className="text-sm text-gray-500"
                         >
                           التقييم الأدنى
@@ -391,7 +388,7 @@ export default function ExploreScreen() {
                         >
                           <SelectTrigger>
                             <SelectValue
-                              style={{ fontFamily: "Arabic" }}
+                              style={{ fontFamily: "Doc" }}
                               placeholder="اختر التقييم الأدنى"
                             />
                           </SelectTrigger>
@@ -403,7 +400,7 @@ export default function ExploreScreen() {
                                   value={o.value}
                                   label={o.label}
                                 >
-                                  <Text style={{ fontFamily: "Arabic" }}>
+                                  <Text style={{ fontFamily: "Doc" }}>
                                     {o.label}
                                   </Text>
                                 </SelectItem>
@@ -418,7 +415,7 @@ export default function ExploreScreen() {
                     <Text
                       style={{
                         marginVertical: 8,
-                        fontFamily: "Arabic",
+                        fontFamily: "Doc",
                       }}
                     >
                       التصنيفات ({selectedGenres.length} محدد)
@@ -429,7 +426,7 @@ export default function ExploreScreen() {
                           key={g}
                           className="flex gap-1 min-w-28 col-span-1 flex-row-reverse items-center"
                         >
-                          <Text style={{ flex: 1, fontFamily: "Arabic" }}>
+                          <Text style={{ flex: 1, fontFamily: "Doc" }}>
                             {g}
                           </Text>
                           <Checkbox
@@ -449,7 +446,7 @@ export default function ExploreScreen() {
                   style={{
                     color: "#fff",
                     fontWeight: "600",
-                    fontFamily: "Arabic",
+                    fontFamily: "Doc",
                   }}
                 >
                   بحث
@@ -465,19 +462,19 @@ export default function ExploreScreen() {
                     style={{
                       color: "red",
                       textAlign: "center",
-                      fontFamily: "Arabic",
+                      fontFamily: "Doc",
                     }}
                   >
                     {error}
                   </Text>
                   <Button onPress={() => fetchMangaData()}>
-                    <Text style={{ fontFamily: "Arabic" }}>إعادة المحاولة</Text>
+                    <Text style={{ fontFamily: "Doc" }}>إعادة المحاولة</Text>
                   </Button>
                 </View>
               )}
               {!loading && !error && mangaData.length === 0 && (
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-center text-gray-500 my-4"
                 >
                   لم يتم العثور على مانجا.

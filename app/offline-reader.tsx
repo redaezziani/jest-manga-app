@@ -76,7 +76,7 @@ export default function OfflineReader() {
         <Stack.Screen options={{ headerShown: false }} />
         <View className="flex-1 justify-center items-center bg-white">
           <ActivityIndicator size="large" color="#ff4133" />
-          <Text style={{ fontFamily: "Arabic" }} className="text-gray-600 mt-4">
+          <Text style={{ fontFamily: "Doc" }} className="text-gray-600 mt-4">
             جاري تحميل الفصل...
           </Text>
         </View>
@@ -103,7 +103,7 @@ export default function OfflineReader() {
         {pages.length === 0 ? (
           <View className="flex-1 justify-center items-center py-20">
             <Text
-              style={{ fontFamily: "Arabic" }}
+              style={{ fontFamily: "Doc" }}
               className="text-white text-center text-lg"
             >
               لا توجد صفحات في هذا الفصل
@@ -128,7 +128,7 @@ export default function OfflineReader() {
               {/* Page number indicator */}
               <View className="absolute bottom-2 right-2 bg-black bg-opacity-60 px-2 py-1 rounded">
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-white text-xs"
                 >
                   {index + 1} / {pages.length}
@@ -148,15 +148,15 @@ const PathIndicator = ({ chapterName }: { chapterName: string }) => {
     <View className="flex-row items-center  space-x-2 gap-1">
       <Text
         onPress={() => router.back()}
-        style={{ fontFamily: "Arabic" }}
+        style={{ fontFamily: "Doc" }}
         className="text-sm text-[#ff4133]"
       >
         الرئيسية
       </Text>
-      <Text style={{ fontFamily: "Arabic" }} className="text-sm text-gray-500">
+      <Text style={{ fontFamily: "Doc" }} className="text-sm text-gray-500">
         /
       </Text>
-      <Text style={{ fontFamily: "Arabic" }} className="text-sm text-gray-500">
+      <Text style={{ fontFamily: "Doc" }} className="text-sm text-gray-500">
         {chapterName}
       </Text>
     </View>

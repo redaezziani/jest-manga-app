@@ -30,15 +30,13 @@ export default function TabLayout() {
             shadowOpacity: 0,
             shadowOffset: { width: 0, height: 0 },
             shadowRadius: 0,
-            
           },
           tabBarLabelStyle: {
             fontSize: 10,
             fontWeight: "500",
             marginTop: 2,
             letterSpacing: 0.3,
-            fontFamily: "Arabic",
-
+            fontFamily: "Doc",
           },
           tabBarIconStyle: {
             marginTop: 4,

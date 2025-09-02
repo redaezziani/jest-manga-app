@@ -127,13 +127,13 @@ export default function LoginPage() {
             {/* Header */}
             <View className="items-center mb-8">
               <Text
-                style={{ fontFamily: "Arabic" }}
+                style={{ fontFamily: "Doc" }}
                 className="text-3xl  text-gray-900 mb-2"
               >
                 تسجيل الدخول
               </Text>
               <Text
-                style={{ fontFamily: "Arabic" }}
+                style={{ fontFamily: "Doc" }}
                 className="text-gray-600 text-center"
               >
                 مرحباً بك مرة أخرى! سجل الدخول للمتابعة
@@ -145,7 +145,7 @@ export default function LoginPage() {
               {/* Email Input */}
               <View>
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-700 text-sm mb-2"
                 >
                   البريد الإلكتروني
@@ -161,7 +161,7 @@ export default function LoginPage() {
                 />
                 {errors.email && (
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className="text-red-500 text-sm mt-1"
                   >
                     {errors.email}
@@ -172,7 +172,7 @@ export default function LoginPage() {
               {/* Password Input */}
               <View>
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-700 text-sm mb-2"
                 >
                   كلمة المرور
@@ -186,7 +186,7 @@ export default function LoginPage() {
                 />
                 {errors.password && (
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className="text-red-500 text-sm mt-1"
                   >
                     {errors.password}
@@ -201,7 +201,7 @@ export default function LoginPage() {
                 className="bg-[#ff4133] hover:bg-[#e53e3e]  mt-6"
               >
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-white text-lg "
                 >
                   {loading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
@@ -210,17 +210,14 @@ export default function LoginPage() {
 
               {/* Register Link */}
               <View className="flex-row justify-center items-center mt-6">
-                <Text
-                  style={{ fontFamily: "Arabic" }}
-                  className="text-gray-600"
-                >
+                <Text style={{ fontFamily: "Doc" }} className="text-gray-600">
                   ليس لديك حساب؟{" "}
                 </Text>
                 <TouchableOpacity
                   onPress={() => router.push("/auth/register" as any)}
                 >
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className="text-[#ff4133] font-semibold"
                   >
                     إنشاء حساب جديد
@@ -232,7 +229,7 @@ export default function LoginPage() {
               <View className="flex-row justify-center items-center mt-4">
                 <TouchableOpacity onPress={() => router.push("/")}>
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className="text-gray-500 text-sm"
                   >
                     العودة للصفحة الرئيسية

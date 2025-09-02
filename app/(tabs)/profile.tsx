@@ -47,13 +47,13 @@ export default function ProfileScreen() {
             </Avatar>
 
             <Text
-              style={{ fontFamily: "Arabic" }}
+              style={{ fontFamily: "Doc" }}
               className="text-2xl  text-gray-900 mb-2"
             >
               مرحباً بك
             </Text>
             <Text
-              style={{ fontFamily: "Arabic" }}
+              style={{ fontFamily: "Doc" }}
               className="text-gray-600 text-center mb-8"
             >
               قم بتسجيل الدخول للوصول إلى ملفك الشخصي ومكتبتك
@@ -68,7 +68,7 @@ export default function ProfileScreen() {
               <View className="flex-row items-center justify-center gap-2">
                 <LogIn size={16} color="white" />
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-white text-sm font-semibold"
                 >
                   تسجيل الدخول
@@ -83,7 +83,7 @@ export default function ProfileScreen() {
             >
               <View className="flex-row items-center justify-center gap-2">
                 <UserPlus size={16} color="#ff4133" />
-                <Text style={{ fontFamily: "Arabic" }} className=" text-lg ">
+                <Text style={{ fontFamily: "Doc" }} className=" text-lg ">
                   إنشاء حساب جديد
                 </Text>
               </View>
@@ -111,12 +111,12 @@ export default function ProfileScreen() {
           </Avatar>
 
           <Text
-            style={{ fontFamily: "Arabic" }}
+            style={{ fontFamily: "Doc" }}
             className="text-2xl font-bold text-gray-900 mb-1"
           >
             {user?.name}
           </Text>
-          <Text style={{ fontFamily: "Arabic" }} className="text-gray-600">
+          <Text style={{ fontFamily: "Doc" }} className="text-gray-600">
             {user?.email}
           </Text>
         </View>
@@ -124,7 +124,7 @@ export default function ProfileScreen() {
         {/* Profile Info */}
         <View className="bg-gray-50 rounded-xl p-4 mb-6">
           <Text
-            style={{ fontFamily: "Arabic" }}
+            style={{ fontFamily: "Doc" }}
             className="text-lg font-semibold text-gray-900 mb-4"
           >
             معلومات الحساب
@@ -135,13 +135,13 @@ export default function ProfileScreen() {
               <User size={20} color="#666" />
               <View className="flex-1">
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-sm text-gray-500"
                 >
                   الاسم
                 </Text>
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-900 font-medium"
                 >
                   {user?.name}
@@ -153,13 +153,13 @@ export default function ProfileScreen() {
               <Mail size={20} color="#666" />
               <View className="flex-1">
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-sm text-gray-500"
                 >
                   البريد الإلكتروني
                 </Text>
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-900 font-medium"
                 >
                   {user?.email}
@@ -175,7 +175,7 @@ export default function ProfileScreen() {
             onPress={() => router.push("/(tabs)/downloads")}
             className=" rounded-xl p-4 flex-row items-center justify-between"
           >
-            <Text style={{ fontFamily: "Arabic" }} className=" font-medium">
+            <Text style={{ fontFamily: "Doc" }} className=" font-medium">
               مكتبتي المحملة
             </Text>
             <Text className="">←</Text>
@@ -187,7 +187,7 @@ export default function ProfileScreen() {
               className=" mt-2 font-medium w-full"
             >
               <Text
-                style={{ fontFamily: "Arabic" }}
+                style={{ fontFamily: "Doc" }}
                 className="text-white text-sm"
               >
                 تسجيل الخروج

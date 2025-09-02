@@ -110,7 +110,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         style={{
           fontSize: 12,
           color: item.value === selectedValue ? "#5d3aca" : "#333",
-          fontFamily: "Arabic",
+          fontFamily: "Doc",
           flex: 1,
           textAlign: "right",
         }}
@@ -162,7 +162,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           style={{
             fontSize: 13,
             color: selectedOption ? "#333" : "#999",
-            fontFamily: "Arabic",
+            fontFamily: "Doc",
             flex: 1,
             textAlign: "right",
             marginRight: 8,

@@ -15,11 +15,10 @@ import "./global.css";
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    Arabic: require("../assets/fonts/ElMessiri-VariableFont_wght.ttf"),
     Bigx: require("../assets/fonts/bigx.otf"),
     Vexa: require("../assets/fonts/vexa.ttf"),
     Almarai: require("../assets/fonts/Almarai-Regular.ttf"),
-    Readex: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    Doc: require("../assets/fonts/bein-ar-normal_0.ttf"),
   });
 
   if (!loaded) {

@@ -73,7 +73,7 @@ export function UserMenu() {
             >
               <LogIn size={16} color="#666" />
               <Text
-                style={{ fontFamily: "Arabic" }}
+                style={{ fontFamily: "Doc" }}
                 className=" text-sm text-gray-700"
               >
                 تسجيل الدخول
@@ -89,7 +89,7 @@ export function UserMenu() {
             >
               <UserPlus size={16} color="#ff4133" />
               <Text
-                style={{ fontFamily: "Arabic" }}
+                style={{ fontFamily: "Doc" }}
                 className="text-sm  text-[#ff4133]"
               >
                 إنشاء حساب جديد
@@ -114,13 +114,13 @@ export function UserMenu() {
             <UserAvatar />
             <View className="flex-1">
               <Text
-                style={{ fontFamily: "Arabic" }}
+                style={{ fontFamily: "Doc" }}
                 className="font-medium text-xs leading-5"
               >
                 {user?.name}
               </Text>
               <Text
-                style={{ fontFamily: "Arabic" }}
+                style={{ fontFamily: "Doc" }}
                 className="text-muted-foreground line-clamp-1 text-sm font-normal leading-4"
               >
                 {user?.email}
@@ -136,7 +136,7 @@ export function UserMenu() {
           >
             <LogOut size={14} color="#dc2626" />
             <Text
-              style={{ fontFamily: "Arabic" }}
+              style={{ fontFamily: "Doc" }}
               className=" text-xs text-red-600"
             >
               تسجيل الخروج
@@ -148,7 +148,7 @@ export function UserMenu() {
           >
             <UserPlus size={14} color="#666" />
             <Text
-              style={{ fontFamily: "Arabic" }}
+              style={{ fontFamily: "Doc" }}
               className=" text-xs text-gray-700 mx-3"
             >
               ملفي الشخصي

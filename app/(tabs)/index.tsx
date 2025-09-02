@@ -99,14 +99,14 @@ export default function HomeScreen() {
 
       <View className="pt-5 px-1">
         <Text
-          style={{ fontFamily: "Arabic" }}
+          style={{ fontFamily: "Doc" }}
           className="text-sm font-bold line-clamp-1 text-gray-900 mb-1"
           numberOfLines={2}
         >
           {item.title}
         </Text>
         <Text
-          style={{ fontFamily: "Arabic" }}
+          style={{ fontFamily: "Doc" }}
           className="text-xs text-gray-600 mb-2"
           numberOfLines={1}
         >
@@ -116,7 +116,7 @@ export default function HomeScreen() {
         </Text>
         <View className="flex-row items-center space-x-2 gap-1">
           <Text
-            style={{ fontFamily: "Arabic" }}
+            style={{ fontFamily: "Doc" }}
             className="text-xs text-gray-500 capitalize"
           >
             {item.status.toLowerCase() === "ongoing"
@@ -147,15 +147,12 @@ export default function HomeScreen() {
       <View className="my-4">
         <View className="px-4 py-2">
           <Text
-            style={{ fontFamily: "Arabic" }}
+            style={{ fontFamily: "Doc" }}
             className="text-gray-700 text-xl font-semibold"
           >
             {title}
           </Text>
-          <Text
-            style={{ fontFamily: "Arabic" }}
-            className="text-sm text-gray-600"
-          >
+          <Text style={{ fontFamily: "Doc" }} className="text-sm text-gray-600">
             {description}
           </Text>
         </View>
@@ -179,7 +176,7 @@ export default function HomeScreen() {
           <View className="flex-1 justify-center items-center">
             <Text
               style={{
-                fontFamily: "Arabic",
+                fontFamily: "Doc",
               }}
               className="text-gray-500 text-md"
             >
@@ -209,21 +206,21 @@ export default function HomeScreen() {
       </View>
       <View className="p-3">
         <Text
-          style={{ fontFamily: "Arabic" }}
+          style={{ fontFamily: "Doc" }}
           className="text-sm font-bold text-gray-900 mb-1"
           numberOfLines={2}
         >
           {item.manga.title}
         </Text>
         <Text
-          style={{ fontFamily: "Arabic" }}
+          style={{ fontFamily: "Doc" }}
           className="text-xs text-gray-600"
           numberOfLines={1}
         >
           {item.chapter.title}
         </Text>
         <Text
-          style={{ fontFamily: "Arabic" }}
+          style={{ fontFamily: "Doc" }}
           className="text-xs text-gray-500 mt-1"
         >
           الفصل {item.chapter.number}
@@ -242,13 +239,13 @@ export default function HomeScreen() {
         <View className="my-4">
           <View className="px-4 py-2">
             <Text
-              style={{ fontFamily: "Arabic" }}
+              style={{ fontFamily: "Doc" }}
               className="text-gray-700 text-xl font-semibold"
             >
               متابعة القراءة
             </Text>
             <Text
-              style={{ fontFamily: "Arabic" }}
+              style={{ fontFamily: "Doc" }}
               className="text-sm text-gray-600"
             >
               استكمل قراءة المانجا التي بدأتها
@@ -256,7 +253,7 @@ export default function HomeScreen() {
           </View>
           <View className="flex-1 justify-center items-center py-8">
             <Text
-              style={{ fontFamily: "Arabic" }}
+              style={{ fontFamily: "Doc" }}
               className="text-gray-500 text-sm"
             >
               جارٍ تحميل قائمة المتابعة...
@@ -271,13 +268,13 @@ export default function HomeScreen() {
         <View className="my-4">
           <View className="px-4 py-2">
             <Text
-              style={{ fontFamily: "Arabic" }}
+              style={{ fontFamily: "Doc" }}
               className="text-gray-700 text-xl font-semibold"
             >
               متابعة القراءة
             </Text>
             <Text
-              style={{ fontFamily: "Arabic" }}
+              style={{ fontFamily: "Doc" }}
               className="text-sm text-gray-600"
             >
               ابدأ بقراءة مانجا لتظهر هنا
@@ -296,15 +293,12 @@ export default function HomeScreen() {
       <View className="my-4">
         <View className="px-4 py-2">
           <Text
-            style={{ fontFamily: "Arabic" }}
+            style={{ fontFamily: "Doc" }}
             className="text-gray-700 text-xl font-semibold"
           >
             متابعة القراءة
           </Text>
-          <Text
-            style={{ fontFamily: "Arabic" }}
-            className="text-sm text-gray-600"
-          >
+          <Text style={{ fontFamily: "Doc" }} className="text-sm text-gray-600">
             استكمل قراءة المانجا التي بدأتها
           </Text>
         </View>
@@ -367,7 +361,7 @@ export default function HomeScreen() {
             مرحبًا بك في Desire Manga
           </Text>
           <Text
-            style={{ fontFamily: "Arabic" }}
+            style={{ fontFamily: "Doc" }}
             className="text-sm text-white/80 mb-4"
           >
             استكشف مجموعتنا الواسعة من المانجا واستمتع بقراءة قصصك المفضلة.
@@ -375,7 +369,7 @@ export default function HomeScreen() {
           <View className="">
             <Input
               placeholder="ابحث عن مانجا..."
-              style={{ fontFamily: "Arabic" }}
+              style={{ fontFamily: "Doc" }}
               className="text-sm text-gray-800"
             />
           </View>

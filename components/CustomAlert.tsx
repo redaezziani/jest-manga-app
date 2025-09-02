@@ -67,12 +67,12 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              <Text style={{ fontFamily: "Arabic" }}>
+              <Text style={{ fontFamily: "Doc" }}>
                 {alertConfig?.title || ""}
               </Text>
             </AlertDialogTitle>
             <AlertDialogDescription>
-              <Text style={{ fontFamily: "Arabic" }}>
+              <Text style={{ fontFamily: "Doc" }}>
                 {alertConfig?.message || ""}
               </Text>
             </AlertDialogDescription>
@@ -80,13 +80,13 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
           <AlertDialogFooter>
             {alertConfig?.showCancel !== false && (
               <AlertDialogCancel onPress={handleCancel}>
-                <Text style={{ fontFamily: "Arabic" }}>
+                <Text style={{ fontFamily: "Doc" }}>
                   {alertConfig?.cancelText || "إلغاء"}
                 </Text>
               </AlertDialogCancel>
             )}
             <AlertDialogAction onPress={handleConfirm}>
-              <Text style={{ fontFamily: "Arabic" }}>
+              <Text style={{ fontFamily: "Doc" }}>
                 {alertConfig?.confirmText || "موافق"}
               </Text>
             </AlertDialogAction>

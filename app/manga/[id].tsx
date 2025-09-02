@@ -9,7 +9,14 @@ import * as FileSystem from "expo-file-system";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Book, Download } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Swiper from "react-native-swiper";
 
 export default function MangaDetail() {
@@ -25,6 +32,7 @@ export default function MangaDetail() {
   const [downloadingChapters, setDownloadingChapters] = useState<Set<string>>(
     new Set()
   );
+  const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -58,30 +66,41 @@ export default function MangaDetail() {
     }
   };
 
-  const handelFetchMangaDetails = () => {
-    fetch(`${API_URL}/api/manga/info/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setManga(data.data.mangaDetails);
-        setSimilar(data.data.similarManga);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
+  const handelFetchMangaDetails = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/manga/info/${id}`);
+      const data = await res.json();
+      setManga(data.data.mangaDetails);
+      setSimilar(data.data.similarManga);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
   };
 
-  const handelFetchChapters = () => {
-    fetch(`${API_URL}/api/manga/manga/${id}/chapters`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setChapters(data.data.chapters);
-        }
-      })
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
+  const handelFetchChapters = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/manga/manga/${id}/chapters`);
+      const data = await res.json();
+      if (data.success) {
+        setChapters(data.data.chapters);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await Promise.all([
+      handelFetchMangaDetails(),
+      handelFetchChapters(),
+      checkDownloadedChapters(),
+    ]);
+    setRefreshing(false);
   };
 
   const renderMangaCard = (item: MangaExtended) => (
@@ -99,7 +118,7 @@ export default function MangaDetail() {
       <View className="pt-2 px-1">
         <Text
           onPress={() => router.push(`/manga/${item.id}`)}
-          style={{ fontFamily: "Arabic" }}
+          style={{ fontFamily: "Doc" }}
           className="text-sm font-bold line-clamp-1 text-gray-900 mb-1"
           numberOfLines={2}
         >
@@ -110,7 +129,7 @@ export default function MangaDetail() {
         </Text>
         <View className="flex-row items-center justify-between">
           <Text
-            style={{ fontFamily: "Arabic" }}
+            style={{ fontFamily: "Doc" }}
             className="text-xs text-gray-500 capitalize"
           >
             {item.status}
@@ -275,7 +294,18 @@ export default function MangaDetail() {
       <View className="px-4    ">
         <PathIndicator title={manga ? manga.title : "تفاصيل المانجا"} />
       </View>
-      <ScrollView className="flex-1 bg-white px-2">
+      <ScrollView
+        className="flex-1 bg-white px-2"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#ff4133"
+            title="جاري التحديث..."
+            titleColor="#666"
+          />
+        }
+      >
         {manga && (
           <>
             <Image
@@ -286,7 +316,7 @@ export default function MangaDetail() {
 
             <View className="px-2 py-2">
               <Text
-                style={{ fontFamily: "Arabic" }}
+                style={{ fontFamily: "Doc" }}
                 className="text-xl font-bold text-gray-900 mb-1"
               >
                 {manga.title}
@@ -294,7 +324,7 @@ export default function MangaDetail() {
 
               {manga.otherTitles.length > 0 && (
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-500 mb-2"
                 >
                   {manga.otherTitles.join(" / ")}
@@ -303,11 +333,11 @@ export default function MangaDetail() {
 
               <View className="mb-3">
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-500 text-sm"
                 >
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className=" text-sm text-gray-700"
                   >
                     المؤلف:{" "}
@@ -316,11 +346,11 @@ export default function MangaDetail() {
                 </Text>
 
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-500 text-sm"
                 >
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className=" text-sm text-gray-700"
                   >
                     الرسام:{" "}
@@ -329,11 +359,11 @@ export default function MangaDetail() {
                 </Text>
 
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-500 text-sm"
                 >
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className=" text-sm text-gray-700"
                   >
                     النوع:{" "}
@@ -342,11 +372,11 @@ export default function MangaDetail() {
                 </Text>
 
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-500 text-sm"
                 >
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className=" text-sm text-gray-700"
                   >
                     الحالة:{" "}
@@ -365,7 +395,7 @@ export default function MangaDetail() {
                       className="bg-gray-200 px-3 py-1 rounded-full mr-2 mb-2"
                     >
                       <Text
-                        style={{ fontFamily: "Arabic" }}
+                        style={{ fontFamily: "Doc" }}
                         className="text-sm text-gray-700"
                       >
                         {genre}
@@ -376,8 +406,8 @@ export default function MangaDetail() {
               )}
 
               <Text
-                style={{ fontFamily: "Arabic" }}
-                className="text-gray-800 leading-relaxed"
+                style={{ fontFamily: "Doc" }}
+                className="text-gray-800 leading-relaxed "
               >
                 {manga.description}
               </Text>
@@ -386,7 +416,7 @@ export default function MangaDetail() {
             {similar.length > 0 && (
               <View className="py-4 px-2">
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-xl  text-gray-900 mb-2"
                 >
                   مانجا مشابهة
@@ -427,7 +457,7 @@ export default function MangaDetail() {
         {chapters.length > 0 && (
           <View className="px-2 py-4">
             <Text
-              style={{ fontFamily: "Arabic" }}
+              style={{ fontFamily: "Doc" }}
               className="text-xl  text-gray-900 mb-2"
             >
               الفصول
@@ -449,7 +479,7 @@ export default function MangaDetail() {
                       }
                     >
                       <Text
-                        style={{ fontFamily: "Arabic" }}
+                        style={{ fontFamily: "Doc" }}
                         className="text-gray-800 text-sm"
                       >
                         {chapter.number} - {chapter.title}
@@ -458,7 +488,7 @@ export default function MangaDetail() {
 
                     {isDownloading && (
                       <Text
-                        style={{ fontFamily: "Arabic" }}
+                        style={{ fontFamily: "Doc" }}
                         className="text-blue-600 text-xs mt-1"
                       >
                         ⬇️ جاري التحميل...
@@ -502,14 +532,14 @@ export default function MangaDetail() {
 
 const PathIndicator = ({ title }: { title: string }) => (
   <View className="flex-row items-center gap-1 ">
-    <Link href="/" style={{ fontFamily: "Arabic" }} className=" text-[#ff4133]">
+    <Link href="/" style={{ fontFamily: "Doc" }} className=" text-[#ff4133]">
       الرئيسية
     </Link>
-    <Text style={{ fontFamily: "Arabic" }} className="text-sm text-gray-500">
+    <Text style={{ fontFamily: "Doc" }} className="text-sm text-gray-500">
       /
     </Text>
     <Text
-      style={{ fontFamily: "Arabic" }}
+      style={{ fontFamily: "Doc" }}
       className="text-sm text-gray-700 font-bold"
       numberOfLines={1}
       ellipsizeMode="tail"

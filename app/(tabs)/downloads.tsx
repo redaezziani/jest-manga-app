@@ -278,7 +278,7 @@ export default function DownloadsPage() {
 
             <View className="flex-1">
               <Text
-                style={{ fontFamily: "Arabic" }}
+                style={{ fontFamily: "Doc" }}
                 className="text-lg font-bold text-gray-900 mb-1"
               >
                 {manga.info.title}
@@ -286,7 +286,7 @@ export default function DownloadsPage() {
 
               {manga.info.otherTitles && manga.info.otherTitles.length > 0 && (
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-500 mb-2 text-sm line-clamp-1"
                 >
                   {manga.info.otherTitles.join(" / ")}
@@ -295,7 +295,7 @@ export default function DownloadsPage() {
 
               {manga.info.authors && manga.info.authors.length > 0 && (
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-600 text-sm mb-1"
                 >
                   المؤلف: {manga.info.authors.join(", ")}
@@ -304,7 +304,7 @@ export default function DownloadsPage() {
 
               {manga.info.status && (
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-600 text-sm mb-2"
                 >
                   الحالة:{" "}
@@ -315,7 +315,7 @@ export default function DownloadsPage() {
               )}
 
               <Text
-                style={{ fontFamily: "Arabic" }}
+                style={{ fontFamily: "Doc" }}
                 className="text-sm text-primary font-medium"
               >
                 {manga.chapters.length} فصل محمل
@@ -331,7 +331,7 @@ export default function DownloadsPage() {
                   className="bg-gray-100 px-2 py-1 rounded-full mr-2 mb-1"
                 >
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className="text-xs text-gray-700"
                   >
                     {genre}
@@ -341,7 +341,7 @@ export default function DownloadsPage() {
               {manga.info.genres.length > 3 && (
                 <View className="bg-gray-100 px-2 py-1 rounded-full">
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className="text-xs text-gray-700"
                   >
                     +{manga.info.genres.length - 3}
@@ -356,7 +356,7 @@ export default function DownloadsPage() {
           <View className="border-t border-gray-200 border-dashed p-4">
             {manga.info.description && (
               <Text
-                style={{ fontFamily: "Arabic" }}
+                style={{ fontFamily: "Doc" }}
                 className="text-gray-700 text-sm line-clamp-3 mb-4 leading-relaxed"
               >
                 {manga.info.description}
@@ -364,7 +364,7 @@ export default function DownloadsPage() {
             )}
 
             <Text
-              style={{ fontFamily: "Arabic" }}
+              style={{ fontFamily: "Doc" }}
               className="text-base font-semibold text-gray-800 mb-3"
             >
               الفصول المحملة
@@ -393,7 +393,7 @@ export default function DownloadsPage() {
 
                   <View className="flex-1">
                     <Text
-                      style={{ fontFamily: "Arabic" }}
+                      style={{ fontFamily: "Doc" }}
                       className="text-gray-800 font-medium"
                     >
                       الفصل {chapter.number}
@@ -401,7 +401,7 @@ export default function DownloadsPage() {
                     {chapter.title &&
                       chapter.title !== `الفصل ${chapter.number}` && (
                         <Text
-                          style={{ fontFamily: "Arabic" }}
+                          style={{ fontFamily: "Doc" }}
                           className="text-gray-600 text-sm"
                         >
                           {chapter.title}
@@ -410,7 +410,7 @@ export default function DownloadsPage() {
                   </View>
 
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className="text-xs text-gray-500 mr-2"
                   >
                     {chapter.totalPages} صفحة
@@ -444,7 +444,7 @@ export default function DownloadsPage() {
             >
               <Trash2 size={14} color="#ef4444" />
               <Text
-                style={{ fontFamily: "Arabic" }}
+                style={{ fontFamily: "Doc" }}
                 className="text-red-500 text-xs  "
               >
                 حذف المانجا وجميع فصولها
@@ -459,16 +459,10 @@ export default function DownloadsPage() {
   return (
     <ScrollView className="flex-1 bg-gray-50 p-4">
       <View className="flex-col mb-6">
-        <Text
-          style={{ fontFamily: "Arabic" }}
-          className="text-xl  text-gray-900 "
-        >
+        <Text style={{ fontFamily: "Doc" }} className="text-xl  text-gray-900 ">
           مكتبتي
         </Text>
-        <Text
-          style={{ fontFamily: "Arabic" }}
-          className="text-gray-600  text-sm"
-        >
+        <Text style={{ fontFamily: "Doc" }} className="text-gray-600  text-sm">
           هنا تجد جميع المانجا والفصول التي قمت بتحميلها للقراءة بدون اتصال
           بالإنترنت.
         </Text>
@@ -477,13 +471,13 @@ export default function DownloadsPage() {
       {downloads.length === 0 ? (
         <View className="flex-1 items-center justify-center mt-20">
           <Text
-            style={{ fontFamily: "Arabic" }}
+            style={{ fontFamily: "Doc" }}
             className="text-gray-600 text-center text-lg"
           >
             لا توجد مانجا محملة
           </Text>
           <Text
-            style={{ fontFamily: "Arabic" }}
+            style={{ fontFamily: "Doc" }}
             className="text-gray-500 text-center mt-2"
           >
             قم بتحميل بعض الفصول لتظهر هنا

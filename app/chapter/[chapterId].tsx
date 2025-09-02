@@ -161,7 +161,7 @@ export default function ChapterReader() {
     return (
       <View className="flex-1 justify-center items-center bg-white">
         <ActivityIndicator size="large" color="#ff4133" />
-        <Text style={{ fontFamily: "Arabic" }} className="text-gray-500 mt-2">
+        <Text style={{ fontFamily: "Doc" }} className="text-gray-500 mt-2">
           جاري تحميل الفصل...
         </Text>
       </View>
@@ -171,7 +171,7 @@ export default function ChapterReader() {
   if (!chapter) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
-        <Text style={{ fontFamily: "Arabic" }} className="text-red-500">
+        <Text style={{ fontFamily: "Doc" }} className="text-red-500">
           لم يتم العثور على الفصل.
         </Text>
       </View>
@@ -198,7 +198,7 @@ export default function ChapterReader() {
           >
             <SelectTrigger>
               <SelectValue
-                style={{ fontFamily: "Arabic" }}
+                style={{ fontFamily: "Doc" }}
                 placeholder="اختر الفصل"
                 className="text-sm text-gray-700"
               />
@@ -288,26 +288,26 @@ const PathIndicator = ({
   <View className="flex-row items-center space-x-2 gap-1">
     <Link
       href="/"
-      style={{ fontFamily: "Arabic" }}
+      style={{ fontFamily: "Doc" }}
       className="text-sm text-[#ff4133]"
     >
       الرئيسية
     </Link>
-    <Text style={{ fontFamily: "Arabic" }} className="text-sm text-gray-500">
+    <Text style={{ fontFamily: "Doc" }} className="text-sm text-gray-500">
       /
     </Text>
     <Link
       href={`/manga/${mangaId}`}
-      style={{ fontFamily: "Arabic" }}
+      style={{ fontFamily: "Doc" }}
       className="text-sm text-gray-500"
     >
       {mangaName}
     </Link>
-    <Text style={{ fontFamily: "Arabic" }} className="text-sm text-gray-500">
+    <Text style={{ fontFamily: "Doc" }} className="text-sm text-gray-500">
       /
     </Text>
     <Text
-      style={{ fontFamily: "Arabic" }}
+      style={{ fontFamily: "Doc" }}
       className="text-sm text-gray-700 "
       numberOfLines={1}
       ellipsizeMode="tail"

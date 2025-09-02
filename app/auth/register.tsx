@@ -135,13 +135,13 @@ export default function RegisterPage() {
             {/* Header */}
             <View className="items-center mb-8">
               <Text
-                style={{ fontFamily: "Arabic" }}
+                style={{ fontFamily: "Doc" }}
                 className="text-3xl  text-gray-900 mb-2"
               >
                 إنشاء حساب جديد
               </Text>
               <Text
-                style={{ fontFamily: "Arabic" }}
+                style={{ fontFamily: "Doc" }}
                 className="text-gray-600 text-center"
               >
                 انضم إلينا واستمتع بقراءة المانجا المفضلة لديك
@@ -153,7 +153,7 @@ export default function RegisterPage() {
               {/* Name Input */}
               <View>
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-700 text-sm mb-2"
                 >
                   الاسم الكامل
@@ -169,7 +169,7 @@ export default function RegisterPage() {
                 />
                 {errors.name && (
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className="text-red-500 text-sm mt-1"
                   >
                     {errors.name}
@@ -180,7 +180,7 @@ export default function RegisterPage() {
               {/* Email Input */}
               <View>
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-700 text-sm mb-2"
                 >
                   البريد الإلكتروني
@@ -198,7 +198,7 @@ export default function RegisterPage() {
                 />
                 {errors.email && (
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className="text-red-500 text-sm mt-1"
                   >
                     {errors.email}
@@ -209,7 +209,7 @@ export default function RegisterPage() {
               {/* Password Input */}
               <View>
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-700 text-sm mb-2"
                 >
                   كلمة المرور
@@ -225,7 +225,7 @@ export default function RegisterPage() {
                 />
                 {errors.password && (
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className="text-red-500 text-sm mt-1"
                   >
                     {errors.password}
@@ -236,7 +236,7 @@ export default function RegisterPage() {
               {/* Confirm Password Input */}
               <View>
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-gray-700 text-sm mb-2"
                 >
                   تأكيد كلمة المرور
@@ -256,7 +256,7 @@ export default function RegisterPage() {
                 />
                 {errors.confirmPassword && (
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className="text-red-500 text-sm mt-1"
                   >
                     {errors.confirmPassword}
@@ -271,7 +271,7 @@ export default function RegisterPage() {
                 className="bg-[#ff4133] hover:bg-[#e53e3e] py-4 rounded-lg mt-6"
               >
                 <Text
-                  style={{ fontFamily: "Arabic" }}
+                  style={{ fontFamily: "Doc" }}
                   className="text-white text-lg font-semibold"
                 >
                   {loading ? "جاري إنشاء الحساب..." : "إنشاء حساب"}
@@ -280,17 +280,14 @@ export default function RegisterPage() {
 
               {/* Login Link */}
               <View className="flex-row justify-center items-center mt-6">
-                <Text
-                  style={{ fontFamily: "Arabic" }}
-                  className="text-gray-600"
-                >
+                <Text style={{ fontFamily: "Doc" }} className="text-gray-600">
                   لديك حساب بالفعل؟{" "}
                 </Text>
                 <TouchableOpacity
                   onPress={() => router.push("/auth/login" as any)}
                 >
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className="text-[#ff4133] font-semibold"
                   >
                     تسجيل الدخول
@@ -302,7 +299,7 @@ export default function RegisterPage() {
               <View className="flex-row justify-center items-center mt-4">
                 <TouchableOpacity onPress={() => router.push("/")}>
                   <Text
-                    style={{ fontFamily: "Arabic" }}
+                    style={{ fontFamily: "Doc" }}
                     className="text-gray-500 text-sm"
                   >
                     العودة للصفحة الرئيسية
