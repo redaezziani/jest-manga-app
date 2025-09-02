@@ -2,18 +2,21 @@ import { useCustomAlert } from "@/components/CustomAlert";
 import { MangaDetailSkeleton } from "@/components/Details-Manga-S";
 import { LayoutWithTopBar } from "@/components/LayoutWithBar";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import { Chapter } from "@/type/chapter";
+import { Comment } from "@/type/comment";
 import { MangaExtended } from "@/type/manga";
 import { API_URL } from "@/utils";
 import * as FileSystem from "expo-file-system";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Book, Download } from "lucide-react-native";
+import { Book, Download, MessageCircle, Send } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   Image,
   RefreshControl,
   ScrollView,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -33,12 +36,19 @@ export default function MangaDetail() {
     new Set()
   );
   const [refreshing, setRefreshing] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyContent, setReplyContent] = useState("");
+  const [commentsLoading, setCommentsLoading] = useState(false);
   const router = useRouter();
+  const { user, token, isAuthenticated } = useAuth();
 
   useEffect(() => {
     handelFetchMangaDetails();
     handelFetchChapters();
     checkDownloadedChapters();
+    fetchComments();
   }, [id]);
 
   const checkDownloadedChapters = async () => {
@@ -99,9 +109,182 @@ export default function MangaDetail() {
       handelFetchMangaDetails(),
       handelFetchChapters(),
       checkDownloadedChapters(),
+      fetchComments(),
     ]);
     setRefreshing(false);
   };
+
+  // Comment-related functions
+  const fetchComments = async () => {
+    if (!id) return;
+
+    setCommentsLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/comments/manga/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        console.log("Fetched comments:", data);
+
+        // Handle both wrapped and direct response formats
+        if (data.success && data.data) {
+          setComments(data.data);
+        } else if (Array.isArray(data)) {
+          setComments(data);
+        } else {
+          setComments([]);
+        }
+      } else {
+        console.error("Failed to fetch comments:", res.status);
+        setComments([]);
+      }
+    } catch (err) {
+      console.error("Error fetching comments:", err);
+      setComments([]);
+    } finally {
+      setCommentsLoading(false);
+    }
+  };
+
+  const createComment = async (content: string, parentId?: string) => {
+    if (!isAuthenticated || !token || !content.trim()) {
+      showAlert({
+        title: "خطأ",
+        message: "يجب تسجيل الدخول لإضافة تعليق",
+        showCancel: false,
+      });
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/api/comments/manga/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          content,
+          parentId,
+        }),
+      });
+
+      const data = await res.json();
+      console.log("Create comment response:", data);
+
+      if (res.ok) {
+        showAlert({
+          title: "نجاح ✅",
+          message: "تم إضافة التعليق بنجاح",
+          showCancel: false,
+        });
+
+        // Reset form
+        setNewComment("");
+        setReplyingTo(null);
+        setReplyContent("");
+
+        // Refresh comments
+        fetchComments();
+      } else {
+        throw new Error(data.message || "Failed to create comment");
+      }
+    } catch (err) {
+      console.error("Error creating comment:", err);
+      showAlert({
+        title: "خطأ ❌",
+        message: "فشل في إضافة التعليق",
+        showCancel: false,
+      });
+    }
+  };
+
+  const renderComment = (comment: Comment, level: number = 0) => (
+    <View key={comment.id} className={`mb-1 ${level > 0 ? "ml-4 pl-4 " : ""}`}>
+      <View className=" p-3 ">
+        <View className="flex-row items-center justify-between mb-2">
+          <Text
+            style={{ fontFamily: "Doc" }}
+            className=" text-sm text-gray-800"
+          >
+            {comment.user.name}
+          </Text>
+          <Text className="text-xs text-gray-500">
+            {new Date(comment.createdAt).toLocaleDateString("ar")}
+          </Text>
+        </View>
+
+        <Text
+          style={{ fontFamily: "Doc" }}
+          className="text-gray-500 text-sm mb-2"
+        >
+          {comment.content}
+        </Text>
+
+        <TouchableOpacity
+          onPress={() =>
+            setReplyingTo(replyingTo === comment.id ? null : comment.id)
+          }
+          className="flex-row items-center"
+        >
+          <Text
+            style={{ fontFamily: "Doc" }}
+            className="text-sm text-gray-600 underline ml-1"
+          >
+            رد
+          </Text>
+        </TouchableOpacity>
+
+        {replyingTo === comment.id && (
+          <View className="mt-3 p-2 bg-white rounded">
+            <TextInput
+              style={{ fontFamily: "Doc" }}
+              className="border border-gray-300 rounded p-2 mb-2"
+              placeholder="اكتب ردك هنا..."
+              value={replyContent}
+              onChangeText={setReplyContent}
+              multiline
+            />
+            <View className="flex-row gap-2">
+              <Button
+                onPress={() => createComment(replyContent, comment.id)}
+                size="sm"
+                className="flex-1"
+              >
+                <Send size={16} color="white" />
+                <Text style={{ fontFamily: "Doc" }} className="text-white ml-2">
+                  إرسال
+                </Text>
+              </Button>
+              <Button
+                variant="ghost"
+                onPress={() => {
+                  setReplyingTo(null);
+                  setReplyContent("");
+                }}
+                size="sm"
+              >
+                <Text style={{ fontFamily: "Doc" }} className="text-gray-600">
+                  إلغاء
+                </Text>
+              </Button>
+            </View>
+          </View>
+        )}
+      </View>
+
+      {/* Render replies */}
+      {comment.replies && comment.replies.length > 0 && (
+        <View className="">
+          {comment.replies.map((reply) => renderComment(reply, level + 1))}
+        </View>
+      )}
+    </View>
+  );
 
   const renderMangaCard = (item: MangaExtended) => (
     <View className="flex-1 px-2 mb-4 " key={item.id}>
@@ -525,6 +708,76 @@ export default function MangaDetail() {
             })}
           </View>
         )}
+
+        {/* Comments Section */}
+        <View className="px-2 py-4 mt-4 border-t border-gray-200">
+          <View className="flex-row items-center mb-4">
+            <MessageCircle size={20} color="#ff4133" />
+            <Text
+              style={{ fontFamily: "Doc" }}
+              className="text-xl text-gray-900 ml-2"
+            >
+              التعليقات ({comments.length})
+            </Text>
+          </View>
+
+          {/* Add new comment */}
+          {isAuthenticated ? (
+            <View className="mb-4 p-3 ">
+              <TextInput
+                style={{ fontFamily: "Doc" }}
+                className="border border-gray-300 rounded p-3 mb-3"
+                placeholder="اكتب تعليقك هنا..."
+                value={newComment}
+                onChangeText={setNewComment}
+                multiline
+                numberOfLines={3}
+              />
+              <Button
+                onPress={() => createComment(newComment)}
+                disabled={!newComment.trim()}
+                className="flex-row items-center justify-center"
+              >
+                <Send size={16} color="white" />
+                <Text style={{ fontFamily: "Doc" }} className="text-white ml-2">
+                  إضافة تعليق
+                </Text>
+              </Button>
+            </View>
+          ) : (
+            <View className="mb-4 p-3 bg-gray-100 rounded-lg">
+              <Text
+                style={{ fontFamily: "Doc" }}
+                className="text-gray-600 text-center"
+              >
+                يجب تسجيل الدخول لإضافة تعليق
+              </Text>
+            </View>
+          )}
+
+          {/* Comments list */}
+          {commentsLoading ? (
+            <View className="py-4">
+              <Text
+                style={{ fontFamily: "Doc" }}
+                className="text-center text-gray-500"
+              >
+                جاري تحميل التعليقات...
+              </Text>
+            </View>
+          ) : comments.length > 0 ? (
+            <View>{comments.map((comment) => renderComment(comment))}</View>
+          ) : (
+            <View className="py-8">
+              <Text
+                style={{ fontFamily: "Doc" }}
+                className="text-center text-gray-500"
+              >
+                لا توجد تعليقات بعد. كن أول من يعلق!
+              </Text>
+            </View>
+          )}
+        </View>
       </ScrollView>
     </LayoutWithTopBar>
   );

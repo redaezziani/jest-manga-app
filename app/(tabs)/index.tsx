@@ -83,8 +83,8 @@ export default function HomeScreen() {
   };
 
   const renderMangaCard = (item: Manga) => (
-    <Link href={`/manga/${item.id}`} className="flex-1 px-2  " key={item.id}>
-      <View className=" p-0.5 border relative border-gray-300 w-full rounded-md ">
+    <Link href={`/manga/${item.id}`} className="flex-1 px-3  " key={item.id}>
+      <View className=" p-0.5  relative  w-full rounded-md ">
         <Image
           source={{ uri: item.coverThumbnail }}
           style={{
@@ -97,7 +97,7 @@ export default function HomeScreen() {
         />
       </View>
 
-      <View className="pt-5 px-1">
+      <View className="pt-2 px-1">
         <Text
           style={{ fontFamily: "Doc" }}
           className="text-sm font-bold line-clamp-1 text-gray-900 mb-1"
@@ -129,7 +129,7 @@ export default function HomeScreen() {
   );
 
   const renderMangaPair = (pair: Manga[], index: number) => (
-    <View className="flex-row px-4" key={index}>
+    <View className="flex-row px-2" key={index}>
       {pair.map((manga) => renderMangaCard(manga))}
       {pair.length === 1 && <View className="flex-1 mx-2" />}
     </View>
