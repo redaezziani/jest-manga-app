@@ -147,11 +147,21 @@ const PathIndicator = ({ chapterName }: { chapterName: string }) => {
   return (
     <View className="flex-row items-center  space-x-2 gap-1">
       <Text
-        onPress={() => router.back()}
+        onPress={() => router.push("/")}
         style={{ fontFamily: "Doc" }}
         className="text-sm text-[#ff4133]"
       >
         الرئيسية
+      </Text>
+      <Text style={{ fontFamily: "Doc" }} className="text-sm text-gray-500">
+        /
+      </Text>
+      <Text
+        onPress={() => router.back()}
+        style={{ fontFamily: "Doc" }}
+        className="text-sm text-gray-500"
+      >
+        الفصول المحفوظة
       </Text>
       <Text style={{ fontFamily: "Doc" }} className="text-sm text-gray-500">
         /

@@ -7,14 +7,7 @@ import { APIService } from "@/utils/apiService";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Image,
-  RefreshControl,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, RefreshControl, ScrollView, Text, View } from "react-native";
 import Swiper from "react-native-swiper";
 
 export default function HomeScreen() {
@@ -189,25 +182,28 @@ export default function HomeScreen() {
   };
 
   const renderKeepReadingCard = (item: KeepReadingItem) => (
-    <TouchableOpacity
+    <Link
+      href={`/chapter/${item.chapterId}?mangaId=${item.mangaId}`}
+      className="flex-1 px-3"
       key={item.id}
-      className="flex-1 mx-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm"
-      onPress={() =>
-        router.push(`/chapter/${item.chapterId}?mangaId=${item.mangaId}`)
-      }
     >
-      <View className="relative">
+      <View className="p-0.5 relative w-full rounded-md">
         <Image
           source={{ uri: item.manga.coverThumbnail }}
-          style={{ width: "100%", height: 150 }}
+          style={{
+            width: "100%",
+            height: 245,
+            borderRadius: 5,
+          }}
           resizeMode="cover"
-          className="rounded-t-lg"
+          className="border border-gray-300"
         />
       </View>
-      <View className="p-3">
+
+      <View className="pt-2 px-1">
         <Text
           style={{ fontFamily: "Doc" }}
-          className="text-sm font-bold text-gray-900 mb-1"
+          className="text-sm font-bold line-clamp-1 text-gray-900 mb-1"
           numberOfLines={2}
         >
           {item.manga.title}
@@ -226,13 +222,11 @@ export default function HomeScreen() {
           الفصل {item.chapter.number}
         </Text>
       </View>
-    </TouchableOpacity>
+    </Link>
   );
 
   const renderKeepReadingSection = () => {
-    if (!isAuthenticated) {
-      return null;
-    }
+    if (!isAuthenticated) return null;
 
     if (keepReadingLoading) {
       return (
@@ -303,7 +297,7 @@ export default function HomeScreen() {
           </Text>
         </View>
 
-        <View style={{ height: 250 }} className="relative">
+        <View style={{ height: 330 }} className="relative">
           <Swiper
             showsPagination={true}
             autoplay={false}
@@ -314,7 +308,7 @@ export default function HomeScreen() {
             className="mt-2"
           >
             {mangaPairs.map((pair, index) => (
-              <View className="flex-row px-4" key={index}>
+              <View className="flex-row px-2" key={index}>
                 {pair.map((item) => renderKeepReadingCard(item))}
                 {pair.length === 1 && <View className="flex-1 mx-2" />}
               </View>

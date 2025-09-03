@@ -261,7 +261,7 @@ export default function ChapterReader() {
         </View>
       </View>
 
-      <ScrollView className="flex-1 bg-white px-2">
+      <ScrollView className="flex-1 bg-black px-2">
         {chapter.pages.map((pageUrl, index) => (
           <Image
             key={index}
