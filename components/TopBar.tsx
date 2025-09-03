@@ -2,6 +2,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import React, { useState } from "react";
 import {
   I18nManager,
+  Image,
   Modal,
   Platform,
   Pressable,
@@ -57,18 +58,32 @@ const UserMenuWrapper = ({ toggleMenu }: { toggleMenu: () => void }) => (
     <UserMenu />
   </View>
 );
-
 const AppTitle = () => (
-  <Text
-    style={{
-      fontFamily: "Bigx",
-      includeFontPadding: false,
-      textAlignVertical: "center",
-    }}
-    className="text-3xl text-white"
-  >
-    دينو <Text style={{ color: "#fff" }}>مانجا</Text>
-  </Text>
+  <View style={{ flexDirection: "row", alignItems: "center" }}>
+    <Image
+      source={require("../assets/images/jest-name.png")}
+      style={{
+        width: 32,
+        height: 32,
+        marginRight: 8,
+        tintColor: "white", // <- this changes black parts to white
+      }}
+      resizeMode="contain"
+    />
+
+    <Text
+      style={{
+        fontFamily: "Bigx",
+        includeFontPadding: false,
+        textAlignVertical: "center",
+        fontSize: 24,
+        color: "#fff",
+      }}
+      className="text-3xl text-white"
+    >
+      ر دينو <Text style={{ color: "#fff" }}>مانجا</Text>
+    </Text>
+  </View>
 );
 
 const MenuModal = ({

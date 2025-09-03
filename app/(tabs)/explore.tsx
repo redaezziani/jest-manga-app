@@ -206,7 +206,7 @@ export default function ExploreScreen() {
           ListHeaderComponent={
             <View style={{ backgroundColor: "#f9fafb", padding: 16 }}>
               {/* Header */}
-              <View style={{ marginBottom: 24, marginTop: 16 }}>
+              <View style={{ marginBottom: 24, marginTop: 2 }}>
                 <Text style={{ fontFamily: "Doc" }}>استكشاف المانجا</Text>
                 <Text
                   style={{ color: "#4b5563", fontFamily: "Doc" }}
