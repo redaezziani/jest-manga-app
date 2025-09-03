@@ -141,7 +141,7 @@ export default function HomeScreen() {
         <View className="px-4 py-2">
           <Text
             style={{ fontFamily: "Doc" }}
-            className="text-gray-700 text-xl font-semibold"
+            className="text-primary text-xl font-semibold"
           >
             {title}
           </Text>
@@ -234,7 +234,7 @@ export default function HomeScreen() {
           <View className="px-4 py-2">
             <Text
               style={{ fontFamily: "Doc" }}
-              className="text-gray-700 text-xl font-semibold"
+              className="text-primary text-xl font-semibold"
             >
               متابعة القراءة
             </Text>
@@ -263,7 +263,7 @@ export default function HomeScreen() {
           <View className="px-4 py-2">
             <Text
               style={{ fontFamily: "Doc" }}
-              className="text-gray-700 text-xl font-semibold"
+              className="text-primary text-xl font-semibold"
             >
               متابعة القراءة
             </Text>
@@ -288,7 +288,7 @@ export default function HomeScreen() {
         <View className="px-4 py-2">
           <Text
             style={{ fontFamily: "Doc" }}
-            className="text-gray-700 text-xl font-semibold"
+            className="text-primary text-xl font-semibold"
           >
             متابعة القراءة
           </Text>
@@ -329,14 +329,14 @@ export default function HomeScreen() {
       <View className=" h-72 w-full bg-gray-200 relative flex justify-center items-center">
         <Image
           source={{
-            uri: "https://t3.ftcdn.net/jpg/07/32/10/90/360_F_732109080_4lXwGofazqAiysUpcCnrbflsNOl9EMdW.jpg",
+            uri: "https://img1.wallspic.com/crops/6/0/2/2/7/172206/172206-anime-luffy_manga-roronoa_zoro-sleeve-one_piece-2443x1378.jpg",
           }}
           style={{ width: "100%", height: "100%" }}
           resizeMode="cover"
           className=" z-0"
         />
         <LinearGradient
-          colors={["rgba(0,0,0,0.6)", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.6)"]}
+          colors={["rgba(0,0,0,0.6)", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]}
           style={{
             position: "absolute",
             top: 0,
@@ -385,8 +385,6 @@ export default function HomeScreen() {
         popularManga,
         swiperRefPopular
       )}
-
-      {renderKeepReadingSection()}
     </ScrollView>
   );
 }
