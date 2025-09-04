@@ -226,7 +226,7 @@ export default function ChapterReader() {
             className=" rounded-full w-9 h-9 flex items-center justify-center"
             onPress={downloadChapter}
           >
-            <Download size={16} className="" color="#ff4133" />
+            <Download size={16} className="" color="#9ca3af" />
           </Button>
           <Button
             variant="outline"
@@ -239,7 +239,7 @@ export default function ChapterReader() {
             }}
             className=" rounded-full w-9 h-9 flex items-center justify-center"
           >
-            <ChevronRight size={16} color="#ff4133" />
+            <ChevronRight size={16} color="#9ca3af" />
           </Button>
           <Button
             variant="outline"
@@ -254,21 +254,20 @@ export default function ChapterReader() {
           >
             <ChevronRight
               size={16}
-              color="#ff4133"
+              color="#9ca3af"
               style={{ transform: [{ rotate: "180deg" }] }}
             />
           </Button>
         </View>
       </View>
 
-      <ScrollView className="flex-1 bg-black px-2">
+      <ScrollView className="flex-1 w-full  ">
         {chapter.pages.map((pageUrl, index) => (
           <Image
             key={index}
             source={{ uri: pageUrl }}
             style={{ width: "100%", height: 550 }}
             className="mt-2"
-            resizeMode="contain"
           />
         ))}
       </ScrollView>
