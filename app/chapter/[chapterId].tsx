@@ -62,31 +62,43 @@ export default function ChapterReader() {
 
   useEffect(() => {
     handelFetchChapter();
-    // Automatically add to keep reading when chapter loads
-    if (mangaId && chapterId && isAuthenticated && token) {
-      addToKeepReading();
-    }
-  }, [chapterId, mangaId, isAuthenticated, token]);
+  }, [chapterId, mangaId]);
+
   useEffect(() => {
     handelFetchMangaChapters();
   }, [mangaId]);
 
   const currentIndex = useMemo(
-    () => chapters.findIndex((c) => c.id === chapterId),
+    () => chapters.findIndex((c) => c.number.toString() === chapterId),
     [chapters, chapterId]
   );
+
+  const currentChapter = useMemo(
+    () => chapters.find((c) => c.number.toString() === chapterId),
+    [chapters, chapterId]
+  );
+
+  // Separate useEffect for adding to keep reading after chapter is loaded
+  useEffect(() => {
+    if (chapter && mangaId && currentChapter && isAuthenticated && token) {
+      addToKeepReading();
+    }
+  }, [chapter, mangaId, currentChapter, isAuthenticated, token]);
 
   const chapterOptions = useMemo(
     () =>
       chapters.map((c) => ({
-        label: `الفصل ${c.number} - ${c.title}`,
-        value: c.id,
+        label: ` ${c.title}`,
+        value: c.number.toString(), // Use chapter number for navigation
       })),
     [chapters]
   );
 
-  const goToChapter = (chapterIdToGo: string) => {
-    router.push(`/chapter/${chapterIdToGo}?mangaId=${mangaId}`);
+  const goToChapter = (chapterNumber: string) => {
+    if (!mangaId) return;
+    console.log("Navigating to chapter:", chapterNumber);
+    console.log("With mangaId:", mangaId);
+    router.push(`/chapter/${chapterNumber}?mangaId=${mangaId}`);
   };
 
   const downloadChapter = async () => {
@@ -130,17 +142,27 @@ export default function ChapterReader() {
   };
 
   const addToKeepReading = async () => {
-    if (!mangaId || !chapterId || !token || !isAuthenticated) {
-      // Silently return if not authenticated - no alert needed
+    if (
+      !mangaId ||
+      !chapterId ||
+      !token ||
+      !isAuthenticated ||
+      !currentChapter
+    ) {
+      // Silently return if not authenticated or chapter not found - no alert needed
       return;
     }
 
     setAddingToKeepReading(true);
     try {
+      console.log("Adding to keep reading:", {
+        mangaId,
+        chapterId: currentChapter.id,
+      }); // Debug log
       const result = await APIService.addToKeepReading(
         {
           mangaId: mangaId,
-          chapterId: chapter?.chapterId!,
+          chapterId: currentChapter.id, // Use actual chapter ID, not the URL parameter
         },
         token
       );
@@ -193,7 +215,7 @@ export default function ChapterReader() {
         <View className="flex-row items-center space-x-2">
           <Select
             value={chapterOptions.find((option) => option.value === chapterId)}
-            onValueChange={(value) => value && goToChapter(value.value)}
+            onValueChange={(option) => option && goToChapter(option.value)}
             className="w-48"
           >
             <SelectTrigger>
@@ -234,7 +256,7 @@ export default function ChapterReader() {
             disabled={currentIndex === chapters.length - 1}
             onPress={() => {
               if (currentIndex < chapters.length - 1) {
-                goToChapter(chapters[currentIndex + 1].id);
+                goToChapter(chapters[currentIndex + 1].number.toString());
               }
             }}
             className=" rounded-full w-9 h-9 flex items-center justify-center"
@@ -247,7 +269,7 @@ export default function ChapterReader() {
             disabled={currentIndex === 0}
             onPress={() => {
               if (currentIndex > 0) {
-                goToChapter(chapters[currentIndex - 1].id);
+                goToChapter(chapters[currentIndex - 1].number.toString());
               }
             }}
             className=" rounded-full w-9 h-9 flex items-center justify-center"
