@@ -477,7 +477,9 @@ export default function MangaDetail() {
                   style={{ fontFamily: "Doc" }}
                   className="text-gray-500 mb-2"
                 >
-                  {manga.otherTitles.join(" / ")}
+                  {manga.otherTitles.length > 2
+                    ? `${manga.otherTitles.slice(0, 2).join(" / ")} ...`
+                    : manga.otherTitles.join(" / ")}
                 </Text>
               )}
 
@@ -492,7 +494,9 @@ export default function MangaDetail() {
                   >
                     المؤلف:{" "}
                   </Text>
-                  {manga.authors.join(", ")}
+                  {manga.authors.join(", ") === ""
+                    ? "غير محدد"
+                    : manga.authors.join(", ")}
                 </Text>
 
                 <Text
@@ -505,7 +509,9 @@ export default function MangaDetail() {
                   >
                     الرسام:{" "}
                   </Text>
-                  {manga.artists.join(", ")}
+                  {manga.artists.join(", ") === ""
+                    ? "غير محدد"
+                    : manga.artists.join(", ")}
                 </Text>
 
                 <Text
@@ -518,7 +524,7 @@ export default function MangaDetail() {
                   >
                     النوع:{" "}
                   </Text>
-                  {manga.type}
+                  {manga.type === "" ? "غير محدد" : manga.type}
                 </Text>
 
                 <Text
@@ -557,9 +563,11 @@ export default function MangaDetail() {
 
               <Text
                 style={{ fontFamily: "Doc" }}
-                className="text-gray-800 leading-relaxed "
+                className={`text-gray-800 leading-relaxed ${manga.description === "" ? " text-gray-400" : ""}`}
               >
-                {manga.description}
+                {manga.description === ""
+                  ? "لا توجد وصف متاح لهذه المانجا."
+                  : manga.description}
               </Text>
             </View>
 
@@ -698,9 +706,7 @@ export default function MangaDetail() {
               <Button
                 onPress={() => createComment(newComment)}
                 disabled={!newComment.trim()}
-              >
-                
-              </Button>
+              ></Button>
             </View>
           ) : (
             <View className="mb-4 p-3 bg-gray-100 rounded-lg">

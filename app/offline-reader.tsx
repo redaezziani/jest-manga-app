@@ -1,15 +1,18 @@
 import { LayoutWithTopBar } from "@/components/LayoutWithBar";
 import * as FileSystem from "expo-file-system";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Animated,
   Dimensions,
+  FlatList,
   Image,
-  ScrollView,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 interface OfflineChapterInfo {
   id: string;
@@ -31,6 +34,10 @@ export default function OfflineReader() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const { width: screenWidth } = Dimensions.get("window");
+
+  // Refs for smooth scrolling
+  const flatListRef = useRef<FlatList>(null);
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     loadOfflineChapter();
@@ -70,6 +77,17 @@ export default function OfflineReader() {
     }
   };
 
+  // Smooth scroll to specific page
+  const scrollToPage = (index: number) => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToIndex({
+        index,
+        animated: true,
+        viewPosition: 0, // Top of the screen
+      });
+    }
+  };
+
   if (loading) {
     return (
       <LayoutWithTopBar>
@@ -85,39 +103,54 @@ export default function OfflineReader() {
   }
 
   return (
-    <LayoutWithTopBar>
-      <Stack.Screen options={{ headerShown: false }} />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <LayoutWithTopBar>
+        <Stack.Screen options={{ headerShown: false }} />
 
-      {/* Header */}
-      <View className="px-4    pt-2 pb-1 ">
-        <PathIndicator
-          chapterName={chapterInfo ? chapterInfo.title : title || "الفصل"}
-        />
-      </View>
+        <View className="px-4 pt-2 pb-1">
+          <PathIndicator
+            chapterName={chapterInfo ? chapterInfo.title : title || "الفصل"}
+          />
+        </View>
 
-      {/* Pages */}
-      <ScrollView
-        className="flex-1 bg-black"
-        showsVerticalScrollIndicator={false}
-      >
-        {pages.length === 0 ? (
-          <View className="flex-1 justify-center items-center py-20">
-            <Text
-              style={{ fontFamily: "Doc" }}
-              className="text-white text-center text-lg"
+        <Animated.FlatList
+          ref={flatListRef}
+          data={pages}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => (
+            <Animated.View
+              className="mb-2"
+              style={{
+                opacity: scrollY.interpolate({
+                  inputRange: [
+                    (index - 1) * screenWidth * 1.4,
+                    index * screenWidth * 1.4,
+                    (index + 1) * screenWidth * 1.4,
+                  ],
+                  outputRange: [0.3, 1, 0.3],
+                  extrapolate: "clamp",
+                }),
+                transform: [
+                  {
+                    scale: scrollY.interpolate({
+                      inputRange: [
+                        (index - 1) * screenWidth * 1.4,
+                        index * screenWidth * 1.4,
+                        (index + 1) * screenWidth * 1.4,
+                      ],
+                      outputRange: [0.8, 1, 0.8],
+                      extrapolate: "clamp",
+                    }),
+                  },
+                ],
+              }}
             >
-              لا توجد صفحات في هذا الفصل
-            </Text>
-          </View>
-        ) : (
-          pages.map((pageUri, index) => (
-            <View key={index} className="mb-2">
               <Image
-                source={{ uri: pageUri }}
+                source={{ uri: item }}
                 style={{
                   width: screenWidth,
                   height: undefined,
-                  aspectRatio: 0.7, // Typical manga page ratio
+                  aspectRatio: 0.7,
                 }}
                 resizeMode="contain"
                 onError={(error) => {
@@ -125,8 +158,7 @@ export default function OfflineReader() {
                 }}
               />
 
-              {/* Page number indicator */}
-              <View className="absolute bottom-2 right-2 bg-black bg-opacity-60 px-2 py-1 rounded">
+              <View className="absolute bottom-2 right-2 bg-black/60 bg-opacity-60 px-2 py-1 rounded">
                 <Text
                   style={{ fontFamily: "Doc" }}
                   className="text-white text-xs"
@@ -134,18 +166,81 @@ export default function OfflineReader() {
                   {index + 1} / {pages.length}
                 </Text>
               </View>
-            </View>
-          ))
-        )}
-      </ScrollView>
-    </LayoutWithTopBar>
+            </Animated.View>
+          )}
+          showsVerticalScrollIndicator={false}
+          scrollEventThrottle={1} // Smoother scroll events
+          decelerationRate={0.95} // Custom deceleration for smoother feel
+          // Enhanced scroll properties for smoothness
+          bounces={true}
+          bouncesZoom={false}
+          alwaysBounceVertical={true}
+          // Scroll event handling for animations
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            {
+              useNativeDriver: true,
+              listener: (event) => {
+                // Optional: Add custom scroll logic here
+              },
+            }
+          )}
+          // Snap to pages for better UX (optional)
+          snapToInterval={screenWidth * 1.4 + 8} // Page height + margin
+          snapToAlignment="start"
+          // Momentum scroll settings
+          maximumZoomScale={1}
+          minimumZoomScale={1}
+          // Performance optimizations
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={3}
+          windowSize={5}
+          initialNumToRender={2}
+          // Smooth scroll indicator
+          indicatorStyle="white"
+        />
+
+        {/* Optional: Floating scroll controls */}
+        <View className="absolute right-4 gap-1 bottom-20 flex-col space-y-2">
+          <TouchableOpacity
+            onPress={() => {
+              flatListRef.current?.scrollToOffset({
+                offset: 0,
+                animated: true,
+              });
+            }}
+            className="bg-black/60 bg-opacity-60 p-2 rounded-full"
+          >
+            <Text style={{ fontFamily: "Doc" }} className="text-white text-xs">
+              أول
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              const lastPageOffset =
+                (pages.length - 1) * (screenWidth * 1.4 + 8);
+              flatListRef.current?.scrollToOffset({
+                offset: lastPageOffset,
+                animated: true,
+              });
+            }}
+            className="bg-black/60 bg-opacity-60 p-2 rounded-full"
+          >
+            <Text style={{ fontFamily: "Doc" }} className="text-white text-xs">
+              آخر
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </LayoutWithTopBar>
+    </GestureHandlerRootView>
   );
 }
 
 const PathIndicator = ({ chapterName }: { chapterName: string }) => {
   const router = useRouter();
   return (
-    <View className="flex-row items-center  space-x-2 gap-1">
+    <View className="flex-row items-center space-x-2 gap-1">
       <Text
         onPress={() => router.push("/")}
         style={{ fontFamily: "Doc" }}
