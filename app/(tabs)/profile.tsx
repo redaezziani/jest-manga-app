@@ -169,7 +169,6 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Actions */}
         <View className="space-y-4">
           <TouchableOpacity
             onPress={() => router.push("/(tabs)/downloads")}
