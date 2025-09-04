@@ -15,10 +15,153 @@ import { APIService } from "@/utils/apiService";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { ChevronRight, Download } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
+import { Image, ScrollView, Text, View } from "react-native";
 
 import * as FileSystem from "expo-file-system";
-import { Alert } from "react-native";
+
+// Custom Skeleton Components
+const SkeletonBox = ({
+  width,
+  height,
+  className = "",
+}: {
+  width: string | number;
+  height: string | number;
+  className?: string;
+}) => (
+  <View
+    className={`bg-gray-200 rounded ${className}`}
+    style={{
+      width:
+        typeof width === "string"
+          ? width === "100%"
+            ? "100%"
+            : undefined
+          : width,
+      height:
+        typeof height === "string"
+          ? height === "100%"
+            ? "100%"
+            : undefined
+          : height,
+    }}
+  />
+);
+
+const ChapterReaderSkeleton = () => (
+  <LayoutWithTopBar>
+    <Stack.Screen options={{ headerShown: false }} />
+
+    {/* Path Indicator Skeleton */}
+    <View className="px-4 bg-white pt-2 pb-1">
+      <View className="flex-row items-center space-x-2 gap-1">
+        <SkeletonBox width={60} height={16} />
+        <Text className="text-sm text-gray-300">/</Text>
+        <SkeletonBox width={80} height={16} />
+        <Text className="text-sm text-gray-300">/</Text>
+        <SkeletonBox width={120} height={16} />
+      </View>
+    </View>
+
+    {/* Controls Skeleton */}
+    <View className="flex-row items-center justify-between px-3 py-3 bg-white">
+      <View className="flex-row items-center space-x-2">
+        <SkeletonBox width={192} height={40} className="rounded-md" />
+      </View>
+      <View className="flex-row items-center gap-1 space-x-2">
+        <SkeletonBox width={36} height={36} className="rounded-full" />
+        <SkeletonBox width={36} height={36} className="rounded-full" />
+        <SkeletonBox width={36} height={36} className="rounded-full" />
+      </View>
+    </View>
+
+    {/* Pages Skeleton */}
+    <ScrollView className="flex-1 w-full">
+      {[...Array(5)].map((_, index) => (
+        <View key={index} className="mt-2">
+          <SkeletonBox width="100%" height={550} />
+        </View>
+      ))}
+    </ScrollView>
+  </LayoutWithTopBar>
+);
+
+const AnimatedSkeletonBox = ({
+  width,
+  height,
+  className = "",
+}: {
+  width: string | number;
+  height: string | number;
+  className?: string;
+}) => {
+  const [opacity, setOpacity] = useState(0.3);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setOpacity((prev) => (prev === 0.3 ? 0.7 : 0.3));
+    }, 800);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <View
+      className={`bg-gray-200 rounded ${className}`}
+      style={[
+        typeof width === "string"
+          ? width === "100%"
+            ? { width: "100%" as never }
+            : {}
+          : { width },
+        typeof height === "string"
+          ? height === "100%"
+            ? { height: "100%" as never }
+            : {}
+          : { height },
+        { opacity },
+      ]}
+    />
+  );
+};
+
+const AnimatedChapterReaderSkeleton = () => (
+  <LayoutWithTopBar>
+    <Stack.Screen options={{ headerShown: false }} />
+
+    {/* Path Indicator Skeleton */}
+    <View className="px-4 bg-white pt-2 pb-1">
+      <View className="flex-row items-center space-x-2 gap-1">
+        <AnimatedSkeletonBox width={60} height={16} />
+        <Text className="text-sm text-gray-300">/</Text>
+        <AnimatedSkeletonBox width={80} height={16} />
+        <Text className="text-sm text-gray-300">/</Text>
+        <AnimatedSkeletonBox width={120} height={16} />
+      </View>
+    </View>
+
+    {/* Controls Skeleton */}
+    <View className="flex-row items-center justify-between px-3 py-3 bg-white">
+      <View className="flex-row items-center space-x-2">
+        <AnimatedSkeletonBox width={192} height={40} className="rounded-md" />
+      </View>
+      <View className="flex-row items-center gap-1 space-x-2">
+        <AnimatedSkeletonBox width={36} height={36} className="rounded-full" />
+        <AnimatedSkeletonBox width={36} height={36} className="rounded-full" />
+        <AnimatedSkeletonBox width={36} height={36} className="rounded-full" />
+      </View>
+    </View>
+
+    {/* Pages Skeleton */}
+    <ScrollView className="flex-1 w-full">
+      {[...Array(5)].map((_, index) => (
+        <View key={index} className="mt-2">
+          <AnimatedSkeletonBox width="100%" height={550} />
+        </View>
+      ))}
+    </ScrollView>
+  </LayoutWithTopBar>
+);
 
 export default function ChapterReader() {
   const { chapterId, mangaId } = useLocalSearchParams<{
@@ -89,15 +232,13 @@ export default function ChapterReader() {
     () =>
       chapters.map((c) => ({
         label: ` ${c.title}`,
-        value: c.number.toString(), // Use chapter number for navigation
+        value: c.number.toString(),
       })),
     [chapters]
   );
 
   const goToChapter = (chapterNumber: string) => {
     if (!mangaId) return;
-    console.log("Navigating to chapter:", chapterNumber);
-    console.log("With mangaId:", mangaId);
     router.push(`/chapter/${chapterNumber}?mangaId=${mangaId}`);
   };
 
@@ -133,11 +274,8 @@ export default function ChapterReader() {
           await FileSystem.downloadAsync(pageUrl, fileUri);
         }
       }
-
-      Alert.alert("نجاح ✅", "تم تحميل الفصل ويمكنك قراءته في المكتبة");
     } catch (error) {
       console.error(error);
-      Alert.alert("خطأ ❌", "فشل تحميل الفصل");
     }
   };
 
@@ -149,7 +287,6 @@ export default function ChapterReader() {
       !isAuthenticated ||
       !currentChapter
     ) {
-      // Silently return if not authenticated or chapter not found - no alert needed
       return;
     }
 
@@ -162,7 +299,7 @@ export default function ChapterReader() {
       const result = await APIService.addToKeepReading(
         {
           mangaId: mangaId,
-          chapterId: currentChapter.id, // Use actual chapter ID, not the URL parameter
+          chapterId: currentChapter.id,
         },
         token
       );
@@ -179,24 +316,21 @@ export default function ChapterReader() {
     }
   };
 
+  // Show skeleton while loading
   if (loading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-white">
-        <ActivityIndicator size="large" color="#ff4133" />
-        <Text style={{ fontFamily: "Doc" }} className="text-gray-500 mt-2">
-          جاري تحميل الفصل...
-        </Text>
-      </View>
-    );
+    return <AnimatedChapterReaderSkeleton />;
   }
 
   if (!chapter) {
     return (
-      <View className="flex-1 justify-center items-center bg-white">
-        <Text style={{ fontFamily: "Doc" }} className="text-red-500">
-          لم يتم العثور على الفصل.
-        </Text>
-      </View>
+      <LayoutWithTopBar>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View className="flex-1 justify-center items-center bg-white">
+          <Text style={{ fontFamily: "Doc" }} className="text-red-500">
+            لم يتم العثور على الفصل.
+          </Text>
+        </View>
+      </LayoutWithTopBar>
     );
   }
 

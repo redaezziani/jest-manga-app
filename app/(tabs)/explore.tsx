@@ -204,7 +204,7 @@ export default function ExploreScreen() {
           contentContainerStyle={{ paddingBottom: 20 }}
           keyboardShouldPersistTaps="handled"
           ListHeaderComponent={
-            <View style={{ backgroundColor: "#f9fafb", padding: 16 }}>
+            <View style={{ backgroundColor: "#fffff", padding: 16 }}>
               {/* Header */}
               <View style={{ marginBottom: 24, marginTop: 2 }}>
                 <Text className=" text-primary " style={{ fontFamily: "Doc" }}>

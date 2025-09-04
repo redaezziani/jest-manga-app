@@ -168,13 +168,11 @@ export default function OfflineReader() {
             </Animated.View>
           )}
           showsVerticalScrollIndicator={false}
-          scrollEventThrottle={1} // Smoother scroll events
-          decelerationRate={0.95} // Custom deceleration for smoother feel
-          // Enhanced scroll properties for smoothness
+          scrollEventThrottle={1}
+          decelerationRate={0.95}
           bounces={true}
           bouncesZoom={false}
           alwaysBounceVertical={true}
-          // Scroll event handling for animations
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { y: scrollY } } }],
             {

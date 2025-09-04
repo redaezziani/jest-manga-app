@@ -55,7 +55,11 @@ export function UserMenu() {
               alt="@shadcn"
               className="border-background  web:border-0 web:ring-2 web:ring-background rounded-lg "
             >
-              <AvatarImage source={{ uri: "https://github.com/shadcn.png" }} />
+              <AvatarImage
+                source={{
+                  uri: "https://images6.alphacoders.com/129/1295937.jpg",
+                }}
+              />
               <AvatarFallback>
                 <Text>CN</Text>
               </AvatarFallback>
@@ -172,7 +176,12 @@ function UserAvatar({
       className={cn("size-8", className)}
       {...props}
     >
-      {user?.profile ? <AvatarImage source={{ uri: user.profile }} /> : null}
+      <AvatarImage
+        source={{
+          uri: "https://i.pinimg.com/564x/79/28/b0/7928b0704929f5f58b5571c8731d05c5.jpg",
+        }}
+      />
+
       <AvatarFallback>
         <Text className="text-xs font-medium">
           {user?.name ? getInitials(user.name) : "??"}
