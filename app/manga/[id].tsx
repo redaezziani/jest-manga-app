@@ -12,6 +12,7 @@ import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Book, Download, MessageCircle, Send } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   RefreshControl,
   ScrollView,
@@ -177,12 +178,6 @@ export default function MangaDetail() {
       console.log("Create comment response:", data);
 
       if (res.ok) {
-        showAlert({
-          title: "نجاح ✅",
-          message: "تم إضافة التعليق بنجاح",
-          showCancel: false,
-        });
-
         // Reset form
         setNewComment("");
         setReplyingTo(null);
@@ -195,11 +190,6 @@ export default function MangaDetail() {
       }
     } catch (err) {
       console.error("Error creating comment:", err);
-      showAlert({
-        title: "خطأ ❌",
-        message: "فشل في إضافة التعليق",
-        showCancel: false,
-      });
     }
   };
 
@@ -384,21 +374,15 @@ export default function MangaDetail() {
         );
       }
 
-      // fetch chapter data (pages) from API
-      console.log(
-        `Fetching chapter: ${API_URL}/api/manga/manga/${id}/chapter/${chapter.number}`
-      );
       const res = await fetch(
         `${API_URL}/api/manga/manga/${id}/chapter/${chapter.number}`
       );
-      console.log("Response status:", res.status);
 
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}: ${res.statusText}`);
       }
 
       const data = await res.json();
-      console.log("API Response:", data);
 
       if (!data.success) {
         throw new Error(data.message || "Failed to fetch chapter");
@@ -428,39 +412,22 @@ export default function MangaDetail() {
         JSON.stringify(chapterData)
       );
 
-      // download each page
-      console.log(`Starting download of ${pages.length} pages`);
       for (let i = 0; i < pages.length; i++) {
         const pageUrl = pages[i];
         const fileUri = `${chapterFolder}/page_${i + 1}.jpg`;
         const fileInfo = await FileSystem.getInfoAsync(fileUri);
 
         if (!fileInfo.exists) {
-          console.log(`Downloading page ${i + 1}/${pages.length}: ${pageUrl}`);
           await FileSystem.downloadAsync(pageUrl, fileUri);
         } else {
-          console.log(`Page ${i + 1} already exists, skipping`);
         }
       }
-
-      console.log(`Successfully downloaded all ${pages.length} pages`);
-      showAlert({
-        title: "نجاح ✅",
-        message: `تم تحميل الفصل ${chapter.number} بنجاح (${pages.length} صفحة)`,
-        showCancel: false,
-      });
 
       // Refresh downloaded chapters list
       checkDownloadedChapters();
     } catch (err) {
-      console.error("Download error:", err);
       const errorMessage =
         err instanceof Error ? err.message : "فشل تحميل الفصل";
-      showAlert({
-        title: "خطأ ❌",
-        message: `فشل تحميل الفصل: ${errorMessage}`,
-        showCancel: false,
-      });
     } finally {
       // Remove from downloading state
       setDownloadingChapters((prev) => {
@@ -668,15 +635,6 @@ export default function MangaDetail() {
                         {chapter.number} - {chapter.title}
                       </Text>
                     </TouchableOpacity>
-
-                    {isDownloading && (
-                      <Text
-                        style={{ fontFamily: "Doc" }}
-                        className="text-blue-600 text-xs mt-1"
-                      >
-                        ⬇️ جاري التحميل...
-                      </Text>
-                    )}
                   </View>
 
                   {isDownloaded && (
@@ -700,7 +658,11 @@ export default function MangaDetail() {
                       onPress={() => downloadChapter(chapter)}
                       disabled={isDownloaded || isDownloading}
                     >
-                      <Download color={"#ff4133"} size={12} className="" />
+                      {isDownloading ? (
+                        <ActivityIndicator size={12} color="#ff4133" />
+                      ) : (
+                        <Download color={"#ff4133"} size={12} className="" />
+                      )}
                     </Button>
                   )}
                 </View>
@@ -712,10 +674,10 @@ export default function MangaDetail() {
         {/* Comments Section */}
         <View className="px-2 py-4 mt-4 border-t border-gray-200">
           <View className="flex-row items-center mb-4">
-            <MessageCircle size={20} color="#ff4133" />
+            <MessageCircle size={14} color="#ff4133" />
             <Text
               style={{ fontFamily: "Doc" }}
-              className="text-xl text-gray-900 ml-2"
+              className="text-md text-gray-900 ml-2"
             >
               التعليقات ({comments.length})
             </Text>
@@ -736,12 +698,8 @@ export default function MangaDetail() {
               <Button
                 onPress={() => createComment(newComment)}
                 disabled={!newComment.trim()}
-                className="flex-row items-center justify-center"
               >
-                <Send size={16} color="white" />
-                <Text style={{ fontFamily: "Doc" }} className="text-white ml-2">
-                  إضافة تعليق
-                </Text>
+                
               </Button>
             </View>
           ) : (
