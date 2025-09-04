@@ -35,7 +35,6 @@ export default function OfflineReader() {
   const router = useRouter();
   const { width: screenWidth } = Dimensions.get("window");
 
-  // Refs for smooth scrolling
   const flatListRef = useRef<FlatList>(null);
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -77,7 +76,6 @@ export default function OfflineReader() {
     }
   };
 
-  // Smooth scroll to specific page
   const scrollToPage = (index: number) => {
     if (flatListRef.current) {
       flatListRef.current.scrollToIndex({
