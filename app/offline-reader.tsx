@@ -152,13 +152,12 @@ export default function OfflineReader() {
                   height: undefined,
                   aspectRatio: 0.7,
                 }}
-                resizeMode="contain"
                 onError={(error) => {
                   console.error(`Error loading page ${index + 1}:`, error);
                 }}
               />
 
-              <View className="absolute bottom-2 right-2 bg-black/60 bg-opacity-60 px-2 py-1 rounded">
+              <View className="absolute bottom-2 right-2 bg-black/80 bg-opacity-60 px-2 py-1 rounded">
                 <Text
                   style={{ fontFamily: "Doc" }}
                   className="text-white text-xs"
