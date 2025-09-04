@@ -32,6 +32,9 @@ function SelectValue({
   return (
     <SelectPrimitive.Value
       ref={ref}
+      style={{
+        fontFamily: "Doc",
+      }}
       className={cn(
         "text-foreground line-clamp-1 flex flex-row items-center gap-2 text-sm",
         !value && "text-muted-foreground",
@@ -105,7 +108,7 @@ function SelectContent({
             >
               <SelectPrimitive.Content
                 className={cn(
-                  "bg-popover border-border relative z-50 min-w-[8rem] rounded-md border shadow-md shadow-black/5",
+                  "bg-popover border-border relative mt-1  z-50 min-w-[8rem] rounded-md border shadow-md shadow-black/5 ",
                   Platform.select({
                     web: cn(
                       "animate-in fade-in-0 zoom-in-95 origin-(--radix-select-content-transform-origin) max-h-52 overflow-y-auto overflow-x-hidden",
@@ -161,6 +164,9 @@ function SelectLabel({
         "text-muted-foreground px-2 py-2 text-xs sm:py-1.5",
         className
       )}
+      style={{
+        fontFamily: "Doc",
+      }}
       {...props}
     />
   );
@@ -188,7 +194,12 @@ function SelectItem({
           <Icon as={Check} className="text-muted-foreground size-4 shrink-0" />
         </SelectPrimitive.ItemIndicator>
       </View>
-      <SelectPrimitive.ItemText className="text-foreground group-active:text-accent-foreground select-none text-sm" />
+      <SelectPrimitive.ItemText
+        className="text-foreground group-active:text-accent-foreground select-none text-sm"
+        style={{
+          fontFamily: "Doc",
+        }}
+      />
     </SelectPrimitive.Item>
   );
 }

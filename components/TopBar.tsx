@@ -66,7 +66,7 @@ const AppTitle = () => (
         width: 32,
         height: 32,
         marginRight: 8,
-        tintColor: "white", // <- this changes black parts to white
+        tintColor: "white",
       }}
       resizeMode="contain"
     />
@@ -81,7 +81,7 @@ const AppTitle = () => (
       }}
       className="text-3xl text-white"
     >
-      ر دينو <Text style={{ color: "#fff" }}>مانجا</Text>
+      جيست <Text style={{ color: "#fff" }}>مانجا</Text>
     </Text>
   </View>
 );
