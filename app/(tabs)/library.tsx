@@ -43,6 +43,11 @@ export default function LibraryScreen() {
     }
   }, [isAuthenticated, token, activeTab]);
 
+  // Debug effect to monitor likedManga state changes
+  useEffect(() => {
+    console.log("LikedManga state changed:", likedManga.length, likedManga);
+  }, [likedManga]);
+
   const loadData = async (reset = true) => {
     if (!token) return;
 
@@ -76,13 +81,30 @@ export default function LibraryScreen() {
           limit: 20,
         });
 
-        if (result.success) {
+        console.log("Full API result for liked manga:", result);
+
+        if (result.success && result.data) {
+          console.log("Fetched liked manga array:", result.data.likedManga);
+          console.log(
+            "Liked manga items:",
+            result.data.likedManga.map((item: LikedManga) => ({
+              id: item.id,
+              manga: item.manga,
+              fullItem: item,
+            }))
+          );
+
           if (reset) {
+            console.log("Setting liked manga (reset):", result.data.likedManga);
             setLikedManga(result.data.likedManga);
           } else {
+            console.log("Adding to liked manga:", result.data.likedManga);
             setLikedManga((prev) => [...prev, ...result.data.likedManga]);
           }
+          console.log("After setState call completed");
           setHasMore(result.data.likedManga.length === 20);
+        } else {
+          console.log("No liked manga found in response:", result);
         }
       }
     } catch (error) {
@@ -110,8 +132,17 @@ export default function LibraryScreen() {
   }, [searchQuery, activeTab, token]);
 
   const renderMangaItem = ({ item }: { item: Bookmark | LikedManga }) => {
+    console.log("Rendering item:", {
+      id: item.id,
+      manga: item.manga ? { id: item.manga.id, title: item.manga.title } : null,
+      activeTab,
+    });
+
     const manga = item.manga;
-    if (!manga) return null;
+    if (!manga) {
+      console.log("No manga found for item:", item.id);
+      return null;
+    }
 
     return (
       <MangaCard
@@ -185,6 +216,11 @@ export default function LibraryScreen() {
   }
 
   const currentData = activeTab === "bookmarks" ? bookmarks : likedManga;
+
+  console.log("Current tab:", activeTab);
+  console.log("Current data length:", currentData.length);
+  console.log("Loading state:", loading);
+  console.log("Liked manga state:", likedManga.length, likedManga);
 
   return (
     <>

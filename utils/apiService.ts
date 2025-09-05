@@ -197,6 +197,7 @@ export class APIService {
     token: string
   ): Promise<BookmarkResponse> {
     try {
+      console.log(`Checking bookmark status for manga: ${mangaId}`);
       const response = await this.makeAuthenticatedRequest(
         `/api/bookmarks/check/${mangaId}`,
         {
@@ -205,14 +206,19 @@ export class APIService {
         token
       );
 
-      const result = await response.json();
+      console.log(`Bookmark check response status: ${response.status}`);
 
       if (!response.ok) {
-        throw new Error(
-          result.message || `HTTP ${response.status}: ${response.statusText}`
+        const errorText = await response.text();
+        console.error(
+          `Bookmark check failed with status ${response.status}:`,
+          errorText
         );
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
+      const result = await response.json();
+      console.log("Bookmark check result:", result);
       return result;
     } catch (error) {
       console.error("Error checking bookmark status:", error);
@@ -329,6 +335,7 @@ export class APIService {
     token: string
   ): Promise<LikeResponse> {
     try {
+      console.log(`Checking like status for manga: ${mangaId}`);
       const response = await this.makeAuthenticatedRequest(
         `/api/liked-manga/check/${mangaId}`,
         {
@@ -337,14 +344,19 @@ export class APIService {
         token
       );
 
-      const result = await response.json();
+      console.log(`Like check response status: ${response.status}`);
 
       if (!response.ok) {
-        throw new Error(
-          result.message || `HTTP ${response.status}: ${response.statusText}`
+        const errorText = await response.text();
+        console.error(
+          `Like check failed with status ${response.status}:`,
+          errorText
         );
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
+      const result = await response.json();
+      console.log("Like check result:", result);
       return result;
     } catch (error) {
       console.error("Error checking like status:", error);
@@ -366,6 +378,7 @@ export class APIService {
     token: string
   ): Promise<LikeCountResponse & { success: boolean; message?: string }> {
     try {
+      console.log(`Getting like count for manga: ${mangaId}`);
       const response = await this.makeAuthenticatedRequest(
         `/api/liked-manga/count/${mangaId}`,
         {
@@ -374,14 +387,19 @@ export class APIService {
         token
       );
 
-      const result = await response.json();
+      console.log(`Like count response status: ${response.status}`);
 
       if (!response.ok) {
-        throw new Error(
-          result.message || `HTTP ${response.status}: ${response.statusText}`
+        const errorText = await response.text();
+        console.error(
+          `Like count failed with status ${response.status}:`,
+          errorText
         );
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
+      const result = await response.json();
+      console.log("Like count result:", result);
       return { success: true, ...result };
     } catch (error) {
       console.error("Error getting manga like count:", error);
@@ -436,7 +454,16 @@ export class APIService {
         );
       }
 
-      return result;
+      // Backend returns direct data, wrap it in expected format
+      return {
+        success: true,
+        data: {
+          likedManga: result.likedManga || [],
+          total: result.pagination?.total || 0,
+          page: result.pagination?.page || 1,
+          limit: result.pagination?.limit || 20,
+        },
+      };
     } catch (error) {
       console.error("Error getting user liked manga:", error);
       return {

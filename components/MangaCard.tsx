@@ -26,7 +26,7 @@ export const MangaCard: React.FC<MangaCardProps> = ({
 
   return (
     <TouchableOpacity
-      className="bg-white rounded-lg p-3 mb-3 shadow-sm"
+      className="bg-white rounded-md border border-gray-400/35 p-3 mb-3 "
       onPress={() => router.push(`/manga/${manga.id}`)}
     >
       <View className="flex-row">
@@ -35,8 +35,8 @@ export const MangaCard: React.FC<MangaCardProps> = ({
           style={{
             width: 80,
             height: 120,
-            borderRadius: 8,
           }}
+          className="border border-gray-400/35 rounded-sm mr-3"
         />
 
         <View className="flex-1 mr-3">
@@ -83,10 +83,6 @@ export const MangaCard: React.FC<MangaCardProps> = ({
             >
               {manga.status === "ongoing" ? "مستمرة" : "مكتملة"}
             </Text>
-
-            {showActions && actionIcon && (
-              <View className="flex-row items-center">{actionIcon}</View>
-            )}
           </View>
         </View>
       </View>

@@ -301,35 +301,35 @@ export default function MangaDetail() {
     if (!id || !token) return;
 
     try {
-      console.log('Checking bookmark and like status for manga:', id);
-      
+      console.log("Checking bookmark and like status for manga:", id);
+
       // Check each endpoint separately to better handle errors
       try {
         const bookmarkResult = await APIService.checkBookmarkStatus(id, token);
-        console.log('Bookmark status result:', bookmarkResult);
+        console.log("Bookmark status result:", bookmarkResult);
         setIsBookmarked(bookmarkResult.bookmarked);
       } catch (bookmarkError) {
-        console.error('Bookmark check failed:', bookmarkError);
+        console.error("Bookmark check failed:", bookmarkError);
         // Set default bookmark status if endpoint fails
         setIsBookmarked(false);
       }
 
       try {
         const likeResult = await APIService.checkLikeStatus(id, token);
-        console.log('Like status result:', likeResult);
+        console.log("Like status result:", likeResult);
         setIsLiked(likeResult.liked);
       } catch (likeError) {
-        console.error('Like check failed:', likeError);
+        console.error("Like check failed:", likeError);
         // Set default like status if endpoint fails
         setIsLiked(false);
       }
 
       try {
         const likeCountResult = await APIService.getMangaLikeCount(id, token);
-        console.log('Like count result:', likeCountResult);
+        console.log("Like count result:", likeCountResult);
         setLikeCount(likeCountResult.likeCount);
       } catch (countError) {
-        console.error('Like count check failed:', countError);
+        console.error("Like count check failed:", countError);
         // Set default count if endpoint fails
         setLikeCount(0);
       }
@@ -349,18 +349,8 @@ export default function MangaDetail() {
     try {
       const result = await APIService.toggleBookmark(id, token);
       setIsBookmarked(result.bookmarked);
-      showAlert({
-        title: "تم التحديث",
-        message: result.bookmarked
-          ? "تم إضافة المانجا إلى الإشارات المرجعية"
-          : "تم إزالة المانجا من الإشارات المرجعية",
-      });
     } catch (error) {
       console.error("Error toggling bookmark:", error);
-      showAlert({
-        title: "خطأ",
-        message: "فشل في تحديث الإشارة المرجعية",
-      });
     } finally {
       setBookmarkLoading(false);
     }
@@ -582,28 +572,27 @@ export default function MangaDetail() {
                   marginVertical: 16,
                 }}
               />
+            </View>
 
+            <View className="px-2 ">
               {/* Bookmark and Like buttons */}
               {isAuthenticated && (
-                <View
-                  style={{ position: "absolute", top: 20, left: 8, gap: 2 }}
-                  className="flex-row"
-                >
+                <View className="flex-row gap-4">
                   {/* Bookmark Button */}
                   <TouchableOpacity
                     onPress={handleToggleBookmark}
                     disabled={bookmarkLoading}
                   >
                     {bookmarkLoading ? (
-                      <ActivityIndicator size={20} color="#ff4133" />
+                      <ActivityIndicator size={16} color="#ff4133" />
                     ) : isBookmarked ? (
                       <BookmarkCheck
-                        size={20}
+                        size={16}
                         color="#ff4133"
                         strokeWidth={1.6}
                       />
                     ) : (
-                      <Bookmark size={20} color="#666" strokeWidth={1.6} />
+                      <Bookmark size={16} color="#666" strokeWidth={1.6} />
                     )}
                   </TouchableOpacity>
 
@@ -611,24 +600,30 @@ export default function MangaDetail() {
                   <TouchableOpacity
                     onPress={handleToggleLike}
                     disabled={likeLoading}
+                    className="flex-row gap-2 items-center"
                   >
                     {likeLoading ? (
-                      <ActivityIndicator size={20} color="#ff4133" />
+                      <ActivityIndicator size={16} color="#ff4133" />
                     ) : isLiked ? (
                       <HeartHandshake
-                        size={20}
+                        size={16}
                         color="#ff4133"
                         strokeWidth={1.6}
                       />
                     ) : (
-                      <Heart size={20} color="#666" strokeWidth={1.6} />
+                      <Heart size={16} color="#666" strokeWidth={1.6} />
+                    )}
+                    {likeCount > 0 && (
+                      <Text
+                        style={{ fontFamily: "Doc" }}
+                        className="text-sm text-gray-700 mr-1"
+                      >
+                        {likeCount}
+                      </Text>
                     )}
                   </TouchableOpacity>
                 </View>
               )}
-            </View>
-
-            <View className="px-2 py-2">
               <View className="flex-row justify-between items-start mb-2">
                 <View className="flex-1">
                   <Text
@@ -638,19 +633,6 @@ export default function MangaDetail() {
                     {manga.title}
                   </Text>
                 </View>
-
-                {/* Like count display */}
-                {likeCount > 0 && (
-                  <View className="flex-row items-center bg-gray-100 rounded-full px-3 py-1">
-                    <Heart size={14} color="#ff4133" strokeWidth={1.6} />
-                    <Text
-                      style={{ fontFamily: "Doc" }}
-                      className="text-sm text-gray-700 mr-1"
-                    >
-                      {likeCount}
-                    </Text>
-                  </View>
-                )}
               </View>
 
               {manga.otherTitles.length > 0 && (
