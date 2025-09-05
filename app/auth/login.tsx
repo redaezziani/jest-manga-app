@@ -6,7 +6,6 @@ import { API_URL } from "@/utils";
 import { Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -37,6 +36,7 @@ export default function LoginPage() {
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<LoginData>>({});
+  const [loginError, setLoginError] = useState<string>("");
   const router = useRouter();
 
   const validateForm = (): boolean => {
@@ -64,6 +64,8 @@ export default function LoginPage() {
     if (!validateForm()) return;
 
     setLoading(true);
+    setLoginError("");
+
     try {
       const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
@@ -84,18 +86,11 @@ export default function LoginPage() {
       // Use auth context to login
       await login(loginResponse.user, loginResponse.access_token);
 
-      Alert.alert("نجح تسجيل الدخول ✅", `مرحباً ${loginResponse.user.name}`, [
-        {
-          text: "موافق",
-          onPress: () => {
-            router.replace("/");
-          },
-        },
-      ]);
+      // Navigate to home page after successful login
+      router.replace("/");
     } catch (error) {
       console.error("Login error:", error);
-      Alert.alert(
-        "خطأ في تسجيل الدخول ❌",
+      setLoginError(
         error instanceof Error ? error.message : "حدث خطأ غير متوقع"
       );
     } finally {
@@ -108,6 +103,10 @@ export default function LoginPage() {
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+    // Clear login error when user starts typing
+    if (loginError) {
+      setLoginError("");
     }
   };
 
@@ -125,24 +124,35 @@ export default function LoginPage() {
         >
           <View className="flex-1 justify-center px-6 py-8">
             {/* Header */}
-            <View className="items-center mb-8">
+            <View className="items-start mb-8">
               <Text
                 style={{ fontFamily: "Doc" }}
-                className="text-3xl  text-gray-900 mb-2"
+                className="text-2xl text-gray-900 "
               >
                 تسجيل الدخول
               </Text>
               <Text
                 style={{ fontFamily: "Doc" }}
-                className="text-gray-600 text-center"
+                className="text-gray-500 text-sm "
               >
-                مرحباً بك مرة أخرى! سجل الدخول للمتابعة
+                مرحباً بك مرة أخرى! سجل الدخول للمتابعة إلى حسابك والاستفادة من
+                جميع ميزات
               </Text>
             </View>
 
-            {/* Login Form */}
-            <View className=" flex flex-col gap-2">
-              {/* Email Input */}
+            {/* Login Error */}
+            {loginError && (
+              <View className="mb-4 p-3 bg-red-50 rounded-lg border border-red-200">
+                <Text
+                  style={{ fontFamily: "Doc" }}
+                  className="text-red-600 text-center"
+                >
+                  {loginError}
+                </Text>
+              </View>
+            )}
+
+            <View className="flex flex-col gap-2">
               <View>
                 <Text
                   style={{ fontFamily: "Doc" }}
@@ -157,7 +167,8 @@ export default function LoginPage() {
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
-                  className={`border ${errors.email ? "border-red-500" : ""} `}
+                  style={{ fontFamily: "Doc" }}
+                  className={`border ${errors.email ? "border-red-500" : ""}`}
                 />
                 {errors.email && (
                   <Text
@@ -182,7 +193,8 @@ export default function LoginPage() {
                   onChangeText={(text) => updateFormData("password", text)}
                   placeholder="أدخل كلمة المرور"
                   secureTextEntry
-                  className={` ${errors.password ? "border-red-500" : ""} `}
+                  style={{ fontFamily: "Doc" }}
+                  className={`${errors.password ? "border-red-500" : ""}`}
                 />
                 {errors.password && (
                   <Text
@@ -198,11 +210,11 @@ export default function LoginPage() {
               <Button
                 onPress={handleLogin}
                 disabled={loading}
-                className="bg-[#ff4133] hover:bg-[#e53e3e]  mt-6"
+                className="bg-[#ff4133] hover:bg-[#e53e3e] mt-6"
               >
                 <Text
                   style={{ fontFamily: "Doc" }}
-                  className="text-white text-lg "
+                  className="text-white text-lg"
                 >
                   {loading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
                 </Text>
