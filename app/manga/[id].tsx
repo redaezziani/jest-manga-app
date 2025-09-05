@@ -7,12 +7,16 @@ import { Chapter } from "@/type/chapter";
 import { Comment } from "@/type/comment";
 import { MangaExtended } from "@/type/manga";
 import { API_URL } from "@/utils";
+import { APIService } from "@/utils/apiService";
 import * as FileSystem from "expo-file-system";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import {
   Book,
   Bookmark,
+  BookmarkCheck,
   Download,
+  Heart,
+  HeartHandshake,
   MessageCircle,
   Send,
 } from "lucide-react-native";
@@ -48,6 +52,14 @@ export default function MangaDetail() {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState("");
   const [commentsLoading, setCommentsLoading] = useState(false);
+
+  // Bookmark and Like states
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
+  const [likeLoading, setLikeLoading] = useState(false);
+
   const router = useRouter();
   const { user, token, isAuthenticated } = useAuth();
 
@@ -59,6 +71,12 @@ export default function MangaDetail() {
 
   useEffect(() => {
     if (id && isAuthenticated && token) fetchComments();
+  }, [id, isAuthenticated, token]);
+
+  useEffect(() => {
+    if (id && isAuthenticated && token) {
+      checkBookmarkAndLikeStatus();
+    }
   }, [id, isAuthenticated, token]);
 
   const checkDownloadedChapters = async () => {
@@ -120,6 +138,9 @@ export default function MangaDetail() {
       handelFetchChapters(),
       checkDownloadedChapters(),
       fetchComments(),
+      isAuthenticated && token
+        ? checkBookmarkAndLikeStatus()
+        : Promise.resolve(),
     ]);
     setRefreshing(false);
   };
@@ -274,6 +295,65 @@ export default function MangaDetail() {
       )}
     </View>
   );
+
+  // Bookmark and Like functions
+  const checkBookmarkAndLikeStatus = async () => {
+    if (!id || !token) return;
+
+    try {
+      const [bookmarkResult, likeResult, likeCountResult] = await Promise.all([
+        APIService.checkBookmarkStatus(id, token),
+        APIService.checkLikeStatus(id, token),
+        APIService.getMangaLikeCount(id, token),
+      ]);
+
+      setIsBookmarked(bookmarkResult.bookmarked);
+      setIsLiked(likeResult.liked);
+      setLikeCount(likeCountResult.likeCount);
+    } catch (error) {
+      console.error("Error checking bookmark and like status:", error);
+    }
+  };
+
+  const handleToggleBookmark = async () => {
+    if (!id || !token || bookmarkLoading) return;
+
+    setBookmarkLoading(true);
+    try {
+      const result = await APIService.toggleBookmark(id, token);
+      setIsBookmarked(result.bookmarked);
+      showAlert({
+        title: "تم التحديث",
+        message: result.bookmarked
+          ? "تم إضافة المانجا إلى الإشارات المرجعية"
+          : "تم إزالة المانجا من الإشارات المرجعية",
+      });
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+      showAlert({
+        title: "خطأ",
+        message: "فشل في تحديث الإشارة المرجعية",
+      });
+    } finally {
+      setBookmarkLoading(false);
+    }
+  };
+
+  const handleToggleLike = async () => {
+    if (!id || !token || likeLoading) return;
+
+    setLikeLoading(true);
+    try {
+      const result = await APIService.toggleLike(id, token);
+      setIsLiked(result.liked);
+      const likeCountResult = await APIService.getMangaLikeCount(id, token);
+      setLikeCount(likeCountResult.likeCount);
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    } finally {
+      setLikeLoading(false);
+    }
+  };
 
   const renderMangaCard = (item: MangaExtended) => (
     <View className="flex-1 px-2 mb-4 " key={item.id}>
@@ -475,21 +555,76 @@ export default function MangaDetail() {
                   marginVertical: 16,
                 }}
               />
-              <Bookmark
-                size={20}
-                color="#d1d5db"
-                strokeWidth={1.6}
-                style={{ position: "absolute", top: 20, left: 198 }}
-              />
+
+              {/* Bookmark and Like buttons */}
+              {isAuthenticated && (
+                <View
+                  style={{ position: "absolute", top: 20, left: 8, gap: 2 }}
+                  className="flex-row"
+                >
+                  {/* Bookmark Button */}
+                  <TouchableOpacity
+                    onPress={handleToggleBookmark}
+                    disabled={bookmarkLoading}
+                  >
+                    {bookmarkLoading ? (
+                      <ActivityIndicator size={20} color="#ff4133" />
+                    ) : isBookmarked ? (
+                      <BookmarkCheck
+                        size={20}
+                        color="#ff4133"
+                        strokeWidth={1.6}
+                      />
+                    ) : (
+                      <Bookmark size={20} color="#666" strokeWidth={1.6} />
+                    )}
+                  </TouchableOpacity>
+
+                  {/* Like Button */}
+                  <TouchableOpacity
+                    onPress={handleToggleLike}
+                    disabled={likeLoading}
+                  >
+                    {likeLoading ? (
+                      <ActivityIndicator size={20} color="#ff4133" />
+                    ) : isLiked ? (
+                      <HeartHandshake
+                        size={20}
+                        color="#ff4133"
+                        strokeWidth={1.6}
+                      />
+                    ) : (
+                      <Heart size={20} color="#666" strokeWidth={1.6} />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
 
             <View className="px-2 py-2">
-              <Text
-                style={{ fontFamily: "Doc" }}
-                className="text-xl font-bold text-gray-900 mb-1"
-              >
-                {manga.title}
-              </Text>
+              <View className="flex-row justify-between items-start mb-2">
+                <View className="flex-1">
+                  <Text
+                    style={{ fontFamily: "Doc" }}
+                    className="text-xl font-bold text-gray-900 mb-1"
+                  >
+                    {manga.title}
+                  </Text>
+                </View>
+
+                {/* Like count display */}
+                {likeCount > 0 && (
+                  <View className="flex-row items-center bg-gray-100 rounded-full px-3 py-1">
+                    <Heart size={14} color="#ff4133" strokeWidth={1.6} />
+                    <Text
+                      style={{ fontFamily: "Doc" }}
+                      className="text-sm text-gray-700 mr-1"
+                    >
+                      {likeCount}
+                    </Text>
+                  </View>
+                )}
+              </View>
 
               {manga.otherTitles.length > 0 && (
                 <Text
