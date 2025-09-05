@@ -49,8 +49,11 @@ export default function MangaDetail() {
     handelFetchMangaDetails();
     handelFetchChapters();
     checkDownloadedChapters();
-    fetchComments();
   }, [id]);
+
+  useEffect(() => {
+    if (id && isAuthenticated && token) fetchComments();
+  }, [id, isAuthenticated, token]);
 
   const checkDownloadedChapters = async () => {
     if (!id) return;
