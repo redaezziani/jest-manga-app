@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import type { TriggerRef } from "@rn-primitives/popover";
 import { Link, useRouter } from "expo-router";
-import { LogIn, LogOut, UserPlus } from "lucide-react-native";
+import { LogOut, UserPlus } from "lucide-react-native";
 import * as React from "react";
 import { Alert, TouchableOpacity, View } from "react-native";
 
@@ -48,60 +48,30 @@ export function UserMenu() {
 
   if (!isAuthenticated) {
     return (
-      <Popover>
-        <PopoverTrigger asChild ref={popoverTriggerRef}>
-          <Button variant="ghost" size="icon" className="p-0 ">
-            <Avatar
-              alt="@shadcn"
-              className="border-background  web:border-0 web:ring-2 web:ring-background rounded-lg "
-            >
-              <AvatarImage
-                source={{
-                  uri: "https://images6.alphacoders.com/129/1295937.jpg",
-                }}
-              />
-              <AvatarFallback>
-                <Text>CN</Text>
-              </AvatarFallback>
-            </Avatar>
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent align="center" side="bottom" className="w-60 p-3">
-          <View className="gap-2">
-            <TouchableOpacity
-              onPress={() => {
-                popoverTriggerRef.current?.close();
-                router.push("/auth/login" as any);
-              }}
-              className="flex-row items-center gap-3 p-3 "
-            >
-              <LogIn size={16} color="#666" />
-              <Text
-                style={{ fontFamily: "Doc" }}
-                className=" text-sm text-gray-700"
-              >
-                تسجيل الدخول
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                popoverTriggerRef.current?.close();
-                router.push("/auth/register" as any);
-              }}
-              className="flex-row items-center gap-3 p-3 "
-            >
-              <UserPlus size={16} color="#ff4133" />
-              <Text
-                style={{ fontFamily: "Doc" }}
-                className="text-sm  text-[#ff4133]"
-              >
-                إنشاء حساب جديد
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </PopoverContent>
-      </Popover>
+      <View className="flex-row items-center gap-2">
+        <Link href="/auth/login" asChild>
+          <Text
+            style={{ fontFamily: "Doc" }}
+            className="text-sm font-normal text-white "
+          >
+            تسجيل الدخول
+          </Text>
+        </Link>
+        <Text
+          style={{ fontFamily: "Doc" }}
+          className="text-sm font-normal text-white "
+        >
+          /
+        </Text>
+        <Link href="/auth/register" asChild>
+          <Text
+            style={{ fontFamily: "Doc" }}
+            className="text-sm font-normal text-white "
+          >
+            إنشاء حساب
+          </Text>
+        </Link>
+      </View>
     );
   }
 

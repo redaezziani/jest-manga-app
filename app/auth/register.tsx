@@ -2,14 +2,13 @@ import { LayoutWithTopBar } from "@/components/LayoutWithBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { API_URL } from "@/utils";
-import { Stack, useRouter } from "expo-router";
+import { Link, Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 
@@ -280,28 +279,26 @@ export default function RegisterPage() {
                 <Text style={{ fontFamily: "Doc" }} className="text-gray-600">
                   لديك حساب بالفعل؟{" "}
                 </Text>
-                <TouchableOpacity
-                  onPress={() => router.push("/auth/login" as any)}
-                >
+                <Link href="/auth/login" asChild>
                   <Text
                     style={{ fontFamily: "Doc" }}
                     className="text-[#ff4133] font-semibold"
                   >
                     تسجيل الدخول
                   </Text>
-                </TouchableOpacity>
+                </Link>
               </View>
 
               {/* Back to Home */}
               <View className="flex-row justify-center items-center mt-4">
-                <TouchableOpacity onPress={() => router.push("/")}>
+                <Link href="/" asChild>
                   <Text
                     style={{ fontFamily: "Doc" }}
                     className="text-gray-500 text-sm"
                   >
                     العودة للصفحة الرئيسية
                   </Text>
-                </TouchableOpacity>
+                </Link>
               </View>
             </View>
           </View>
