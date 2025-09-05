@@ -1,7 +1,6 @@
 import { LayoutWithTopBar } from "@/components/LayoutWithBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/hooks/useAuth";
 import { API_URL } from "@/utils";
 import { Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -14,33 +13,32 @@ import {
   View,
 } from "react-native";
 
-interface LoginData {
+interface RegisterData {
+  name: string;
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
-interface LoginResponse {
-  user: {
-    email: string;
-    name: string;
-    profile: string | null;
-  };
-  access_token: string;
-}
-
-export default function LoginPage() {
-  const { login } = useAuth();
-  const [formData, setFormData] = useState<LoginData>({
+export default function RegisterPage() {
+  const [formData, setFormData] = useState<RegisterData>({
+    name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<Partial<LoginData>>({});
-  const [loginError, setLoginError] = useState<string>("");
+  const [errors, setErrors] = useState<Partial<RegisterData>>({});
+  const [registerError, setRegisterError] = useState<string>("");
   const router = useRouter();
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<LoginData> = {};
+    const newErrors: Partial<RegisterData> = {};
+
+    // Name validation
+    if (!formData.name.trim()) {
+      newErrors.name = "يجب ألا يكون الاسم فارغًا";
+    }
 
     // Email validation
     if (!formData.email.trim()) {
@@ -52,45 +50,51 @@ export default function LoginPage() {
     // Password validation
     if (!formData.password) {
       newErrors.password = "يجب إدخال كلمة المرور";
-    } else if (formData.password.length < 7) {
-      newErrors.password = "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل";
+    }
+
+    // Confirm password validation
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "يجب تأكيد كلمة المرور";
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "كلمتا المرور غير متطابقتين";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     if (!validateForm()) return;
 
     setLoading(true);
-    setLoginError("");
+    setRegisterError("");
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "فشل تسجيل الدخول");
+        throw new Error(data.message || "فشل إنشاء الحساب");
       }
 
-      const loginResponse: LoginResponse = data;
-
-      // Use auth context to login
-      await login(loginResponse.user, loginResponse.access_token);
-
-      // Navigate to home page after successful login
-      router.replace("/");
+      // Navigate to login page after successful registration
+      router.replace("/auth/login");
     } catch (error) {
-      console.error("Login error:", error);
-      setLoginError(
+      console.error("Register error:", error);
+      setRegisterError(
         error instanceof Error ? error.message : "حدث خطأ غير متوقع"
       );
     } finally {
@@ -98,15 +102,15 @@ export default function LoginPage() {
     }
   };
 
-  const updateFormData = (field: keyof LoginData, value: string) => {
+  const updateFormData = (field: keyof RegisterData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
-    // Clear login error when user starts typing
-    if (loginError) {
-      setLoginError("");
+    // Clear register error when user starts typing
+    if (registerError) {
+      setRegisterError("");
     }
   };
 
@@ -127,32 +131,58 @@ export default function LoginPage() {
             <View className="items-start mb-8">
               <Text
                 style={{ fontFamily: "Doc" }}
-                className="text-2xl text-gray-900 "
+                className="text-2xl text-gray-900"
               >
-                تسجيل الدخول
+                إنشاء حساب جديد
               </Text>
               <Text
                 style={{ fontFamily: "Doc" }}
-                className="text-gray-500 text-sm "
+                className="text-gray-500 text-sm"
               >
-                مرحباً بك مرة أخرى! سجل الدخول للمتابعة إلى حسابك والاستفادة من
-                جميع ميزات
+                انضم إلينا واستمتع بقراءة المانجا المفضلة لديك
               </Text>
             </View>
 
-            {/* Login Error */}
-            {loginError && (
+            {/* Register Error */}
+            {registerError && (
               <View className="mb-4 p-3 bg-red-50 rounded-lg border border-red-200">
                 <Text
                   style={{ fontFamily: "Doc" }}
                   className="text-red-600 text-center"
                 >
-                  {loginError}
+                  {registerError}
                 </Text>
               </View>
             )}
 
+            {/* Register Form */}
             <View className="flex flex-col gap-2">
+              {/* Name Input */}
+              <View>
+                <Text
+                  style={{ fontFamily: "Doc" }}
+                  className="text-gray-700 text-sm mb-2"
+                >
+                  الاسم الكامل
+                </Text>
+                <Input
+                  value={formData.name}
+                  onChangeText={(text) => updateFormData("name", text)}
+                  autoCapitalize="words"
+                  style={{ fontFamily: "Doc" }}
+                  className={`border ${errors.name ? "border-red-500" : ""}`}
+                />
+                {errors.name && (
+                  <Text
+                    style={{ fontFamily: "Doc" }}
+                    className="text-red-500 text-sm mt-1"
+                  >
+                    {errors.name}
+                  </Text>
+                )}
+              </View>
+
+              {/* Email Input */}
               <View>
                 <Text
                   style={{ fontFamily: "Doc" }}
@@ -163,7 +193,6 @@ export default function LoginPage() {
                 <Input
                   value={formData.email}
                   onChangeText={(text) => updateFormData("email", text)}
-                  placeholder="أدخل بريدك الإلكتروني"
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -191,10 +220,9 @@ export default function LoginPage() {
                 <Input
                   value={formData.password}
                   onChangeText={(text) => updateFormData("password", text)}
-                  placeholder="أدخل كلمة المرور"
                   secureTextEntry
                   style={{ fontFamily: "Doc" }}
-                  className={`${errors.password ? "border-red-500" : ""}`}
+                  className={`border ${errors.password ? "border-red-500" : ""}`}
                 />
                 {errors.password && (
                   <Text
@@ -206,9 +234,36 @@ export default function LoginPage() {
                 )}
               </View>
 
-              {/* Login Button */}
+              {/* Confirm Password Input */}
+              <View>
+                <Text
+                  style={{ fontFamily: "Doc" }}
+                  className="text-gray-700 text-sm mb-2"
+                >
+                  تأكيد كلمة المرور
+                </Text>
+                <Input
+                  value={formData.confirmPassword}
+                  onChangeText={(text) =>
+                    updateFormData("confirmPassword", text)
+                  }
+                  secureTextEntry
+                  style={{ fontFamily: "Doc" }}
+                  className={`border ${errors.confirmPassword ? "border-red-500" : ""}`}
+                />
+                {errors.confirmPassword && (
+                  <Text
+                    style={{ fontFamily: "Doc" }}
+                    className="text-red-500 text-sm mt-1"
+                  >
+                    {errors.confirmPassword}
+                  </Text>
+                )}
+              </View>
+
+              {/* Register Button */}
               <Button
-                onPress={handleLogin}
+                onPress={handleRegister}
                 disabled={loading}
                 className="bg-[#ff4133] hover:bg-[#e53e3e] mt-6"
               >
@@ -216,23 +271,23 @@ export default function LoginPage() {
                   style={{ fontFamily: "Doc" }}
                   className="text-white text-lg"
                 >
-                  {loading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
+                  {loading ? "جاري إنشاء الحساب..." : "إنشاء حساب"}
                 </Text>
               </Button>
 
-              {/* Register Link */}
+              {/* Login Link */}
               <View className="flex-row justify-center items-center mt-6">
                 <Text style={{ fontFamily: "Doc" }} className="text-gray-600">
-                  ليس لديك حساب؟{" "}
+                  لديك حساب بالفعل؟{" "}
                 </Text>
                 <TouchableOpacity
-                  onPress={() => router.push("/auth/register" as any)}
+                  onPress={() => router.push("/auth/login" as any)}
                 >
                   <Text
                     style={{ fontFamily: "Doc" }}
                     className="text-[#ff4133] font-semibold"
                   >
-                    إنشاء حساب جديد
+                    تسجيل الدخول
                   </Text>
                 </TouchableOpacity>
               </View>

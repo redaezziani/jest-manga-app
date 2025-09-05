@@ -5,7 +5,6 @@ import { API_URL } from "@/utils";
 import { Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -30,6 +29,7 @@ export default function RegisterPage() {
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<RegisterData>>({});
+  const [registerError, setRegisterError] = useState<string>("");
   const router = useRouter();
 
   const validateForm = (): boolean => {
@@ -69,6 +69,8 @@ export default function RegisterPage() {
     if (!validateForm()) return;
 
     setLoading(true);
+    setRegisterError("");
+
     try {
       const response = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
@@ -88,22 +90,11 @@ export default function RegisterPage() {
         throw new Error(data.message || "فشل إنشاء الحساب");
       }
 
-      Alert.alert(
-        "تم إنشاء الحساب بنجاح ✅",
-        "يمكنك الآن تسجيل الدخول باستخدام بيانات حسابك الجديد",
-        [
-          {
-            text: "تسجيل الدخول",
-            onPress: () => {
-              router.replace("/auth/login" as any);
-            },
-          },
-        ]
-      );
+      // Navigate to login page after successful registration
+      router.replace("/auth/login");
     } catch (error) {
       console.error("Register error:", error);
-      Alert.alert(
-        "خطأ في إنشاء الحساب ❌",
+      setRegisterError(
         error instanceof Error ? error.message : "حدث خطأ غير متوقع"
       );
     } finally {
@@ -116,6 +107,10 @@ export default function RegisterPage() {
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+    // Clear register error when user starts typing
+    if (registerError) {
+      setRegisterError("");
     }
   };
 
@@ -133,23 +128,35 @@ export default function RegisterPage() {
         >
           <View className="flex-1 justify-center px-6 py-8">
             {/* Header */}
-            <View className="items-center mb-8">
+            <View className="items-start mb-8">
               <Text
                 style={{ fontFamily: "Doc" }}
-                className="text-3xl  text-gray-900 mb-2"
+                className="text-2xl text-gray-900"
               >
                 إنشاء حساب جديد
               </Text>
               <Text
                 style={{ fontFamily: "Doc" }}
-                className="text-gray-600 text-center"
+                className="text-gray-500 text-sm"
               >
                 انضم إلينا واستمتع بقراءة المانجا المفضلة لديك
               </Text>
             </View>
 
+            {/* Register Error */}
+            {registerError && (
+              <View className="mb-4 p-3 bg-red-50 rounded-lg border border-red-200">
+                <Text
+                  style={{ fontFamily: "Doc" }}
+                  className="text-red-600 text-center"
+                >
+                  {registerError}
+                </Text>
+              </View>
+            )}
+
             {/* Register Form */}
-            <View className="space-y-4">
+            <View className="flex flex-col gap-2">
               {/* Name Input */}
               <View>
                 <Text
@@ -161,11 +168,9 @@ export default function RegisterPage() {
                 <Input
                   value={formData.name}
                   onChangeText={(text) => updateFormData("name", text)}
-                  placeholder="أدخل اسمك الكامل"
                   autoCapitalize="words"
-                  className={`border ${
-                    errors.name ? "border-red-500" : "border-gray-300"
-                  } rounded-lg px-4 py-3`}
+                  style={{ fontFamily: "Doc" }}
+                  className={`border ${errors.name ? "border-red-500" : ""}`}
                 />
                 {errors.name && (
                   <Text
@@ -188,13 +193,11 @@ export default function RegisterPage() {
                 <Input
                   value={formData.email}
                   onChangeText={(text) => updateFormData("email", text)}
-                  placeholder="أدخل بريدك الإلكتروني"
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
-                  className={`border ${
-                    errors.email ? "border-red-500" : "border-gray-300"
-                  } rounded-lg px-4 py-3`}
+                  style={{ fontFamily: "Doc" }}
+                  className={`border ${errors.email ? "border-red-500" : ""}`}
                 />
                 {errors.email && (
                   <Text
@@ -217,11 +220,9 @@ export default function RegisterPage() {
                 <Input
                   value={formData.password}
                   onChangeText={(text) => updateFormData("password", text)}
-                  placeholder="أدخل كلمة المرور (6 أحرف على الأقل)"
                   secureTextEntry
-                  className={`border ${
-                    errors.password ? "border-red-500" : "border-gray-300"
-                  } rounded-lg px-4 py-3`}
+                  style={{ fontFamily: "Doc" }}
+                  className={`border ${errors.password ? "border-red-500" : ""}`}
                 />
                 {errors.password && (
                   <Text
@@ -246,13 +247,9 @@ export default function RegisterPage() {
                   onChangeText={(text) =>
                     updateFormData("confirmPassword", text)
                   }
-                  placeholder="أعد إدخال كلمة المرور"
                   secureTextEntry
-                  className={`border ${
-                    errors.confirmPassword
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  } rounded-lg px-4 py-3`}
+                  style={{ fontFamily: "Doc" }}
+                  className={`border ${errors.confirmPassword ? "border-red-500" : ""}`}
                 />
                 {errors.confirmPassword && (
                   <Text
@@ -268,11 +265,11 @@ export default function RegisterPage() {
               <Button
                 onPress={handleRegister}
                 disabled={loading}
-                className="bg-[#ff4133] hover:bg-[#e53e3e] py-4 rounded-lg mt-6"
+                className="bg-[#ff4133] hover:bg-[#e53e3e] mt-6"
               >
                 <Text
                   style={{ fontFamily: "Doc" }}
-                  className="text-white text-lg font-semibold"
+                  className="text-white text-lg"
                 >
                   {loading ? "جاري إنشاء الحساب..." : "إنشاء حساب"}
                 </Text>
