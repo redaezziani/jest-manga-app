@@ -132,9 +132,7 @@ export default function MangaDetail() {
 
       if (res.ok) {
         const data = await res.json();
-        console.log("Fetched comments:", data);
 
-        // Handle both wrapped and direct response formats
         if (data.success && data.data) {
           setComments(data.data);
         } else if (Array.isArray(data)) {
@@ -156,11 +154,7 @@ export default function MangaDetail() {
 
   const createComment = async (content: string, parentId?: string) => {
     if (!isAuthenticated || !token || !content.trim()) {
-      showAlert({
-        title: "خطأ",
-        message: "يجب تسجيل الدخول لإضافة تعليق",
-        showCancel: false,
-      });
+     
       return;
     }
 
@@ -181,12 +175,9 @@ export default function MangaDetail() {
       console.log("Create comment response:", data);
 
       if (res.ok) {
-        // Reset form
         setNewComment("");
         setReplyingTo(null);
         setReplyContent("");
-
-        // Refresh comments
         fetchComments();
       } else {
         throw new Error(data.message || "Failed to create comment");
