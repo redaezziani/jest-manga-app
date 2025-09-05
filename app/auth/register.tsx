@@ -181,7 +181,6 @@ export default function RegisterPage() {
                 )}
               </View>
 
-              {/* Email Input */}
               <View>
                 <Text
                   style={{ fontFamily: "Doc" }}
@@ -208,7 +207,6 @@ export default function RegisterPage() {
                 )}
               </View>
 
-              {/* Password Input */}
               <View>
                 <Text
                   style={{ fontFamily: "Doc" }}
@@ -233,7 +231,6 @@ export default function RegisterPage() {
                 )}
               </View>
 
-              {/* Confirm Password Input */}
               <View>
                 <Text
                   style={{ fontFamily: "Doc" }}

@@ -1,18 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import type { TriggerRef } from "@rn-primitives/popover";
 import { Link, useRouter } from "expo-router";
-import { LogOut, UserPlus } from "lucide-react-native";
 import * as React from "react";
-import { Alert, TouchableOpacity, View } from "react-native";
+import { Alert, View } from "react-native";
 
 export function UserMenu() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -76,61 +70,14 @@ export function UserMenu() {
   }
 
   return (
-    <Popover>
-      <PopoverTrigger asChild ref={popoverTriggerRef}>
-        <Button variant="ghost" size="icon" className="size-8 rounded-full">
-          <UserAvatar />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent align="center" side="bottom" className="w-52 p-0">
-        <View className="border-border gap-3 border-b border-dashed p-3">
-          <View className="flex-row items-center gap-3">
-            <UserAvatar />
-            <View className="flex-1">
-              <Text
-                style={{ fontFamily: "Doc" }}
-                className="font-medium text-xs leading-5"
-              >
-                {user?.name}
-              </Text>
-              <Text
-                style={{ fontFamily: "Doc" }}
-                className="text-muted-foreground line-clamp-1 text-sm font-normal leading-4"
-              >
-                {user?.email}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        <View className="p-3">
-          <TouchableOpacity
-            onPress={onSignOut}
-            className="flex-row items-center gap-1   hover:bg-gray-50"
-          >
-            <LogOut size={14} color="#dc2626" />
-            <Text
-              style={{ fontFamily: "Doc" }}
-              className=" text-xs text-red-600"
-            >
-              تسجيل الخروج
-            </Text>
-          </TouchableOpacity>
-          <Link
-            href="/(tabs)/profile"
-            className="flex-row items-center gap-1   hover:bg-gray-50 mt-2"
-          >
-            <UserPlus size={14} color="#666" />
-            <Text
-              style={{ fontFamily: "Doc" }}
-              className=" text-xs text-gray-700 mx-3"
-            >
-              ملفي الشخصي
-            </Text>
-          </Link>
-        </View>
-      </PopoverContent>
-    </Popover>
+    <Link href="/profile" asChild>
+      <Text
+        style={{ fontFamily: "Doc" }}
+        className="text-sm font-normal  text-white "
+      >
+        مرحباً، {user?.name || "مستخدم"}
+      </Text>
+    </Link>
   );
 }
 
