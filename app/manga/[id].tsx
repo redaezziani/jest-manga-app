@@ -9,7 +9,13 @@ import { MangaExtended } from "@/type/manga";
 import { API_URL } from "@/utils";
 import * as FileSystem from "expo-file-system";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Book, Download, MessageCircle, Send } from "lucide-react-native";
+import {
+  Book,
+  Bookmark,
+  Download,
+  MessageCircle,
+  Send,
+} from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -154,7 +160,6 @@ export default function MangaDetail() {
 
   const createComment = async (content: string, parentId?: string) => {
     if (!isAuthenticated || !token || !content.trim()) {
-     
       return;
     }
 
@@ -452,11 +457,31 @@ export default function MangaDetail() {
       >
         {manga && (
           <>
-            <Image
-              source={{ uri: manga.cover }}
-              style={{ width: 220, height: 350 }}
-              className="my-4 rounded-md border border-gray-300"
-            />
+            <View
+              style={{
+                position: "relative",
+                alignItems: "flex-start",
+                justifyContent: "flex-start",
+              }}
+            >
+              <Image
+                source={{ uri: manga.cover }}
+                style={{
+                  width: 220,
+                  height: 350,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: "#d1d5db",
+                  marginVertical: 16,
+                }}
+              />
+              <Bookmark
+                size={20}
+                color="#d1d5db"
+                strokeWidth={1.6}
+                style={{ position: "absolute", top: 20, left: 198 }}
+              />
+            </View>
 
             <View className="px-2 py-2">
               <Text
