@@ -184,6 +184,7 @@ export default function ProfileScreen() {
             <Button
               variant={"destructive"}
               className=" mt-2 font-medium w-full"
+              onPress={handleLogout}
             >
               <Text
                 style={{ fontFamily: "Doc" }}
