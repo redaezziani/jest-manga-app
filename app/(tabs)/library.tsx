@@ -234,7 +234,6 @@ export default function LibraryScreen() {
             </TabsList>
           </Tabs>
 
-          {/* Search Bar */}
           <View className="flex-row mt-4 items-center bg-gray-100 rounded-lg px-3">
             <Search size={16} color="#666" />
             <Input
