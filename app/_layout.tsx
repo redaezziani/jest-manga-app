@@ -2,10 +2,11 @@ import AnimatedSplashScreen from "@/components/AnimatedSplashScreen";
 import { AlertProvider } from "@/components/CustomAlert";
 import { AuthProvider } from "@/hooks/useAuth";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { NotificationProvider } from "@/providers/notification-context";
 import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
+    DarkTheme,
+    DefaultTheme,
+    ThemeProvider,
 } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
 import { useFonts } from "expo-font";
@@ -72,20 +73,22 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <AlertProvider>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style="auto" />
-            <PortalHost />
-          </View>
-        </ThemeProvider>
-      </AlertProvider>
+      <NotificationProvider>
+        <AlertProvider>
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          >
+            <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+              <StatusBar style="auto" />
+              <PortalHost />
+            </View>
+          </ThemeProvider>
+        </AlertProvider>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

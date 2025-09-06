@@ -2,6 +2,7 @@ import { LayoutWithTopBar } from "@/components/LayoutWithBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
+import { useNotifications } from "@/providers/notification-context";
 import { API_URL } from "@/utils";
 import { Link, Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -29,6 +30,7 @@ interface LoginResponse {
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const { sendLocalNotification, expoPushToken } = useNotifications();
   const [formData, setFormData] = useState<LoginData>({
     email: "",
     password: "",
@@ -84,6 +86,23 @@ export default function LoginPage() {
 
       // Use auth context to login
       await login(loginResponse.user, loginResponse.access_token);
+
+      // Send welcome notification
+      await sendLocalNotification({
+        title: "مرحباً بك! 🎌",
+        body: `أهلاً ${loginResponse.user.name}، تم تسجيل الدخول بنجاح إلى تطبيق المانجا`,
+        data: { 
+          type: "login_success", 
+          userId: loginResponse.user.email 
+        }
+      });
+
+      // Log push token for server-side notifications (optional)
+      if (expoPushToken) {
+        console.log("User push token:", expoPushToken);
+        // Here you could send the push token to your server to associate it with the user
+        // Example: await sendPushTokenToServer(expoPushToken, loginResponse.access_token);
+      }
 
       // Navigate to home page after successful login
       router.replace("/");
