@@ -1,6 +1,7 @@
 import { useCustomAlert } from "@/components/CustomAlert";
 import { MangaDetailSkeleton } from "@/components/Details-Manga-S";
 import { LayoutWithTopBar } from "@/components/LayoutWithBar";
+import { MangaSubscriptionButton } from "@/components/MangaSubscriptionButton";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Chapter } from "@/type/chapter";
@@ -13,12 +14,10 @@ import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import {
   Book,
   Bookmark,
-  BookmarkCheck,
   Download,
   Heart,
-  HeartHandshake,
   MessageCircle,
-  Send,
+  Send
 } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
@@ -235,21 +234,24 @@ export default function MangaDetail() {
           {comment.content}
         </Text>
 
-        <TouchableOpacity
-          onPress={() =>
-            setReplyingTo(replyingTo === comment.id ? null : comment.id)
-          }
-          className="flex-row items-center"
-        >
-          <Text
-            style={{ fontFamily: "Doc" }}
-            className="text-sm text-gray-600 underline ml-1"
+        {/* Only show reply button for top-level comments (level 0) */}
+        {level === 0 && (
+          <TouchableOpacity
+            onPress={() =>
+              setReplyingTo(replyingTo === comment.id ? null : comment.id)
+            }
+            className="flex-row items-center"
           >
-            رد
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={{ fontFamily: "Doc" }}
+              className="text-sm text-gray-600 underline ml-1"
+            >
+              رد
+            </Text>
+          </TouchableOpacity>
+        )}
 
-        {replyingTo === comment.id && (
+        {replyingTo === comment.id && level === 0 && (
           <View className="mt-3 p-2 bg-white rounded">
             <TextInput
               style={{ fontFamily: "Doc" }}
@@ -287,8 +289,8 @@ export default function MangaDetail() {
         )}
       </View>
 
-      {/* Render replies */}
-      {comment.replies && comment.replies.length > 0 && (
+      {/* Only render direct replies (level 0 -> level 1), no nested replies */}
+      {level === 0 && comment.replies && comment.replies.length > 0 && (
         <View className="">
           {comment.replies.map((reply) => renderComment(reply, level + 1))}
         </View>
@@ -575,55 +577,81 @@ export default function MangaDetail() {
             </View>
 
             <View className="px-2 ">
+                         <View className="px-2">
               {/* Bookmark and Like buttons */}
               {isAuthenticated && (
                 <View className="flex-row gap-4">
                   {/* Bookmark Button */}
-                  <TouchableOpacity
+                  <Button
+                    variant="outline"
+                    className="flex-row items-center px-3 py-1 rounded-lg border border-gray-300 bg-white"
                     onPress={handleToggleBookmark}
                     disabled={bookmarkLoading}
                   >
                     {bookmarkLoading ? (
                       <ActivityIndicator size={16} color="#ff4133" />
                     ) : isBookmarked ? (
-                      <BookmarkCheck
+                      <Bookmark
                         size={16}
+                        fill={"#ff4133"}
                         color="#ff4133"
                         strokeWidth={1.6}
                       />
                     ) : (
                       <Bookmark size={16} color="#666" strokeWidth={1.6} />
                     )}
-                  </TouchableOpacity>
+                    <Text
+                      style={{ fontFamily: "Doc" }}
+                      className="ml-2 text-sm text-gray-700"
+                    >
+                      {isBookmarked ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
+                    </Text>
+                  </Button>
 
                   {/* Like Button */}
-                  <TouchableOpacity
+                  <Button
+                    variant="outline"
+                    className="flex-row items-center px-3 py-1 rounded-lg border border-gray-300 bg-white"
                     onPress={handleToggleLike}
                     disabled={likeLoading}
-                    className="flex-row gap-2 items-center"
                   >
                     {likeLoading ? (
                       <ActivityIndicator size={16} color="#ff4133" />
                     ) : isLiked ? (
-                      <HeartHandshake
-                        size={16}
+                      <Heart
+                        size={18}
+                        fill={"#ff4133"}
                         color="#ff4133"
                         strokeWidth={1.6}
                       />
                     ) : (
-                      <Heart size={16} color="#666" strokeWidth={1.6} />
+                      <Heart size={18} color="#666" strokeWidth={1.6} />
                     )}
-                    {likeCount > 0 && (
-                      <Text
-                        style={{ fontFamily: "Doc" }}
-                        className="text-sm text-gray-700 mr-1"
-                      >
-                        {likeCount}
-                      </Text>
-                    )}
-                  </TouchableOpacity>
+                    <Text
+                      style={{ fontFamily: "Doc" }}
+                      className="ml-2 text-sm text-gray-700"
+                    >
+                      {isLiked ? "إلغاء الإعجاب" : "إعجاب"}
+                      {likeCount > 0 ? ` (${likeCount})` : ""}
+                    </Text>
+                  </Button>
                 </View>
               )}
+
+              
+            </View>
+              
+              {/* Notification Subscription Button */}
+              {isAuthenticated && manga && (
+                <View className="mb-4">
+                  <MangaSubscriptionButton
+                    mangaId={manga.id}
+                    mangaTitle={manga.title}
+                    className="mt-2"
+                  />
+                </View>
+              )}
+              
               <View className="flex-row justify-between items-start mb-2">
                 <View className="flex-1">
                   <Text

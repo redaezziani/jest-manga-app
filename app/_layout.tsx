@@ -2,6 +2,7 @@ import AnimatedSplashScreen from "@/components/AnimatedSplashScreen";
 import { AlertProvider } from "@/components/CustomAlert";
 import { AuthProvider } from "@/hooks/useAuth";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { MangaNotificationProvider } from "@/providers/MangaNotificationProvider";
 import { NotificationProvider } from "@/providers/notification-context";
 import {
     DarkTheme,
@@ -74,20 +75,22 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <NotificationProvider>
-        <AlertProvider>
-          <ThemeProvider
-            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-          >
-            <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-              <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="+not-found" />
-              </Stack>
-              <StatusBar style="auto" />
-              <PortalHost />
-            </View>
-          </ThemeProvider>
-        </AlertProvider>
+        <MangaNotificationProvider>
+          <AlertProvider>
+            <ThemeProvider
+              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+            >
+              <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+                <Stack>
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen name="+not-found" />
+                </Stack>
+                <StatusBar style="auto" />
+                <PortalHost />
+              </View>
+            </ThemeProvider>
+          </AlertProvider>
+        </MangaNotificationProvider>
       </NotificationProvider>
     </AuthProvider>
   );

@@ -1,4 +1,7 @@
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useMangaNotifications } from "@/hooks/useMangaNotifications";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   I18nManager,
@@ -37,7 +40,9 @@ export const TopBar = () => {
       <StatusBar barStyle="light-content" backgroundColor="#ef4444" />
 
       <View className="flex-row-reverse justify-between items-center">
-        <UserMenuWrapper toggleMenu={() => setMenuVisible(!menuVisible)} />
+        <View className="flex-row-reverse items-center gap-3">
+          <UserMenuWrapper toggleMenu={() => setMenuVisible(!menuVisible)} />
+        </View>
         <AppTitle />
       </View>
 
@@ -58,6 +63,44 @@ const UserMenuWrapper = ({ toggleMenu }: { toggleMenu: () => void }) => (
     <UserMenu />
   </View>
 );
+
+const NotificationIcon = () => {
+  const { unreadCount, isConnected } = useMangaNotifications();
+
+  const handleNotificationPress = () => {
+    router.push('/notifications');
+  };
+
+  return (
+    <TouchableOpacity
+      onPress={handleNotificationPress}
+      className="relative p-2"
+      style={{ minHeight: 40, justifyContent: 'center' }}
+    >
+      <Ionicons
+        name={isConnected ? "notifications" : "notifications-outline"}
+        size={24}
+        color="white"
+      />
+      {unreadCount > 0 && (
+        <View
+          className="absolute -top-1 -right-1 bg-yellow-400 rounded-full min-w-[18px] h-[18px] items-center justify-center"
+          style={{ minWidth: 18 }}
+        >
+          <Text
+            className="text-xs font-bold text-gray-800"
+            style={{ fontSize: 10, includeFontPadding: false }}
+          >
+            {unreadCount > 99 ? '99+' : unreadCount.toString()}
+          </Text>
+        </View>
+      )}
+      {!isConnected && (
+        <View className="absolute -bottom-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
+      )}
+    </TouchableOpacity>
+  );
+};
 const AppTitle = () => (
   <View style={{ flexDirection: "row", alignItems: "center" }}>
     <Image
