@@ -161,6 +161,7 @@ export default function HomeScreen() {
               activeDotStyle={{ display: "none" }}
               showsButtons={false}
               className="mt-2"
+              style={{ flexDirection: "row-reverse" }}
             >
               {mangaPairs.map((pair, index) => renderMangaPair(pair, index))}
             </Swiper>

@@ -5,9 +5,9 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { MangaNotificationProvider } from "@/providers/MangaNotificationProvider";
 import { NotificationProvider } from "@/providers/notification-context";
 import {
-    DarkTheme,
-    DefaultTheme,
-    ThemeProvider,
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
 } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
 import { useFonts } from "expo-font";
@@ -17,6 +17,12 @@ import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import "./global.css";
+
+import { I18nManager } from "react-native";
+
+// Enable RTL layout
+I18nManager.forceRTL(true);
+I18nManager.allowRTL(true);
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -82,7 +88,10 @@ export default function RootLayout() {
             >
               <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
                 <Stack>
-                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{ headerShown: false }}
+                  />
                   <Stack.Screen name="+not-found" />
                 </Stack>
                 <StatusBar style="auto" />
