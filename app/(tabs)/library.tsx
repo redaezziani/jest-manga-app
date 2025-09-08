@@ -215,13 +215,6 @@ export default function LibraryScreen() {
     );
   }
 
-  const currentData = activeTab === "bookmarks" ? bookmarks : likedManga;
-
-  console.log("Current tab:", activeTab);
-  console.log("Current data length:", currentData.length);
-  console.log("Loading state:", loading);
-  console.log("Liked manga state:", likedManga.length, likedManga);
-
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -229,16 +222,10 @@ export default function LibraryScreen() {
       <View className="flex-1 bg-gray-50">
         {/* Header */}
         <View className="bg-white p-4 border-b border-gray-200">
-          <Text
-            style={{ fontFamily: "Doc" }}
-            className="text-2xl  text-gray-900 mb-4 text-center"
-          >
-            مكتبتي
-          </Text>
-
           {/* Tabs */}
           <Tabs
             value={activeTab}
+            className="border border-border rounded-lg"
             onValueChange={(value) => setActiveTab(value as TabType)}
           >
             <TabsList className="w-full">
@@ -246,7 +233,12 @@ export default function LibraryScreen() {
                 value="bookmarks"
                 className="flex-1  p-1 flex justify-center items-center"
               >
-                <BookmarkIcon size={16} color="#ff4133" />
+                <BookmarkIcon
+                  fill={activeTab === "bookmarks" ? "#9ca3af" : "none"}
+                  size={16}
+                  color="#9ca3af"
+                  strokeWidth={1.6}
+                />
                 <Text
                   className=" -mt-2 text-center  "
                   style={{ fontFamily: "Doc" }}
@@ -259,7 +251,12 @@ export default function LibraryScreen() {
                 value="liked"
                 className="flex-1 p-1 flex justify-center items-center"
               >
-                <Heart size={16} color="#ff4133" />
+                <Heart
+                  fill={activeTab === "liked" ? "#9ca3af" : "none"}
+                  size={16}
+                  color="#9ca3af"
+                  strokeWidth={1.6}
+                />
                 <Text
                   className="-mt-2 text-center  "
                   style={{ fontFamily: "Doc" }}
@@ -270,13 +267,12 @@ export default function LibraryScreen() {
             </TabsList>
           </Tabs>
 
-          <View className="flex-row mt-4 items-center bg-gray-100 rounded-lg px-3">
+          <View className="flex-row mt-4 items-center border border-border  bg-gray-100 rounded-lg px-3">
             <Search size={16} color="#666" />
             <Input
               style={{ fontFamily: "Doc" }}
-              className="flex-1 mr-2 text-gray-700 bg-transparent border-none
+              className="flex-1  text-gray-700 bg-transparent border-transparent border-none
               shadow-none focus:ring-0 rounded-none"
-              placeholder={`البحث في ${activeTab === "bookmarks" ? "الإشارات المرجعية" : "المُعجب بها"}...`}
               value={searchQuery}
               onChangeText={setSearchQuery}
               onSubmitEditing={handleSearch}
