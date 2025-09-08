@@ -200,7 +200,6 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
         </Text>
       </View>
 
-      {/* Add new comment */}
       {isAuthenticated ? (
         <View className="mb-4 p-3 ">
           <TextInput
