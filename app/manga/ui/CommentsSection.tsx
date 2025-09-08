@@ -189,7 +189,7 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
   );
 
   return (
-    <View className="px-2 py-4 mt-4 border-t border-gray-200">
+    <View className="px-2 py-2 ">
       <View className="flex-row items-center mb-4">
         <MessageCircle size={14} color="#ff4133" />
         <Text
