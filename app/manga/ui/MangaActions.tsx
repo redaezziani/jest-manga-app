@@ -8,6 +8,7 @@ interface MangaActionsProps {
   isBookmarked: boolean;
   isLiked: boolean;
   likeCount: number;
+  viewsCount: number;
   bookmarkLoading: boolean;
   likeLoading: boolean;
   onToggleBookmark: () => void;
@@ -23,6 +24,7 @@ export const MangaActions: React.FC<MangaActionsProps> = ({
   likeLoading,
   onToggleBookmark,
   onToggleLike,
+  viewsCount = 0,
 }) => {
   if (!isAuthenticated) {
     return null;
@@ -42,8 +44,8 @@ export const MangaActions: React.FC<MangaActionsProps> = ({
         ) : isBookmarked ? (
           <Bookmark
             size={16}
-            fill={"#9ca3af"}
-            color="#9ca3af"
+            fill={"#f43f5e"}
+            color="#f43f5e"
             strokeWidth={1.6}
           />
         ) : (
@@ -53,18 +55,17 @@ export const MangaActions: React.FC<MangaActionsProps> = ({
           {isBookmarked ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
         </Text>
       </Button>
-
       {/* Like Button */}
       <Button
         variant="outline"
-        className="flex-row items-center border-transparent px-3 py-1 border-none"
+        className="flex-row items-center border-transparent px-0 py-1 border-none"
         onPress={onToggleLike}
         disabled={likeLoading}
       >
         {likeLoading ? (
           <ActivityIndicator size={16} color="#ff4133" />
         ) : isLiked ? (
-          <Heart size={16} fill={"#9ca3af"} color="#9ca3af" strokeWidth={1.6} />
+          <Heart size={16} fill={"#f43f5e"} color="#f43f5e" strokeWidth={1.6} />
         ) : (
           <Heart size={16} color="#666" strokeWidth={1.6} />
         )}

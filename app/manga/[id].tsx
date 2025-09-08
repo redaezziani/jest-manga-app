@@ -244,35 +244,27 @@ export default function MangaDetail() {
       // Check each endpoint separately to better handle errors
       try {
         const bookmarkResult = await APIService.checkBookmarkStatus(id, token);
-        console.log("Bookmark status result:", bookmarkResult);
         setIsBookmarked(bookmarkResult.bookmarked);
       } catch (bookmarkError) {
-        console.error("Bookmark check failed:", bookmarkError);
         // Set default bookmark status if endpoint fails
         setIsBookmarked(false);
       }
 
       try {
         const likeResult = await APIService.checkLikeStatus(id, token);
-        console.log("Like status result:", likeResult);
         setIsLiked(likeResult.liked);
       } catch (likeError) {
-        console.error("Like check failed:", likeError);
         // Set default like status if endpoint fails
         setIsLiked(false);
       }
 
       try {
         const likeCountResult = await APIService.getMangaLikeCount(id, token);
-        console.log("Like count result:", likeCountResult);
         setLikeCount(likeCountResult.likeCount);
       } catch (countError) {
-        console.error("Like count check failed:", countError);
-        // Set default count if endpoint fails
         setLikeCount(0);
       }
     } catch (error) {
-      console.error("General error checking bookmark and like status:", error);
       // Set defaults if everything fails
       setIsBookmarked(false);
       setIsLiked(false);
@@ -468,6 +460,7 @@ export default function MangaDetail() {
                 likeLoading={likeLoading}
                 onToggleBookmark={handleToggleBookmark}
                 onToggleLike={handleToggleLike}
+                viewsCount={manga.views}
               />
 
               <MangaInfo manga={manga} />
