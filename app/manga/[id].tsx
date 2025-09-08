@@ -1,8 +1,6 @@
 import { useCustomAlert } from "@/components/CustomAlert";
 import { MangaDetailSkeleton } from "@/components/Details-Manga-S";
 import { LayoutWithTopBar } from "@/components/LayoutWithBar";
-import { MangaSubscriptionButton } from "@/components/MangaSubscriptionButton";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Chapter } from "@/type/chapter";
 import { Comment } from "@/type/comment";
@@ -10,27 +8,18 @@ import { MangaExtended } from "@/type/manga";
 import { API_URL } from "@/utils";
 import { APIService } from "@/utils/apiService";
 import * as FileSystem from "expo-file-system";
-import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
-import {
-  Book,
-  Bookmark,
-  Download,
-  Heart,
-  MessageCircle,
-  Send
-} from "lucide-react-native";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+import { RefreshControl, ScrollView, View } from "react-native";
 import {
-  ActivityIndicator,
-  Image,
-  RefreshControl,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import Swiper from "react-native-swiper";
+  ChaptersList,
+  CommentsSection,
+  MangaActions,
+  MangaCover,
+  MangaInfo,
+  PathIndicator,
+  SimilarManga,
+} from "./ui";
 
 export default function MangaDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -212,92 +201,6 @@ export default function MangaDetail() {
     }
   };
 
-  const renderComment = (comment: Comment, level: number = 0) => (
-    <View key={comment.id} className={`mb-1 ${level > 0 ? "ml-4 pl-4 " : ""}`}>
-      <View className=" p-3 ">
-        <View className="flex-row items-center justify-between mb-2">
-          <Text
-            style={{ fontFamily: "Doc" }}
-            className=" text-sm text-gray-800"
-          >
-            {comment.user.name}
-          </Text>
-          <Text className="text-xs text-gray-500">
-            {new Date(comment.createdAt).toLocaleDateString("ar")}
-          </Text>
-        </View>
-
-        <Text
-          style={{ fontFamily: "Doc" }}
-          className="text-gray-500 text-sm mb-2"
-        >
-          {comment.content}
-        </Text>
-
-        {/* Only show reply button for top-level comments (level 0) */}
-        {level === 0 && (
-          <TouchableOpacity
-            onPress={() =>
-              setReplyingTo(replyingTo === comment.id ? null : comment.id)
-            }
-            className="flex-row items-center"
-          >
-            <Text
-              style={{ fontFamily: "Doc" }}
-              className="text-sm text-gray-600 underline ml-1"
-            >
-              رد
-            </Text>
-          </TouchableOpacity>
-        )}
-
-        {replyingTo === comment.id && level === 0 && (
-          <View className="mt-3 p-2 bg-white rounded">
-            <TextInput
-              style={{ fontFamily: "Doc" }}
-              className="border border-gray-300 rounded p-2 mb-2"
-              placeholder="اكتب ردك هنا..."
-              value={replyContent}
-              onChangeText={setReplyContent}
-              multiline
-            />
-            <View className="flex-row gap-2">
-              <Button
-                onPress={() => createComment(replyContent, comment.id)}
-                size="sm"
-                className="flex-1"
-              >
-                <Send size={16} color="white" />
-                <Text style={{ fontFamily: "Doc" }} className="text-white ml-2">
-                  إرسال
-                </Text>
-              </Button>
-              <Button
-                variant="ghost"
-                onPress={() => {
-                  setReplyingTo(null);
-                  setReplyContent("");
-                }}
-                size="sm"
-              >
-                <Text style={{ fontFamily: "Doc" }} className="text-gray-600">
-                  إلغاء
-                </Text>
-              </Button>
-            </View>
-          </View>
-        )}
-      </View>
-
-      {/* Only render direct replies (level 0 -> level 1), no nested replies */}
-      {level === 0 && comment.replies && comment.replies.length > 0 && (
-        <View className="">
-          {comment.replies.map((reply) => renderComment(reply, level + 1))}
-        </View>
-      )}
-    </View>
-  );
-
   // Bookmark and Like functions
   const checkBookmarkAndLikeStatus = async () => {
     if (!id || !token) return;
@@ -373,42 +276,6 @@ export default function MangaDetail() {
       setLikeLoading(false);
     }
   };
-
-  const renderMangaCard = (item: MangaExtended) => (
-    <View className="flex-1 px-2 mb-4 " key={item.id}>
-      <Image
-        source={{ uri: item.coverThumbnail }}
-        style={{
-          width: "100%",
-          height: 245,
-          borderRadius: 10,
-        }}
-        resizeMode="cover"
-        className="border border-gray-300"
-      />
-      <View className="pt-2 px-1">
-        <Text
-          onPress={() => router.push(`/manga/${item.id}`)}
-          style={{ fontFamily: "Doc" }}
-          className="text-sm font-bold line-clamp-1 text-gray-900 mb-1"
-          numberOfLines={2}
-        >
-          {item.title}
-        </Text>
-        <Text className="text-xs text-gray-600 mb-2" numberOfLines={1}>
-          {item.authors.join(", ")}
-        </Text>
-        <View className="flex-row items-center justify-between">
-          <Text
-            style={{ fontFamily: "Doc" }}
-            className="text-xs text-gray-500 capitalize"
-          >
-            {item.status}
-          </Text>
-        </View>
-      </View>
-    </View>
-  );
 
   if (loading) {
     return (
@@ -539,7 +406,7 @@ export default function MangaDetail() {
   return (
     <LayoutWithTopBar>
       <Stack.Screen options={{ headerShown: false }} />
-      <View className="px-4    ">
+      <View className="px-4">
         <PathIndicator title={manga ? manga.title : "تفاصيل المانجا"} />
       </View>
       <ScrollView
@@ -556,403 +423,48 @@ export default function MangaDetail() {
       >
         {manga && (
           <>
-            <View
-              style={{
-                position: "relative",
-                alignItems: "flex-start",
-                justifyContent: "flex-start",
-              }}
-            >
-              <Image
-                source={{ uri: manga.cover }}
-                style={{
-                  width: 220,
-                  height: 350,
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: "#d1d5db",
-                  marginVertical: 16,
-                }}
+            <MangaCover coverUrl={manga.cover} />
+
+            <View className="px-2">
+              <MangaActions
+                isAuthenticated={isAuthenticated}
+                isBookmarked={isBookmarked}
+                isLiked={isLiked}
+                likeCount={likeCount}
+                bookmarkLoading={bookmarkLoading}
+                likeLoading={likeLoading}
+                onToggleBookmark={handleToggleBookmark}
+                onToggleLike={handleToggleLike}
               />
+
+              <MangaInfo manga={manga} />
             </View>
 
-            <View className="px-2 ">
-                         <View className="px-2">
-              {/* Bookmark and Like buttons */}
-              {isAuthenticated && (
-                <View className="flex-row gap-4">
-                  {/* Bookmark Button */}
-                  <Button
-                    variant="outline"
-                    className="flex-row items-center px-3 py-1 rounded-lg border border-gray-300 bg-white"
-                    onPress={handleToggleBookmark}
-                    disabled={bookmarkLoading}
-                  >
-                    {bookmarkLoading ? (
-                      <ActivityIndicator size={16} color="#ff4133" />
-                    ) : isBookmarked ? (
-                      <Bookmark
-                        size={16}
-                        fill={"#ff4133"}
-                        color="#ff4133"
-                        strokeWidth={1.6}
-                      />
-                    ) : (
-                      <Bookmark size={16} color="#666" strokeWidth={1.6} />
-                    )}
-                    <Text
-                      style={{ fontFamily: "Doc" }}
-                      className="ml-2 text-sm text-gray-700"
-                    >
-                      {isBookmarked ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
-                    </Text>
-                  </Button>
-
-                  {/* Like Button */}
-                  <Button
-                    variant="outline"
-                    className="flex-row items-center px-3 py-1 rounded-lg border border-gray-300 bg-white"
-                    onPress={handleToggleLike}
-                    disabled={likeLoading}
-                  >
-                    {likeLoading ? (
-                      <ActivityIndicator size={16} color="#ff4133" />
-                    ) : isLiked ? (
-                      <Heart
-                        size={18}
-                        fill={"#ff4133"}
-                        color="#ff4133"
-                        strokeWidth={1.6}
-                      />
-                    ) : (
-                      <Heart size={18} color="#666" strokeWidth={1.6} />
-                    )}
-                    <Text
-                      style={{ fontFamily: "Doc" }}
-                      className="ml-2 text-sm text-gray-700"
-                    >
-                      {isLiked ? "إلغاء الإعجاب" : "إعجاب"}
-                      {likeCount > 0 ? ` (${likeCount})` : ""}
-                    </Text>
-                  </Button>
-                </View>
-              )}
-
-              
-            </View>
-              
-              {/* Notification Subscription Button */}
-              {isAuthenticated && manga && (
-                <View className="mb-4">
-                  <MangaSubscriptionButton
-                    mangaId={manga.id}
-                    mangaTitle={manga.title}
-                    className="mt-2"
-                  />
-                </View>
-              )}
-              
-              <View className="flex-row justify-between items-start mb-2">
-                <View className="flex-1">
-                  <Text
-                    style={{ fontFamily: "Doc" }}
-                    className="text-xl font-bold text-gray-900 mb-1"
-                  >
-                    {manga.title}
-                  </Text>
-                </View>
-              </View>
-
-              {manga.otherTitles.length > 0 && (
-                <Text
-                  style={{ fontFamily: "Doc" }}
-                  className="text-gray-500 mb-2"
-                >
-                  {manga.otherTitles.length > 2
-                    ? `${manga.otherTitles.slice(0, 2).join(" / ")} ...`
-                    : manga.otherTitles.join(" / ")}
-                </Text>
-              )}
-
-              <View className="mb-3">
-                <Text
-                  style={{ fontFamily: "Doc" }}
-                  className="text-gray-500 text-sm"
-                >
-                  <Text
-                    style={{ fontFamily: "Doc" }}
-                    className=" text-sm text-gray-700"
-                  >
-                    المؤلف:{" "}
-                  </Text>
-                  {manga.authors.join(", ") === ""
-                    ? "غير محدد"
-                    : manga.authors.join(", ")}
-                </Text>
-
-                <Text
-                  style={{ fontFamily: "Doc" }}
-                  className="text-gray-500 text-sm"
-                >
-                  <Text
-                    style={{ fontFamily: "Doc" }}
-                    className=" text-sm text-gray-700"
-                  >
-                    الرسام:{" "}
-                  </Text>
-                  {manga.artists.join(", ") === ""
-                    ? "غير محدد"
-                    : manga.artists.join(", ")}
-                </Text>
-
-                <Text
-                  style={{ fontFamily: "Doc" }}
-                  className="text-gray-500 text-sm"
-                >
-                  <Text
-                    style={{ fontFamily: "Doc" }}
-                    className=" text-sm text-gray-700"
-                  >
-                    النوع:{" "}
-                  </Text>
-                  {manga.type === "" ? "غير محدد" : manga.type}
-                </Text>
-
-                <Text
-                  style={{ fontFamily: "Doc" }}
-                  className="text-gray-500 text-sm"
-                >
-                  <Text
-                    style={{ fontFamily: "Doc" }}
-                    className=" text-sm text-gray-700"
-                  >
-                    الحالة:{" "}
-                  </Text>
-                  {manga.status.toLowerCase() === "ongoing"
-                    ? "مستمرة"
-                    : "مكتملة"}
-                </Text>
-              </View>
-
-              {manga.genres.length > 0 && (
-                <View className="flex-row flex-wrap mb-4">
-                  {manga.genres.map((genre, index) => (
-                    <View
-                      key={`genre-${genre}-${index}`}
-                      className="bg-gray-200 px-3 py-1 rounded-full mr-2 mb-2"
-                    >
-                      <Text
-                        style={{ fontFamily: "Doc" }}
-                        className="text-sm text-gray-700"
-                      >
-                        {genre}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              )}
-
-              <Text
-                style={{ fontFamily: "Doc" }}
-                className={`text-gray-800 leading-relaxed ${manga.description === "" ? " text-gray-400" : ""}`}
-              >
-                {manga.description === ""
-                  ? "لا توجد وصف متاح لهذه المانجا."
-                  : manga.description}
-              </Text>
-            </View>
-
-            {similar.length > 0 && (
-              <View className="py-4 px-2">
-                <Text
-                  style={{ fontFamily: "Doc" }}
-                  className="text-xl  text-gray-900 mb-2"
-                >
-                  مانجا مشابهة
-                </Text>
-                <View style={{ height: 330 }} className="relative">
-                  <Swiper
-                    showsPagination={true}
-                    autoplay={false}
-                    loop={false}
-                    dotStyle={{ display: "none" }}
-                    activeDotStyle={{ display: "none" }}
-                    showsButtons={false}
-                    className="mt-2"
-                  >
-                    {similar
-                      .reduce((resultArray: MangaExtended[][], item, index) => {
-                        const chunkIndex = Math.floor(index / 2);
-                        if (!resultArray[chunkIndex]) {
-                          resultArray[chunkIndex] = [];
-                        }
-                        resultArray[chunkIndex].push(item);
-                        return resultArray;
-                      }, [])
-                      .map((pair, index) => (
-                        <View className="flex-row " key={index}>
-                          {pair.map((manga) => renderMangaCard(manga))}
-                          {pair.length === 1 && (
-                            <View className="flex-1 mx-2" />
-                          )}
-                        </View>
-                      ))}
-                  </Swiper>
-                </View>
-              </View>
-            )}
+            <SimilarManga similarManga={similar} />
           </>
         )}
-        {chapters.length > 0 && (
-          <View className="px-2 py-4">
-            <Text
-              style={{ fontFamily: "Doc" }}
-              className="text-xl  text-gray-900 mb-2"
-            >
-              الفصول
-            </Text>
-            {chapters.map((chapter) => {
-              const isDownloaded = downloadedChapters.has(chapter.id);
-              const isDownloading = downloadingChapters.has(chapter.id);
 
-              return (
-                <View
-                  key={chapter.id}
-                  className="py-2 flex-row items-center justify-between"
-                >
-                  {/* Chapter title and reading options */}
-                  <View className="flex-1">
-                    <TouchableOpacity
-                      onPress={() =>
-                        router.push(`/chapter/${chapter.number}?mangaId=${id}`)
-                      }
-                    >
-                      <Text
-                        style={{ fontFamily: "Doc" }}
-                        className="text-gray-800 text-sm"
-                      >
-                        {chapter.number} - {chapter.title}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
+        <ChaptersList
+          chapters={chapters}
+          mangaId={id!}
+          downloadedChapters={downloadedChapters}
+          downloadingChapters={downloadingChapters}
+          onDownloadChapter={downloadChapter}
+        />
 
-                  {isDownloaded && (
-                    <TouchableOpacity
-                      onPress={() => {
-                        const chapterPath = `${FileSystem.documentDirectory}manga_${id}/chapter_${chapter.id}`;
-                        router.push(
-                          `/offline-reader?chapterPath=${encodeURIComponent(chapterPath)}&title=${encodeURIComponent(`الفصل ${chapter.number}`)}`
-                        );
-                      }}
-                      className="rounded-full w-6 h-6 flex items-center justify-center"
-                    >
-                      <Book size={12} color={"#374151"} />
-                    </TouchableOpacity>
-                  )}
-                  {!isDownloaded && (
-                    <Button
-                      variant="ghost"
-                      size={"icon"}
-                      className="rounded-full w-6 h-6 flex items-center justify-center"
-                      onPress={() => downloadChapter(chapter)}
-                      disabled={isDownloaded || isDownloading}
-                    >
-                      {isDownloading ? (
-                        <ActivityIndicator size={12} color="#ff4133" />
-                      ) : (
-                        <Download color={"#ff4133"} size={12} className="" />
-                      )}
-                    </Button>
-                  )}
-                </View>
-              );
-            })}
-          </View>
-        )}
-
-        {/* Comments Section */}
-        <View className="px-2 py-4 mt-4 border-t border-gray-200">
-          <View className="flex-row items-center mb-4">
-            <MessageCircle size={14} color="#ff4133" />
-            <Text
-              style={{ fontFamily: "Doc" }}
-              className="text-md text-gray-900 ml-2"
-            >
-              التعليقات ({comments.length})
-            </Text>
-          </View>
-
-          {/* Add new comment */}
-          {isAuthenticated ? (
-            <View className="mb-4 p-3 ">
-              <TextInput
-                style={{ fontFamily: "Doc" }}
-                className="border border-gray-300 rounded p-3 mb-3"
-                placeholder="اكتب تعليقك هنا..."
-                value={newComment}
-                onChangeText={setNewComment}
-                multiline
-                numberOfLines={3}
-              />
-              <Button
-                onPress={() => createComment(newComment)}
-                disabled={!newComment.trim()}
-              ></Button>
-            </View>
-          ) : (
-            <View className="mb-4 p-3 bg-gray-100 rounded-lg">
-              <Text
-                style={{ fontFamily: "Doc" }}
-                className="text-gray-600 text-center"
-              >
-                يجب تسجيل الدخول لإضافة تعليق
-              </Text>
-            </View>
-          )}
-
-          {/* Comments list */}
-          {commentsLoading ? (
-            <View className="py-4">
-              <Text
-                style={{ fontFamily: "Doc" }}
-                className="text-center text-gray-500"
-              >
-                جاري تحميل التعليقات...
-              </Text>
-            </View>
-          ) : comments.length > 0 ? (
-            <View>{comments.map((comment) => renderComment(comment))}</View>
-          ) : (
-            <View className="py-8">
-              <Text
-                style={{ fontFamily: "Doc" }}
-                className="text-center text-gray-500"
-              >
-                لا توجد تعليقات بعد. كن أول من يعلق!
-              </Text>
-            </View>
-          )}
-        </View>
+        <CommentsSection
+          comments={comments}
+          newComment={newComment}
+          replyingTo={replyingTo}
+          replyContent={replyContent}
+          commentsLoading={commentsLoading}
+          isAuthenticated={isAuthenticated}
+          onNewCommentChange={setNewComment}
+          onReplyContentChange={setReplyContent}
+          onCreateComment={createComment}
+          onSetReplyingTo={setReplyingTo}
+        />
       </ScrollView>
     </LayoutWithTopBar>
   );
 }
-
-const PathIndicator = ({ title }: { title: string }) => (
-  <View className="flex-row items-center gap-1 ">
-    <Link href="/" style={{ fontFamily: "Doc" }} className=" text-[#ff4133]">
-      الرئيسية
-    </Link>
-    <Text style={{ fontFamily: "Doc" }} className="text-sm text-gray-500">
-      /
-    </Text>
-    <Text
-      style={{ fontFamily: "Doc" }}
-      className="text-sm text-gray-700 font-bold"
-      numberOfLines={1}
-      ellipsizeMode="tail"
-    >
-      {title}
-    </Text>
-  </View>
-);
