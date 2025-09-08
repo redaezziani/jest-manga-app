@@ -201,6 +201,39 @@ export default function MangaDetail() {
     }
   };
 
+  const deleteComment = async (commentId: string) => {
+    if (!isAuthenticated || !token) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/api/comments/${commentId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        // Refresh comments after successful deletion
+        fetchComments();
+        showAlert({
+          title: "نجح الحذف",
+          message: "تم حذف التعليق بنجاح",
+        });
+      } else {
+        const data = await res.json();
+        throw new Error(data.message || "Failed to delete comment");
+      }
+    } catch (err) {
+      console.error("Error deleting comment:", err);
+      showAlert({
+        title: "خطأ",
+        message: "فشل في حذف التعليق",
+      });
+    }
+  };
+
   // Bookmark and Like functions
   const checkBookmarkAndLikeStatus = async () => {
     if (!id || !token) return;
@@ -459,10 +492,13 @@ export default function MangaDetail() {
           replyContent={replyContent}
           commentsLoading={commentsLoading}
           isAuthenticated={isAuthenticated}
+          currentUserId={user?.email} // Using email as identifier until we have proper user ID
           onNewCommentChange={setNewComment}
           onReplyContentChange={setReplyContent}
           onCreateComment={createComment}
           onSetReplyingTo={setReplyingTo}
+          onDeleteComment={deleteComment}
+          showAlert={showAlert}
         />
       </ScrollView>
     </LayoutWithTopBar>

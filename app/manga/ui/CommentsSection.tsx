@@ -1,8 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Comment } from "@/type/comment";
-import { MessageCircle, Send } from "lucide-react-native";
-import React from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { MessageCircle, Send, Trash2 } from "lucide-react-native";
+import React, { useState } from "react";
+import {
+  ActivityIndicator,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface CommentsSectionProps {
   comments: Comment[];
@@ -11,10 +17,19 @@ interface CommentsSectionProps {
   replyContent: string;
   commentsLoading: boolean;
   isAuthenticated: boolean;
+  currentUserId?: string;
   onNewCommentChange: (text: string) => void;
   onReplyContentChange: (text: string) => void;
   onCreateComment: (content: string, parentId?: string) => void;
   onSetReplyingTo: (commentId: string | null) => void;
+  onDeleteComment: (commentId: string) => void;
+  showAlert?: (config: {
+    title: string;
+    message: string;
+    showCancel?: boolean;
+    confirmText?: string;
+    onConfirm?: () => void;
+  }) => void;
 }
 
 export const CommentsSection: React.FC<CommentsSectionProps> = ({
@@ -24,11 +39,45 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
   replyContent,
   commentsLoading,
   isAuthenticated,
+  currentUserId,
   onNewCommentChange,
   onReplyContentChange,
   onCreateComment,
   onSetReplyingTo,
+  onDeleteComment,
+  showAlert,
 }) => {
+  const [deletingComments, setDeletingComments] = useState<Set<string>>(
+    new Set()
+  );
+  const handleDeleteComment = async (commentId: string) => {
+    const executeDelete = async () => {
+      setDeletingComments((prev) => new Set(prev).add(commentId));
+      try {
+        await onDeleteComment(commentId);
+      } finally {
+        setDeletingComments((prev) => {
+          const updated = new Set(prev);
+          updated.delete(commentId);
+          return updated;
+        });
+      }
+    };
+
+    if (showAlert) {
+      showAlert({
+        title: "تأكيد الحذف",
+        message:
+          "هل أنت متأكد من حذف هذا التعليق؟ لا يمكن التراجع عن هذا الإجراء.",
+        showCancel: true,
+        confirmText: "حذف",
+        onConfirm: executeDelete,
+      });
+    } else {
+      await executeDelete();
+    }
+  };
+
   const renderComment = (comment: Comment, level: number = 0) => (
     <View key={comment.id} className={`mb-1 ${level > 0 ? "ml-4 pl-4 " : ""}`}>
       <View className=" p-3 ">
@@ -51,22 +100,46 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
           {comment.content}
         </Text>
 
-        {/* Only show reply button for top-level comments (level 0) */}
-        {level === 0 && (
-          <TouchableOpacity
-            onPress={() =>
-              onSetReplyingTo(replyingTo === comment.id ? null : comment.id)
-            }
-            className="flex-row items-center"
-          >
-            <Text
-              style={{ fontFamily: "Doc" }}
-              className="text-sm text-gray-600 underline ml-1"
+        {/* Reply and Delete buttons */}
+        <View className="flex-row items-center gap-4 mt-2">
+          {/* Only show reply button for top-level comments (level 0) */}
+          {level === 0 && (
+            <TouchableOpacity
+              onPress={() =>
+                onSetReplyingTo(replyingTo === comment.id ? null : comment.id)
+              }
+              className="flex-row items-center"
             >
-              رد
-            </Text>
-          </TouchableOpacity>
-        )}
+              <Text
+                style={{ fontFamily: "Doc" }}
+                className="text-sm text-gray-600 underline"
+              >
+                رد
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          {/* Delete button - only show for own comments */}
+          {isAuthenticated && currentUserId === comment.user.email && (
+            <TouchableOpacity
+              onPress={() => handleDeleteComment(comment.id)}
+              className="flex-row items-center"
+              disabled={deletingComments.has(comment.id)}
+            >
+              {deletingComments.has(comment.id) ? (
+                <ActivityIndicator size={14} color="#ef4444" />
+              ) : (
+                <Trash2 size={14} color="#ef4444" />
+              )}
+              <Text
+                style={{ fontFamily: "Doc" }}
+                className={`text-sm ml-1 ${deletingComments.has(comment.id) ? "text-gray-400" : "text-red-500"}`}
+              >
+                {deletingComments.has(comment.id) ? "جاري الحذف..." : "حذف"}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
 
         {replyingTo === comment.id && level === 0 && (
           <View className="mt-3 p-2 bg-white rounded">
@@ -162,12 +235,7 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
       {/* Comments list */}
       {commentsLoading ? (
         <View className="py-4">
-          <Text
-            style={{ fontFamily: "Doc" }}
-            className="text-center text-gray-500"
-          >
-            جاري تحميل التعليقات...
-          </Text>
+          <ActivityIndicator size="small" color="#ff4133" />
         </View>
       ) : comments.length > 0 ? (
         <View>{comments.map((comment) => renderComment(comment))}</View>
