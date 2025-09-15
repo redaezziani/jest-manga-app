@@ -1,4 +1,4 @@
-# Dino Manga 📚
+# Jest Manga 📚
 
 ![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Expo](https://img.shields.io/badge/Expo-1B1F23?style=for-the-badge&logo=expo&logoColor=white)
@@ -15,7 +15,7 @@
 
 ## Overview
 
-**Dino Manga** is a modern mobile application for manga enthusiasts, built using **React Native** and **Expo**. The app is fully **RTL-friendly**, designed for seamless manga browsing, exploration, and collection management.
+**Jest Manga** is a modern mobile application for manga enthusiasts, built using **React Native** and **Expo**. The app is fully **RTL-friendly**, designed for seamless manga browsing, exploration, and collection management.
 
 ---
 
